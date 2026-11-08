@@ -22,7 +22,7 @@ const router = Router();
 // DB-configurable list — client and server are separate builds with no shared
 // package. Keep this array in sync with src/lib/i18n.ts's SUPPORTED_LANGUAGES;
 // src/lib/__tests__/languageAllowlist.test.ts fails CI if they drift apart.
-const SUPPORTED_LANGUAGE_CODES = ['en', 'nb'];
+const SUPPORTED_LANGUAGE_CODES = ['de-DE', 'en', 'nb'];
 
 router.get('/me', authenticate, asyncHandler(async (req, res) => {
   const user = await queryOne<Record<string, any>>(

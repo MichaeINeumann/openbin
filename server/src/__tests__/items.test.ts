@@ -188,3 +188,23 @@ describe('GET /api/items', () => {
     expect(names).toEqual(['Zebra', 'Alpha']);
   });
 });
+
+
+describe('German and English inventory search', () => {
+  it.each([
+    ['Schrauben', 'M2 Schrauben'],
+    ['Schraube', 'M2 Schrauben'],
+    ['DÜBEL', 'Dübel'],
+    ['dübel', 'DÜBEL'],
+    ['screws', 'M2 Screws'],
+  ])('finds %s while preserving %s', async (term, name) => {
+    const { token } = await createTestUser(app);
+    const location = await createTestLocation(app, token);
+    await createTestBin(app, token, location.id, { name: 'Test', items: [name] });
+    const result = await request(app).get('/api/items')
+      .query({ location_id: location.id, q: term })
+      .set('Authorization', `Bearer ${token}`);
+    expect(result.status).toBe(200);
+    expect(result.body.results.map((item: { name: string }) => item.name)).toContain(name);
+  });
+});

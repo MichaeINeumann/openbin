@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { d, generateUuid, query } from '../db.js';
 import { testProviderConnection } from '../lib/aiCaller.js';
 import { AiAnalysisError } from '../lib/aiErrors.js';
+import { getAiLanguage } from '../lib/aiLanguage.js';
 import { aiRouteHandler, validateTextInput } from '../lib/aiRouteHandler.js';
 import { getUserAiSettings } from '../lib/aiSettings.js';
 import { validateEndpointUrl } from '../lib/aiSsrf.js';
@@ -312,7 +313,7 @@ router.post('/structure-text', ...aiRateLimiters, requireAiAccess(), checkAiCred
     } : undefined,
   };
 
-  const result = await structureText(taskConfig, request, settings.structure_prompt || undefined, settings, isDemoUser(req));
+  const result = await structureText(taskConfig, request, settings.structure_prompt || undefined, settings, isDemoUser(req), await getAiLanguage(req.user!.id));
   res.json(result);
 }));
 

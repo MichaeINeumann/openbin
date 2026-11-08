@@ -1,6 +1,7 @@
 import { generateObject } from 'ai';
 import type { AiProviderConfig } from './aiCaller.js';
 import { mapSdkError } from './aiErrors.js';
+import { withAiLanguage } from './aiLanguage.js';
 import type { AiSuggestedItem } from './aiProviders.js';
 import { normalizeAiItems } from './aiProviders.js';
 import { resolvePrompt } from './aiSanitize.js';
@@ -60,7 +61,8 @@ export async function structureText(
   request: StructureTextRequest,
   customPrompt?: string,
   overrides?: StructureTextOverrides,
-  isDemoUser?: boolean
+  isDemoUser?: boolean,
+  language = 'de-DE'
 ): Promise<StructureTextResult> {
   const pinnedFetch = await resolvePinnedFetch(config.endpointUrl);
   const model = createSdkModel(config, pinnedFetch);
@@ -69,7 +71,7 @@ export async function structureText(
     const result = await generateObject({
       model,
       schema: StructureTextSchema,
-      system: buildPrompt(request, customPrompt, isDemoUser),
+      system: withAiLanguage(buildPrompt(request, customPrompt, isDemoUser), language),
       messages: [{ role: 'user' as const, content: request.text }],
       maxOutputTokens: overrides?.max_tokens ?? STRUCTURE_TEXT_TOKENS,
       temperature: overrides?.temperature ?? 0.2,
