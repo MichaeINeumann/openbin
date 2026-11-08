@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
 import { getSecondaryColorInfo, setSecondaryColor } from '@/lib/cardStyle';
@@ -16,6 +17,7 @@ interface BulkAppearanceDialogProps {
 }
 
 export function BulkAppearanceDialog({ open, onOpenChange, binIds, onDone }: BulkAppearanceDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [icon, setIcon] = useState('');
   const [color, setColor] = useState('');
   const [cardStyle, setCardStyle] = useState('');
@@ -50,8 +52,8 @@ export function BulkAppearanceDialog({ open, onOpenChange, binIds, onDone }: Bul
     <BulkUpdateDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Appearance"
-      description={`Customize ${pluralizeBins(binIds.length)}. Only modified sections will be applied.`}
+      title={tx("appearance_41def7", { defaultValue: "Appearance" })}
+      description={tx("customize_value0_only_modified_sections_will_be_applied_4e8475", { defaultValue: "Customize {{value0}}. Only modified sections will be applied.", value0: pluralizeBins(binIds.length) })}
       selectedIds={binIds}
       onApply={apply}
       onApplied={onDone}
@@ -59,16 +61,12 @@ export function BulkAppearanceDialog({ open, onOpenChange, binIds, onDone }: Bul
     >
       <div className="space-y-5">
         <div className="space-y-2">
-          <Label className="row-tight">
-            Icon
-            {iconDirty && <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />}
+          <Label className="row-tight"> {tx("icon_716f63", { defaultValue: "Icon" })} {iconDirty && <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />}
           </Label>
           <IconPicker value={icon} onChange={(v) => { setIcon(v); setIconDirty(true); }} />
         </div>
         <div className="space-y-2">
-          <Label className="row-tight">
-            Color
-            {colorDirty && <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />}
+          <Label className="row-tight"> {tx("color_1d0c83", { defaultValue: "Color" })} {colorDirty && <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />}
           </Label>
           <ColorPicker
             value={color}
@@ -83,9 +81,7 @@ export function BulkAppearanceDialog({ open, onOpenChange, binIds, onDone }: Bul
           />
         </div>
         <div className="space-y-2">
-          <Label className="row-tight">
-            Style
-            {styleDirty && <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />}
+          <Label className="row-tight"> {tx("style_99a0ef", { defaultValue: "Style" })} {styleDirty && <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />}
           </Label>
           <StylePicker value={cardStyle} color={color} onChange={(v) => { setCardStyle(v); setStyleDirty(true); }} photos={[]} />
         </div>

@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { buildColorKey, hslToHex, resolveColor, SHADE_COUNT } from '@/lib/colorPalette';
 import { useColorGradient } from '@/lib/useColorGradient';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,7 @@ function getShadePreview(hue: number | 'neutral', shade: number): string {
 }
 
 export function HueGradientPicker({ value, onChange }: { value: string; onChange: (color: string) => void }) {
+  const { t: tx } = useTranslation('ui');
   const {
     barRef,
     isBlack,
@@ -39,7 +41,7 @@ export function HueGradientPicker({ value, onChange }: { value: string; onChange
         <button
           type="button"
           onClick={() => onChange('')}
-          title="Choose a color"
+          title={tx("choose_a_color_b7fc97", { defaultValue: "Choose a color" })}
           className={cn(
             'h-7 w-7 rounded-full transition-colors',
             !value
@@ -51,7 +53,7 @@ export function HueGradientPicker({ value, onChange }: { value: string; onChange
         <button
           type="button"
           onClick={() => onChange('black')}
-          title="Black"
+          title={tx("black_b406fb", { defaultValue: "Black" })}
           className={cn(
             'h-7 w-7 rounded-full transition-colors',
             isBlack
@@ -63,7 +65,7 @@ export function HueGradientPicker({ value, onChange }: { value: string; onChange
         <button
           type="button"
           onClick={() => onChange('white')}
-          title="White"
+          title={tx("white_37619f", { defaultValue: "White" })}
           className={cn(
             'h-7 w-7 rounded-full border border-[var(--border-subtle)] transition-colors',
             isWhite
@@ -75,7 +77,7 @@ export function HueGradientPicker({ value, onChange }: { value: string; onChange
         <button
           type="button"
           onClick={() => onChange(buildColorKey('neutral', currentShade))}
-          title="Gray"
+          title={tx("gray_4f9bef", { defaultValue: "Gray" })}
           className={cn(
             'h-7 w-7 rounded-full transition-colors',
             isNeutral
@@ -152,6 +154,7 @@ function ColorDot({ colorKey }: { colorKey: string }) {
 }
 
 export function ColorPicker({ value, onChange, secondaryLabel, secondaryValue, onSecondaryChange }: ColorPickerProps) {
+  const { t: tx } = useTranslation('ui');
   const [open, setOpen] = useState(false);
   const preset = resolveColor(value);
   const hasSecondary = !!(secondaryLabel && onSecondaryChange);
@@ -186,7 +189,7 @@ export function ColorPicker({ value, onChange, secondaryLabel, secondaryValue, o
       {open && (
         <div className="space-y-3 p-2 rounded-[var(--radius-sm)] border border-[var(--border-flat)] bg-[var(--bg-elevated)]">
           {hasSecondary && (
-            <p className="text-[12px] text-[var(--text-tertiary)]">Color</p>
+            <p className="text-[12px] text-[var(--text-tertiary)]">{tx("color_1d0c83", { defaultValue: "Color" })}</p>
           )}
           <HueGradientPicker value={value} onChange={onChange} />
           {hasSecondary && (

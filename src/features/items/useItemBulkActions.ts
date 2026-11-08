@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiFetch } from '@/lib/api';
 import { Events, notify } from '@/lib/eventBus';
 import { pluralize } from '@/lib/utils';
@@ -12,6 +13,7 @@ type ToastFn = (toast: {
 export type QuantityOp = 'set' | 'clear' | 'inc' | 'dec';
 
 export function useItemBulkActions(clearSelection: () => void, showToast: ToastFn) {
+  const { t: tx } = useTranslation('ui');
   const [isBusy, setIsBusy] = useState(false);
 
   const bulkDelete = useCallback(async (ids: string[]) => {
@@ -24,9 +26,9 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
       notify(Events.BINS);
       clearSelection();
       showToast({
-        message: `Deleted ${pluralize(deleted, 'item')}`,
+        message: tx("deleted_value0_8dc93c", { defaultValue: "Deleted {{value0}}", value0: pluralize(deleted, 'item') }),
         action: {
-          label: 'Undo',
+          label: tx("undo_39fc72", { defaultValue: "Undo" }),
           onClick: async () => {
             await apiFetch('/api/items/bulk-restore', { method: 'POST', body: { ids } });
             notify(Events.BINS);
@@ -65,7 +67,7 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
       });
       notify(Events.BINS);
       clearSelection();
-      showToast({ message: `Moved ${pluralize(moved, 'item')} to ${targetBinName}` });
+      showToast({ message: tx("moved_value0_to_targetbinname_cf2674", { defaultValue: "Moved {{value0}} to {{targetBinName}}", value0: pluralize(moved, 'item'), targetBinName: targetBinName }) });
     } finally {
       setIsBusy(false);
     }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ interface BinCreateDialogProps {
 }
 
 export function BinCreateDialog({ open, onOpenChange, prefillName, allTags: allTagsProp, initialPhotos, initialGroups, onInitialPhotosConsumed }: BinCreateDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const t = useTerminology();
   const allTagsFetched = useAllTagsFetch(allTagsProp !== undefined);
@@ -98,8 +100,8 @@ export function BinCreateDialog({ open, onOpenChange, prefillName, allTags: allT
         <DialogContent flush className="sm:max-w-lg h-[min(720px,85vh)]">
           {!successInfo && (
             <DialogHeader className="shrink-0 px-5 pt-4 pb-3 mb-0 text-left border-b border-[var(--border-subtle)]">
-              <DialogTitle>New {t.Bin}</DialogTitle>
-              <DialogDescription className="text-[13px]">Add a new storage {t.bin} to your inventory.</DialogDescription>
+              <DialogTitle>{tx("new_6403f2", { defaultValue: "New" })} {t.Bin}</DialogTitle>
+              <DialogDescription className="text-[13px]">{tx("add_a_new_storage_6d9f6d", { defaultValue: "Add a new storage" })} {t.bin} {tx("to_your_inventory_87a4f8", { defaultValue: "to your inventory." })}</DialogDescription>
             </DialogHeader>
           )}
           {activeLocationId && (

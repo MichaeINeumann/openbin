@@ -1,6 +1,7 @@
 import { Check, Copy, EllipsisVertical, KeyRound, LogOut, UserMinus } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,6 +33,7 @@ interface LocationMembersDialogProps {
 }
 
 export function LocationMembersDialog({ locationId, open, onOpenChange }: LocationMembersDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { user, setActiveLocationId, activeLocationId } = useAuth();
   const { members, isLoading } = useLocationMembers(locationId);
   const { locations } = useLocationList();
@@ -126,10 +128,8 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
     <Dialog open={open} onOpenChange={(v) => { if (!v) { setResetToken(null); setMemberSearch(''); setMemberToRemove(null); setConfirmLeave(false); } onOpenChange(v); }}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{location?.name ?? 'Location'} Members</DialogTitle>
-          <DialogDescription>
-            Manage members and share the invite code.
-          </DialogDescription>
+          <DialogTitle>{location?.name ?? tx("location_d219c6", { defaultValue: "Location" })} {tx("members_1cb449", { defaultValue: "Members" })}</DialogTitle>
+          <DialogDescription> {tx("manage_members_and_share_the_invite_code_3f93d5", { defaultValue: "Manage members and share the invite code." })} </DialogDescription>
         </DialogHeader>
 
         {/* Invite share (admin only — component returns null otherwise) */}
@@ -152,7 +152,7 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
                 value={memberSearch}
                 onChange={(e) => setMemberSearch(e.target.value)}
                 onClear={memberSearch ? () => setMemberSearch('') : undefined}
-                placeholder="Search members..."
+                placeholder={tx("search_members_c69831", { defaultValue: "Search members..." })}
                 containerClassName="mb-2"
               />
             )}
@@ -171,7 +171,7 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
                   />
                   <div className="flex-1 min-w-0">
                     <span className="text-[14px] text-[var(--text-primary)] truncate block">
-                      {isSelf ? 'You' : displayName}
+                      {isSelf ? tx("you_905cb3", { defaultValue: "You" }) : displayName}
                     </span>
                     {showEmail && (
                       <span className="text-[12px] text-[var(--text-tertiary)] truncate block">
@@ -199,9 +199,7 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
 
         {resetToken && (
           <div className="space-y-2 p-3 rounded-[var(--radius-sm)] bg-[var(--bg-input)]">
-            <p className="text-[13px] text-[var(--text-secondary)]">
-              Share this link with the member to reset their password:
-            </p>
+            <p className="text-[13px] text-[var(--text-secondary)]"> {tx("share_this_link_with_the_member_to_reset_their_password_908312", { defaultValue: "Share this link with the member to reset their password:" })} </p>
             <div className="row gap-2">
               <code className="flex-1 min-w-0 text-[12px] text-[var(--text-primary)] break-all">
                 {resetLink}
@@ -211,7 +209,7 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
                 size="icon-sm"
                 onClick={handleCopyResetLink}
                 className="shrink-0"
-                aria-label="Copy reset link"
+                aria-label={tx("copy_reset_link_edce97", { defaultValue: "Copy reset link" })}
               >
                 {resetCopied ? <Check className="h-4 w-4 text-[var(--color-success)]" /> : <Copy className="h-4 w-4" />}
               </Button>
@@ -226,21 +224,15 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
             onClick={() => setConfirmLeave(true)}
             className="w-full rounded-[var(--radius-sm)]"
           >
-            <LogOut className="h-4 w-4 mr-2" />
-            Leave Location
-          </Button>
+            <LogOut className="h-4 w-4 mr-2" /> {tx("leave_location_c743e7", { defaultValue: "Leave Location" })} </Button>
         )}
         {!isAdmin && confirmLeave && (
           <div className="space-y-2 p-3 rounded-[var(--radius-sm)] bg-[var(--destructive-soft)]">
-            <p className="text-[13px] text-[var(--text-secondary)]">
-              You&apos;ll lose access to all content in this location. Continue?
-            </p>
+            <p className="text-[13px] text-[var(--text-secondary)]"> {tx("you_apos_ll_lose_access_to_all_content_in_this_location_cont_cd7415", { defaultValue: "You'll lose access to all content in this location. Continue?" })} </p>
             <div className="flex gap-2 justify-end">
-              <Button variant="ghost" size="sm" onClick={() => setConfirmLeave(false)} disabled={leaving}>
-                Cancel
-              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setConfirmLeave(false)} disabled={leaving}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
               <Button variant="destructive" size="sm" onClick={handleLeaveConfirmed} disabled={leaving}>
-                {leaving ? 'Leaving...' : 'Leave'}
+                {leaving ? tx("leaving_08f850", { defaultValue: "Leaving..." }) : tx("leave_7e3520", { defaultValue: "Leave" })}
               </Button>
             </div>
           </div>
@@ -251,17 +243,13 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
       <Dialog open={memberToRemove !== null} onOpenChange={(v) => { if (!v) setMemberToRemove(null); }}>
         <DialogContent className="flat-popover">
           <DialogHeader>
-            <DialogTitle>Remove member</DialogTitle>
-            <DialogDescription>
-              Remove {memberToRemove?.display_name || memberToRemove?.email || 'this member'} from {location?.name ?? 'this location'}? They will lose access to all bins in this location.
-            </DialogDescription>
+            <DialogTitle>{tx("remove_member_1c31d1", { defaultValue: "Remove member" })}</DialogTitle>
+            <DialogDescription> {tx("remove_e96390", { defaultValue: "Remove" })} {memberToRemove?.display_name || memberToRemove?.email || tx("this_member_4cc704", { defaultValue: "this member" })} {tx("from_0b1e95", { defaultValue: "from" })} {location?.name ?? tx("this_location_869076", { defaultValue: "this location" })}{tx("they_will_lose_access_to_all_bins_in_this_location_d45223", { defaultValue: "? They will lose access to all bins in this location." })} </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setMemberToRemove(null)} disabled={removing}>
-              Cancel
-            </Button>
+            <Button variant="ghost" onClick={() => setMemberToRemove(null)} disabled={removing}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button variant="destructive" onClick={handleRemoveConfirmed} disabled={removing}>
-              {removing ? 'Removing...' : 'Remove'}
+              {removing ? tx("removing_2a76d4", { defaultValue: "Removing..." }) : tx("remove_e96390", { defaultValue: "Remove" })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -271,6 +259,7 @@ export function LocationMembersDialog({ locationId, open, onOpenChange }: Locati
 }
 
 function MemberActionMenu({ onResetPassword, onRemove }: { onResetPassword: () => void; onRemove: () => void }) {
+  const { t: tx } = useTranslation('ui');
   const dialogPortal = useDialogPortal();
   const { visible, animating, isOpen, toggle, close } = usePopover();
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -310,29 +299,25 @@ function MemberActionMenu({ onResetPassword, onRemove }: { onResetPassword: () =
         onClick={() => { close(); onResetPassword(); }}
         className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left text-[14px] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
       >
-        <KeyRound className="h-4 w-4" />
-        Reset password
-      </button>
+        <KeyRound className="h-4 w-4" /> {tx("reset_password_5c4bc9", { defaultValue: "Reset password" })} </button>
       <div className="my-1 border-t border-[var(--border-flat)]" />
       <button
         type="button"
         onClick={() => { close(); onRemove(); }}
         className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left text-[14px] text-[var(--destructive)] hover:bg-[var(--bg-hover)] transition-colors"
       >
-        <UserMinus className="h-4 w-4" />
-        Remove member
-      </button>
+        <UserMinus className="h-4 w-4" /> {tx("remove_member_1c31d1", { defaultValue: "Remove member" })} </button>
     </div>
   );
 
   return (
     <div ref={triggerRef} className="shrink-0">
-      <Tooltip content="More actions" side="bottom">
+      <Tooltip content={tx("more_actions_a1e34f", { defaultValue: "More actions" })} side="bottom">
         <Button
           variant="ghost"
           size="icon-sm"
           onClick={toggle}
-          aria-label="More actions"
+          aria-label={tx("more_actions_a1e34f", { defaultValue: "More actions" })}
         >
           <EllipsisVertical className="h-3.5 w-3.5" />
         </Button>

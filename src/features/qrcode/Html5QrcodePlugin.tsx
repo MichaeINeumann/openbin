@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import './html5qrcode-overrides.css';
 import type { Html5Qrcode } from 'html5-qrcode';
 import { useEffect, useRef, useState } from 'react';
@@ -9,6 +10,7 @@ interface Html5QrcodePluginProps {
 }
 
 export function Html5QrcodePlugin({ paused, onScanSuccess }: Html5QrcodePluginProps) {
+  const { t: tx } = useTranslation('ui');
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerId = 'html5-qrcode-scanner';
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ export function Html5QrcodePlugin({ paused, onScanSuccess }: Html5QrcodePluginPr
         })
         .catch((err) => {
           if (!cancelled) {
-            setError(getErrorMessage(err, 'Failed to start camera'));
+            setError(getErrorMessage(err, tx("failed_to_start_camera_399727", { defaultValue: "Failed to start camera" })));
           }
         });
     });
@@ -74,7 +76,7 @@ export function Html5QrcodePlugin({ paused, onScanSuccess }: Html5QrcodePluginPr
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-12 text-center px-4">
-        <p className="text-[15px] font-medium text-[var(--text-primary)]">Failed to start scanner</p>
+        <p className="text-[15px] font-medium text-[var(--text-primary)]">{tx("failed_to_start_scanner_f85cad", { defaultValue: "Failed to start scanner" })}</p>
         <p className="text-[13px] text-[var(--text-tertiary)]">{error}</p>
       </div>
     );

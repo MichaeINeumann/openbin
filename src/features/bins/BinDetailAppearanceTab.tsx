@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { getSecondaryColorInfo, setSecondaryColor } from '@/lib/cardStyle';
 import type { Bin, Photo } from '@/types';
@@ -15,6 +16,7 @@ interface BinDetailAppearanceTabProps {
 }
 
 export function BinDetailAppearanceTab({ bin, autoSave, photos }: BinDetailAppearanceTabProps) {
+  const { t: tx } = useTranslation('ui');
   const [localIcon, setLocalIcon] = useState(bin.icon);
   const [localColor, setLocalColor] = useState(bin.color);
   const [localCardStyle, setLocalCardStyle] = useState(bin.card_style);
@@ -32,7 +34,7 @@ export function BinDetailAppearanceTab({ bin, autoSave, photos }: BinDetailAppea
   return (
     <div className="grid gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-8 lg:items-start">
       <div className="space-y-3 lg:sticky lg:top-2">
-        <Label>Preview</Label>
+        <Label>{tx("preview_f1fbb2", { defaultValue: "Preview" })}</Label>
         <BinPreviewCard
           name={bin.name}
           color={localColor}
@@ -46,7 +48,7 @@ export function BinDetailAppearanceTab({ bin, autoSave, photos }: BinDetailAppea
       </div>
       <div className="space-y-5 min-w-0">
         <div className="space-y-2">
-          <Label>Icon</Label>
+          <Label>{tx("icon_716f63", { defaultValue: "Icon" })}</Label>
           <IconPicker
             value={localIcon}
             onChange={(icon) => {
@@ -56,7 +58,7 @@ export function BinDetailAppearanceTab({ bin, autoSave, photos }: BinDetailAppea
           />
         </div>
         <div className="space-y-2">
-          <Label>Color</Label>
+          <Label>{tx("color_1d0c83", { defaultValue: "Color" })}</Label>
           <ColorPicker
             value={localColor}
             onChange={(color) => {
@@ -77,7 +79,7 @@ export function BinDetailAppearanceTab({ bin, autoSave, photos }: BinDetailAppea
           />
         </div>
         <div className="space-y-2">
-          <Label>Style</Label>
+          <Label>{tx("style_99a0ef", { defaultValue: "Style" })}</Label>
           <StylePicker
             value={localCardStyle}
             color={localColor}

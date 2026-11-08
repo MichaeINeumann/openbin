@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -29,6 +30,7 @@ interface LocationRetentionDialogProps {
 }
 
 export function LocationRetentionDialog({ location, open, onOpenChange }: LocationRetentionDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { showToast } = useToast();
   const t = useTerminology();
   const [activityRetention, setActivityRetention] = useState(90);
@@ -67,14 +69,13 @@ export function LocationRetentionDialog({ location, open, onOpenChange }: Locati
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t.Location} Settings</DialogTitle>
-          <DialogDescription>
-            Configure data retention and membership defaults for this {t.location}.
+          <DialogTitle>{t.Location} {tx("settings_c7f73b", { defaultValue: "Settings" })}</DialogTitle>
+          <DialogDescription> {tx("configure_data_retention_and_membership_defaults_for_this_2863ba", { defaultValue: "Configure data retention and membership defaults for this" })} {t.location}.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="activity-retention">Activity log retention (days)</Label>
+            <Label htmlFor="activity-retention">{tx("activity_log_retention_days_f0a235", { defaultValue: "Activity log retention (days)" })}</Label>
             <Input
               id="activity-retention"
               type="number"
@@ -85,10 +86,10 @@ export function LocationRetentionDialog({ location, open, onOpenChange }: Locati
               value={activityRetention}
               onChange={(e) => setActivityRetention(Number(e.target.value))}
             />
-            <p className="text-[11px] text-[var(--text-tertiary)]">7–365 days. Entries older than this are automatically pruned.</p>
+            <p className="text-[11px] text-[var(--text-tertiary)]">{tx("7_365_days_entries_older_than_this_are_automatically_pruned_272295", { defaultValue: "7–365 days. Entries older than this are automatically pruned." })}</p>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="trash-retention">Trash retention (days)</Label>
+            <Label htmlFor="trash-retention">{tx("trash_retention_days_06522e", { defaultValue: "Trash retention (days)" })}</Label>
             <Input
               id="trash-retention"
               type="number"
@@ -99,10 +100,10 @@ export function LocationRetentionDialog({ location, open, onOpenChange }: Locati
               value={trashRetention}
               onChange={(e) => setTrashRetention(Number(e.target.value))}
             />
-            <p className="text-[11px] text-[var(--text-tertiary)]">7–365 days. Deleted {t.bins} are permanently purged after this period.</p>
+            <p className="text-[11px] text-[var(--text-tertiary)]">{tx("7_365_days_deleted_a30bb7", { defaultValue: "7–365 days. Deleted" })} {t.bins} {tx("are_permanently_purged_after_this_period_9869d4", { defaultValue: "are permanently purged after this period." })}</p>
           </div>
           <div className="space-y-1.5">
-            <Label>Default role for new members</Label>
+            <Label>{tx("default_role_for_new_members_e052e4", { defaultValue: "Default role for new members" })}</Label>
             <OptionGroup
               options={joinRoleOptions}
               value={defaultJoinRole}
@@ -110,20 +111,18 @@ export function LocationRetentionDialog({ location, open, onOpenChange }: Locati
             />
             <p className="text-[11px] text-[var(--text-tertiary)]">
               {defaultJoinRole === 'viewer'
-                ? 'New members will be read-only until promoted.'
-                : 'New members can create and edit content.'}
+                ? tx("new_members_will_be_read_only_until_promoted_56ab10", { defaultValue: "New members will be read-only until promoted." })
+                : tx("new_members_can_create_and_edit_content_e30453", { defaultValue: "New members can create and edit content." })}
             </p>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           <Button
             onClick={handleSave}
             disabled={saving || activityRetention < 7 || activityRetention > 365 || trashRetention < 7 || trashRetention > 365}
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? tx("saving_ae7e88", { defaultValue: "Saving..." }) : tx("save_efc007", { defaultValue: "Save" })}
           </Button>
         </DialogFooter>
       </DialogContent>

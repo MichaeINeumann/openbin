@@ -1,6 +1,7 @@
 import { Palette } from 'lucide-react';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { useDialogPortal } from '@/components/ui/dialog';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -41,6 +42,7 @@ interface TagColorPickerBodyProps {
 
 /** Inline picker body — preview + swatch buttons + hue slider + shade swatches. */
 function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose }: TagColorPickerBodyProps) {
+  const { t: tx } = useTranslation('ui');
   const { theme } = useTheme();
   const {
     barRef,
@@ -86,7 +88,7 @@ function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose
       {/* Preview badge */}
       {tagName && (
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-medium text-[var(--text-quaternary)]">Preview</span>
+          <span className="text-[11px] font-medium text-[var(--text-quaternary)]">{tx("preview_f1fbb2", { defaultValue: "Preview" })}</span>
           <Badge variant="secondary" className="text-[13px]" style={previewStyle}>
             {tagName}
           </Badge>
@@ -108,8 +110,8 @@ function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose
               ? 'border-[var(--accent)] bg-[var(--bg-base)]'
               : 'border-[var(--border-flat)] bg-[var(--bg-base)] hover:border-[var(--text-tertiary)]'
           )}
-          aria-label="None"
-          title="None"
+          aria-label={tx("none_6eef66", { defaultValue: "None" })}
+          title={tx("none_6eef66", { defaultValue: "None" })}
         >
           {!currentColor && <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />}
         </button>
@@ -119,8 +121,8 @@ function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose
             e.stopPropagation();
             onColorChange('black');
           }}
-          title="Black"
-          aria-label="Black"
+          title={tx("black_b406fb", { defaultValue: "Black" })}
+          aria-label={tx("black_b406fb", { defaultValue: "Black" })}
           className={cn(
             'h-8 w-8 rounded-full transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-flat)]',
             isBlack
@@ -135,8 +137,8 @@ function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose
             e.stopPropagation();
             onColorChange('white');
           }}
-          title="White"
-          aria-label="White"
+          title={tx("white_37619f", { defaultValue: "White" })}
+          aria-label={tx("white_37619f", { defaultValue: "White" })}
           className={cn(
             'h-8 w-8 rounded-full border border-[var(--border-subtle)] transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-flat)]',
             isWhite
@@ -151,8 +153,8 @@ function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose
             e.stopPropagation();
             onColorChange(buildColorKey('neutral', currentShade));
           }}
-          title="Gray"
-          aria-label="Gray"
+          title={tx("gray_4f9bef", { defaultValue: "Gray" })}
+          aria-label={tx("gray_4f9bef", { defaultValue: "Gray" })}
           className={cn(
             'h-8 w-8 rounded-full transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-flat)]',
             isNeutral
@@ -169,7 +171,7 @@ function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose
           ref={barRef}
           role="slider"
           tabIndex={0}
-          aria-label="Hue"
+          aria-label={tx("hue_7e58a6", { defaultValue: "Hue" })}
           aria-valuemin={0}
           aria-valuemax={360}
           aria-valuenow={currentHue ?? 0}
@@ -216,7 +218,7 @@ function TagColorPickerBody({ currentColor, onColorChange, tagName, onClearClose
                   e.stopPropagation();
                   onColorChange(buildColorKey(activeHue, i));
                 }}
-                aria-label={`Shade ${i + 1} of ${SHADE_COUNT}`}
+                aria-label={tx("shade_value0_of_shade_count_968bae", { defaultValue: "Shade {{value0}} of {{SHADE_COUNT}}", value0: i + 1, SHADE_COUNT: SHADE_COUNT })}
                 className={cn(
                   'flex-1 h-10 transition-all cursor-pointer',
                   i === 0 && 'rounded-l-lg',
@@ -247,6 +249,7 @@ export function TagColorPicker({ currentColor, onColorChange, tagName, inline }:
 }
 
 function TagColorPickerPopover({ currentColor, onColorChange, tagName }: TagColorPickerProps) {
+  const { t: tx } = useTranslation('ui');
   const dialogPortal = useDialogPortal();
   const { visible, animating, close, toggle } = usePopover();
   const ref = useRef<HTMLDivElement>(null);
@@ -312,7 +315,7 @@ function TagColorPickerPopover({ currentColor, onColorChange, tagName }: TagColo
             toggle();
           }}
           className="h-9 w-9 rounded-[var(--radius-lg)] flex items-center justify-center hover:bg-[var(--bg-active)] transition-colors shrink-0 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]"
-          aria-label="Pick tag color"
+          aria-label={tx("pick_tag_color_318dc7", { defaultValue: "Pick tag color" })}
         >
           {currentPreset ? (
             <span className="h-[18px] w-[18px] rounded-full" style={{ backgroundColor: currentPreset.bgCss }} />

@@ -1,5 +1,6 @@
 import { BarChart3, Bookmark, ChevronRight, Inbox, MapPin, Package, Pin, Plus, Printer, QrCode, ScanLine, Sparkles } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { SavedViewChips } from '@/components/saved-view-chips';
@@ -46,6 +47,7 @@ const UpgradeDialog = __EE__
   : (() => null) as React.FC<Record<string, unknown>>;
 
 export function DashboardPage() {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const navigate = useNavigate();
   const { activeLocationId } = useAuth();
@@ -83,11 +85,11 @@ export function DashboardPage() {
   if (!activeLocationId) {
     return (
       <div className="page-content-wide">
-        <PageHeader title="Dashboard" />
+        <PageHeader title={tx("dashboard_d87f47", { defaultValue: "Dashboard" })} />
         <EmptyState
           icon={MapPin}
-          title={`No ${t.location} selected`}
-          subtitle={`Create or join a ${t.location} to start organizing ${t.bins}`}
+          title={tx("no_location_selected_4b7dc9", { defaultValue: "No {{location}} selected", location: t.location })}
+          subtitle={tx("create_or_join_a_location_to_start_organizing_bins_ea9d6d", { defaultValue: "Create or join a {{location}} to start organizing {{bins}}", location: t.location, bins: t.bins })}
           variant="onboard"
         >
           <Button
@@ -95,7 +97,7 @@ export function DashboardPage() {
             className="mt-1"
           >
             <MapPin className="h-4 w-4 mr-2" />
-            {`Manage ${t.Locations}`}
+            {tx("manage_locations_54d9ba", { defaultValue: "Manage {{Locations}}", Locations: t.Locations })}
           </Button>
         </EmptyState>
       </div>
@@ -114,7 +116,7 @@ export function DashboardPage() {
   return (
     <div className="page-content-wide">
       <PageHeader
-        title="Dashboard"
+        title={tx("dashboard_d87f47", { defaultValue: "Dashboard" })}
         actions={
           <div className="row">
             <div className="flex items-center gap-1">
@@ -126,7 +128,7 @@ export function DashboardPage() {
                   size="icon"
                   variant="ghost"
                   className="hidden lg:inline-flex h-10 w-10 rounded-[var(--radius-sm)]"
-                  aria-label="Scan QR code"
+                  aria-label={tx("scan_qr_code_e7d8c3", { defaultValue: "Scan QR code" })}
                   data-tour="scan-button"
                 >
                   <ScanLine className="h-5 w-5" />
@@ -139,22 +141,20 @@ export function DashboardPage() {
                     variant="ghost"
                     size="sm"
                     className="hidden lg:inline-flex h-10 gap-1.5 rounded-[var(--radius-sm)] bg-[var(--ai-accent)]/10 text-[var(--ai-accent)] hover:bg-[var(--ai-accent)]/15 active:bg-[var(--ai-accent)]/20 ai-shimmer"
-                    aria-label="Ask AI"
+                    aria-label={tx("ask_ai_8dbaeb", { defaultValue: "Ask AI" })}
                     data-tour="ask-ai-button"
                   >
-                    <Sparkles className="h-4 w-4" />
-                    Ask AI
-                  </Button>
+                    <Sparkles className="h-4 w-4" /> {tx("ask_ai_8dbaeb", { defaultValue: "Ask AI" })} </Button>
                 </Tooltip>
               )}
             </div>
             {canCreateBin && (
-              <Tooltip content={`New ${t.bin}`} side="bottom">
+              <Tooltip content={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })} side="bottom">
                 <Button
                   onClick={() => setCreateOpen(true)}
                   size="icon"
                   className="h-10 w-10 rounded-[var(--radius-sm)]"
-                  aria-label={`New ${t.bin}`}
+                  aria-label={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })}
                   data-tour="new-bin-button"
                 >
                   <Plus className="h-5 w-5" />
@@ -170,8 +170,8 @@ export function DashboardPage() {
         data-shortcut-search
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder={`Search ${t.bins}...`}
-        aria-label={`Search ${t.bins}`}
+        placeholder={tx("search_bins_5c5eaa", { defaultValue: "Search {{bins}}...", bins: t.bins })}
+        aria-label={tx("search_bins_c4ba23", { defaultValue: "Search {{bins}}", bins: t.bins })}
         containerClassName="flex-1"
       />
 
@@ -199,9 +199,8 @@ export function DashboardPage() {
               </div>
               <div className="text-left">
                 <p className="text-[15px] font-semibold text-[var(--text-primary)]">
-                  {needsOrganizing} {needsOrganizing !== 1 ? t.bins : t.bin} need{needsOrganizing === 1 ? 's' : ''} organizing
-                </p>
-                <p className="text-[12px] text-[var(--text-tertiary)]">No tags, area, or items</p>
+                  {tx('needsOrganization', { count: needsOrganizing, term: needsOrganizing === 1 ? t.bin : t.bins, defaultValue: `${needsOrganizing} ${needsOrganizing === 1 ? t.bin : t.bins} need${needsOrganizing === 1 ? 's' : ''} organizing` })} </p>
+                <p className="text-[12px] text-[var(--text-tertiary)]">{tx("no_tags_area_or_items_15adbb", { defaultValue: "No tags, area, or items" })}</p>
               </div>
             </div>
             <ChevronRight className="h-4 w-4 text-[var(--color-warning)] opacity-60" />
@@ -218,7 +217,7 @@ export function DashboardPage() {
           <div className="contents lg:col-span-2 lg:flex lg:flex-col lg:gap-4 lg:min-w-0">
             {dashSettings.showSavedViews && savedViews.length > 0 && (
               <section aria-labelledby="dash-saved-views" className="flex flex-col gap-2 order-2 lg:order-none min-w-0">
-                <SectionHeader id="dash-saved-views" icon={Bookmark} title="Saved searches" />
+                <SectionHeader id="dash-saved-views" icon={Bookmark} title={tx("saved_searches_ed1d84", { defaultValue: "Saved searches" })} />
                 <SavedViewChips
                   views={savedViews}
                   onApply={(view) => {
@@ -227,7 +226,7 @@ export function DashboardPage() {
                   }}
                   onDelete={(viewId) => {
                     deleteView(viewId).catch((err) => {
-                      showToast({ message: getErrorMessage(err, 'Failed to delete saved view'), variant: 'error' });
+                      showToast({ message: getErrorMessage(err, tx("failed_to_delete_saved_view_88b552", { defaultValue: "Failed to delete saved view" })), variant: 'error' });
                     });
                   }}
                 />
@@ -239,8 +238,8 @@ export function DashboardPage() {
                 <SectionHeader
                   id="dash-pinned"
                   icon={Pin}
-                  title="Pinned"
-                  action={{ label: `All ${t.Bins}`, onClick: () => navigate('/bins?pinned=true') }}
+                  title={tx("pinned_f93121", { defaultValue: "Pinned" })}
+                  action={{ label: tx("all_bins_a95967", { defaultValue: "All {{Bins}}", Bins: t.Bins }), onClick: () => navigate('/bins?pinned=true') }}
                 />
                 <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-1 px-1 py-1 snap-x snap-mandatory">
                   {pinnedBins.map((bin, i) => (
@@ -266,10 +265,10 @@ export function DashboardPage() {
           <div className="contents lg:flex lg:flex-col lg:gap-4 lg:min-w-0">
             {dashSettings.showStats && (
               <section aria-labelledby="dash-stats" className="flex flex-col gap-2 order-1 lg:order-none min-w-0">
-                <SectionHeader id="dash-stats" icon={BarChart3} title="Overview" />
+                <SectionHeader id="dash-stats" icon={BarChart3} title={tx("overview_0efc2e", { defaultValue: "Overview" })} />
                 <div className="grid grid-cols-2 gap-3">
                   <StatCard
-                    label={`Total ${t.Bins}`}
+                    label={tx("total_bins_e489de", { defaultValue: "Total {{Bins}}", Bins: t.Bins })}
                     value={totalBins}
                     onClick={() => navigate('/bins')}
                   />
@@ -279,12 +278,12 @@ export function DashboardPage() {
                     onClick={() => navigate('/locations')}
                   />
                   <StatCard
-                    label="Items"
+                    label={tx("items_44d25b", { defaultValue: "Items" })}
                     value={totalItems}
                     onClick={() => navigate('/items')}
                   />
                   <StatCard
-                    label="Checked out"
+                    label={tx("checked_out_4adc7a", { defaultValue: "Checked out" })}
                     value={checkoutCount}
                     variant={checkoutCount > 0 ? 'warning' : 'default'}
                     onClick={() => navigate('/checkouts')}
@@ -319,28 +318,20 @@ export function DashboardPage() {
               <Package aria-hidden className="h-10 w-10 text-[var(--accent)] opacity-80" />
             </div>
             <div className="text-center space-y-1.5">
-              <h3 className="text-[19px] font-semibold text-[var(--text-secondary)]">
-                Get started with {t.Bins}
+              <h3 className="text-[19px] font-semibold text-[var(--text-secondary)]"> {tx("get_started_with_50e252", { defaultValue: "Get started with" })} {t.Bins}
               </h3>
-              <p className="text-[14px] text-[var(--text-tertiary)] max-w-xs mx-auto">
-                Create your first {t.bin} and print a QR label — next time, just scan to see what's inside.
-              </p>
+              <p className="text-[14px] text-[var(--text-tertiary)] max-w-xs mx-auto"> {tx("create_your_first_02d5a1", { defaultValue: "Create your first" })} {t.bin} {tx("and_print_a_qr_label_next_time_just_scan_to_see_what_s_insid_867ca0", { defaultValue: "and print a QR label — next time, just scan to see what's inside." })} </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               {canCreateBin && (
                 <Button onClick={() => setCreateOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create {t.bin}
+                  <Plus className="h-4 w-4 mr-2" /> {tx("create_6e157c", { defaultValue: "Create" })} {t.bin}
                 </Button>
               )}
               <Button variant="outline" onClick={() => navigate('/print')}>
-                <Printer className="h-4 w-4 mr-2" />
-                Print labels
-              </Button>
+                <Printer className="h-4 w-4 mr-2" /> {tx("print_labels_e9f4c1", { defaultValue: "Print labels" })} </Button>
               <Button variant="outline" onClick={() => openScanDialog()}>
-                <QrCode className="h-4 w-4 mr-2" />
-                Scan QR
-              </Button>
+                <QrCode className="h-4 w-4 mr-2" /> {tx("scan_qr_fd35ed", { defaultValue: "Scan QR" })} </Button>
             </div>
           </div>
         )}
@@ -348,18 +339,18 @@ export function DashboardPage() {
         {totalBins > 0 && !anySectionVisible && (
           <div className="flex flex-col items-center justify-center gap-4 py-6 text-[var(--text-tertiary)]">
             <div className="text-center space-y-1.5">
-              <p className="text-[17px] font-semibold text-[var(--text-secondary)]">Your dashboard is empty</p>
-              <p className="text-[13px]">Turn on sections to see your data</p>
+              <p className="text-[17px] font-semibold text-[var(--text-secondary)]">{tx("your_dashboard_is_empty_6feb85", { defaultValue: "Your dashboard is empty" })}</p>
+              <p className="text-[13px]">{tx("turn_on_sections_to_see_your_data_8119cd", { defaultValue: "Turn on sections to see your data" })}</p>
             </div>
             <div className="w-full max-w-xs space-y-1">
               {([
-                { key: 'showStats' as const, label: 'Stats' },
-                { key: 'showNeedsOrganizing' as const, label: 'Needs Organizing' },
-                { key: 'showSavedViews' as const, label: 'Saved searches' },
-                { key: 'showPinnedBins' as const, label: `Pinned ${t.Bins}` },
-                { key: 'showRecentlyScanned' as const, label: 'Recent scans' },
-                { key: 'showCheckouts' as const, label: 'Checked out' },
-                { key: 'showActivity' as const, label: 'Activity' },
+                { key: 'showStats' as const, label: tx("stats_be763e", { defaultValue: "Stats" }) },
+                { key: 'showNeedsOrganizing' as const, label: tx("needs_organizing_a8e50d", { defaultValue: "Needs Organizing" }) },
+                { key: 'showSavedViews' as const, label: tx("saved_searches_ed1d84", { defaultValue: "Saved searches" }) },
+                { key: 'showPinnedBins' as const, label: tx("pinned_bins_8972f6", { defaultValue: "Pinned {{Bins}}", Bins: t.Bins }) },
+                { key: 'showRecentlyScanned' as const, label: tx("recent_scans_9c29e1", { defaultValue: "Recent scans" }) },
+                { key: 'showCheckouts' as const, label: tx("checked_out_4adc7a", { defaultValue: "Checked out" }) },
+                { key: 'showActivity' as const, label: tx("activity_81c0d9", { defaultValue: "Activity" }) },
               ]).map(({ key, label }) => (
                 <div key={key} className="flex items-center justify-between py-2 px-3 rounded-[var(--radius-md)]">
                   <span className="text-[14px] text-[var(--text-primary)]">{label}</span>
@@ -371,7 +362,7 @@ export function DashboardPage() {
               ))}
               {preferences.checklist_eligible && (
                 <div className="flex items-center justify-between py-2 px-3 rounded-[var(--radius-md)]">
-                  <span className="text-[14px] text-[var(--text-primary)]">Onboarding checklist</span>
+                  <span className="text-[14px] text-[var(--text-primary)]">{tx("onboarding_checklist_ad4f37", { defaultValue: "Onboarding checklist" })}</span>
                   <Switch
                     checked={dashSettings.showChecklist}
                     onCheckedChange={(checked) => updateDashSettings({ showChecklist: checked })}
@@ -400,7 +391,7 @@ export function DashboardPage() {
             open={upgradeOpen}
             onOpenChange={setUpgradeOpen}
             feature="AI Features"
-            description="AI-powered commands, analysis, and suggestions are available on the Pro plan."
+            description={tx("ai_powered_commands_analysis_and_suggestions_are_available_o_1bf24e", { defaultValue: "AI-powered commands, analysis, and suggestions are available on the Pro plan." })}
           />
         </Suspense>
       )}

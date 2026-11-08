@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -25,6 +26,7 @@ interface CreateAreaDialogProps {
 }
 
 export function CreateAreaDialog({ open, onOpenChange, locationId, areas, defaultParentId, onCreated }: CreateAreaDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { showToast } = useToast();
   const [newAreaName, setNewAreaName] = useState('');
@@ -61,9 +63,9 @@ export function CreateAreaDialog({ open, onOpenChange, locationId, areas, defaul
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`Create ${t.Area}`}</DialogTitle>
+          <DialogTitle>{tx("create_area_c810d3", { defaultValue: "Create {{Area}}", Area: t.Area })}</DialogTitle>
           <DialogDescription>
-            {`${t.Areas} help organize ${t.bins} by zone (e.g. Garage, Kitchen, Closet).`}
+            {tx("areas_help_organize_bins_by_zone_e_g_garage_kitchen_closet_174c15", { defaultValue: "{{Areas}} help organize {{bins}} by zone (e.g. Garage, Kitchen, Closet).", Areas: t.Areas, bins: t.bins })}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleCreateArea} className="space-y-5">
@@ -71,7 +73,7 @@ export function CreateAreaDialog({ open, onOpenChange, locationId, areas, defaul
             <Input
               value={newAreaName}
               onChange={(e) => setNewAreaName(e.target.value)}
-              placeholder={`${t.Area} name...`}
+              placeholder={tx("area_name_6cb48d", { defaultValue: "{{Area}} name...", Area: t.Area })}
               maxLength={255}
               autoFocus
               required
@@ -79,13 +81,13 @@ export function CreateAreaDialog({ open, onOpenChange, locationId, areas, defaul
           </div>
           {flatAreas.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-[13px]">{`Parent ${t.Area}`}</Label>
+              <Label className="text-[13px]">{tx("parent_area_fd6623", { defaultValue: "Parent {{Area}}", Area: t.Area })}</Label>
               <select
                 value={parentId ?? ''}
                 onChange={(e) => setParentId(e.target.value || null)}
                 className={cn(inputBase, 'h-10 focus-visible:ring-2 focus-visible:ring-[var(--accent)]')}
               >
-                <option value="">No parent (root {t.area})</option>
+                <option value="">{tx("no_parent_root_b8c596", { defaultValue: "No parent (root" })} {t.area})</option>
                 {flatAreas.map((a) => (
                   <option key={a.id} value={a.id}>
                     {'\u00A0\u00A0'.repeat(a.depth)}{a.name}
@@ -95,11 +97,9 @@ export function CreateAreaDialog({ open, onOpenChange, locationId, areas, defaul
             </div>
           )}
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button type="submit" disabled={!newAreaName.trim() || creatingArea}>
-              {creatingArea ? 'Creating...' : 'Create'}
+              {creatingArea ? tx("creating_28ea76", { defaultValue: "Creating..." }) : tx("create_6e157c", { defaultValue: "Create" })}
             </Button>
           </DialogFooter>
         </form>
@@ -127,6 +127,7 @@ interface DeleteAreaDialogProps {
 }
 
 export function DeleteAreaDialog({ target, onOpenChange, locationId }: DeleteAreaDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { showToast } = useToast();
   const [deletingArea, setDeletingArea] = useState(false);
@@ -169,19 +170,17 @@ export function DeleteAreaDialog({ target, onOpenChange, locationId }: DeleteAre
     <Dialog open={!!target} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{`Delete ${t.area}?`}</DialogTitle>
+          <DialogTitle>{tx("delete_area_8487ca", { defaultValue: "Delete {{area}}?", area: t.area })}</DialogTitle>
           <DialogDescription>{getDescription()}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           <Button
             variant="destructive"
             onClick={handleDeleteArea}
             disabled={deletingArea}
           >
-            {deletingArea ? 'Deleting...' : 'Delete'}
+            {deletingArea ? tx("deleting_e16cac", { defaultValue: "Deleting..." }) : tx("delete_f6fdbe", { defaultValue: "Delete" })}
           </Button>
         </DialogFooter>
       </DialogContent>

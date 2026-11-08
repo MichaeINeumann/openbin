@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import { ArrowRightLeft, ChevronLeft, ChevronRight, Copy, Loader2, Lock, MoreHorizontal, Palette, Pin, Printer, Share2, Sparkles, Trash2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useCreditCostLabel, visionWeight } from '@/lib/aiCreditCost';
@@ -67,6 +68,7 @@ export function BinDetailToolbar({
   onSaveName,
   nameSaved,
 }: BinDetailToolbarProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { visible, animating, close, toggle } = usePopover();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -113,13 +115,13 @@ export function BinDetailToolbar({
       {/* Desktop: nav arrows */}
       {hasBinListContext && (
         <div className="hidden lg:flex gap-1.5 shrink-0">
-          <Tooltip content="Previous" side="bottom">
-            <Button variant="ghost" size="icon" onClick={onPrev ?? undefined} disabled={!onPrev} aria-label="Previous bin">
+          <Tooltip content={tx("previous_50f942", { defaultValue: "Previous" })} side="bottom">
+            <Button variant="ghost" size="icon" onClick={onPrev ?? undefined} disabled={!onPrev} aria-label={tx("previous_bin_ab94e4", { defaultValue: "Previous bin" })}>
               <ChevronLeft className="h-[18px] w-[18px]" />
             </Button>
           </Tooltip>
-          <Tooltip content="Next" side="bottom">
-            <Button variant="ghost" size="icon" onClick={onNext ?? undefined} disabled={!onNext} aria-label="Next bin">
+          <Tooltip content={tx("next_bc9819", { defaultValue: "Next" })} side="bottom">
+            <Button variant="ghost" size="icon" onClick={onNext ?? undefined} disabled={!onNext} aria-label={tx("next_bin_a263f9", { defaultValue: "Next bin" })}>
               <ChevronRight className="h-[18px] w-[18px]" />
             </Button>
           </Tooltip>
@@ -137,9 +139,9 @@ export function BinDetailToolbar({
               if (e.key === 'Enter') { e.preventDefault(); commitName(); }
               if (e.key === 'Escape') { e.preventDefault(); setNameValue(bin.name); setEditingName(false); }
             }}
-            aria-label="Bin name"
+            aria-label={tx("bin_name_c22b93", { defaultValue: "Bin name" })}
             className="w-full bg-transparent text-[17px] font-semibold text-[var(--text-primary)] leading-tight border-b border-b-[var(--accent)] outline-none focus-visible:border-b-2 placeholder:text-[var(--text-tertiary)] p-0"
-            placeholder="Name..."
+            placeholder={tx("name_d3d362", { defaultValue: "Name..." })}
           />
         ) : (
           <h1 className={cn('m-0 min-w-0 text-[17px] font-semibold leading-tight', nameSaved && 'animate-save-flash')}>
@@ -149,7 +151,7 @@ export function BinDetailToolbar({
                   <BinIcon className="hidden lg:block h-5 w-5 text-[var(--text-secondary)] shrink-0" />
                   <span className="text-[17px] text-[var(--text-primary)] truncate">{bin.name}</span>
                   {bin.visibility === 'private' && (
-                    <Lock className="h-3.5 w-3.5 text-[var(--text-tertiary)] shrink-0" aria-label="Private" />
+                    <Lock className="h-3.5 w-3.5 text-[var(--text-tertiary)] shrink-0" aria-label={tx("private_237dfa", { defaultValue: "Private" })} />
                   )}
                 </>
               );
@@ -161,7 +163,7 @@ export function BinDetailToolbar({
                     'row-tight min-w-0 w-full cursor-text text-left bg-transparent outline-none rounded-[var(--radius-xs)] font-semibold',
                     focusRing,
                   )}
-                  aria-label={`Edit name: ${bin.name}`}
+                  aria-label={tx("edit_name_value0_838d60", { defaultValue: "Edit name: {{value0}}", value0: bin.name })}
                 >
                   {inner}
                 </button>
@@ -184,15 +186,15 @@ export function BinDetailToolbar({
             </Tooltip>
           )}
           {canPin && (
-            <Tooltip content={bin.is_pinned ? 'Unpin' : 'Pin'} side="bottom">
-              <Button variant="ghost" size="icon" onClick={onTogglePin} aria-label={bin.is_pinned ? `Unpin ${t.bin}` : `Pin ${t.bin}`}>
+            <Tooltip content={bin.is_pinned ? tx("unpin_2eba6a", { defaultValue: "Unpin" }) : tx("pin_9c9184", { defaultValue: "Pin" })} side="bottom">
+              <Button variant="ghost" size="icon" onClick={onTogglePin} aria-label={bin.is_pinned ? tx("unpin_bin_a8fb47", { defaultValue: "Unpin {{bin}}", bin: t.bin }) : tx("pin_bin_cdbf9a", { defaultValue: "Pin {{bin}}", bin: t.bin })}>
                 <Pin className="h-[18px] w-[18px]" fill={bin.is_pinned ? 'currentColor' : 'none'} />
               </Button>
             </Tooltip>
           )}
           {canEdit && (
-            <Tooltip content="Customize appearance" side="bottom">
-              <Button variant="ghost" size="icon" onClick={onCustomize} aria-label="Customize appearance">
+            <Tooltip content={tx("customize_appearance_a70650", { defaultValue: "Customize appearance" })} side="bottom">
+              <Button variant="ghost" size="icon" onClick={onCustomize} aria-label={tx("customize_appearance_a70650", { defaultValue: "Customize appearance" })}>
                 <Palette className="h-[18px] w-[18px]" />
               </Button>
             </Tooltip>
@@ -201,8 +203,8 @@ export function BinDetailToolbar({
 
         {/* More menu */}
         <div className="relative" ref={wrapperRef}>
-          <Tooltip content="More" side="bottom">
-            <Button variant="ghost" size="icon" onClick={toggle} aria-label="More actions">
+          <Tooltip content={tx("more_4bab2d", { defaultValue: "More" })} side="bottom">
+            <Button variant="ghost" size="icon" onClick={toggle} aria-label={tx("more_actions_a1e34f", { defaultValue: "More actions" })}>
               <MoreHorizontal className="h-[18px] w-[18px]" />
             </Button>
           </Tooltip>
@@ -229,45 +231,33 @@ export function BinDetailToolbar({
               {canPin && (
                 <button type="button" role="menuitem" className={cn(menuItemBase, 'lg:hidden')} onClick={() => handleItem(onTogglePin)}>
                   <Pin className="h-4 w-4 text-[var(--text-tertiary)]" fill={bin.is_pinned ? 'currentColor' : 'none'} />
-                  {bin.is_pinned ? 'Unpin' : 'Pin'}
+                  {bin.is_pinned ? tx("unpin_2eba6a", { defaultValue: "Unpin" }) : tx("pin_9c9184", { defaultValue: "Pin" })}
                 </button>
               )}
               {canEdit && (
                 <button type="button" role="menuitem" className={cn(menuItemBase, 'lg:hidden')} onClick={() => handleItem(onCustomize)}>
-                  <Palette className="h-4 w-4 text-[var(--text-tertiary)]" />
-                  Customize appearance
-                </button>
+                  <Palette className="h-4 w-4 text-[var(--text-tertiary)]" /> {tx("customize_appearance_a70650", { defaultValue: "Customize appearance" })} </button>
               )}
               {(showAiButton || canPin || canEdit) && <div className="lg:hidden my-1 border-t border-[var(--border-flat)]" />}
               <button type="button" role="menuitem" className={menuItemBase} onClick={() => handleItem(onPrint)}>
-                <Printer className="h-4 w-4 text-[var(--text-tertiary)]" />
-                Print label
-              </button>
+                <Printer className="h-4 w-4 text-[var(--text-tertiary)]" /> {tx("print_label_ab4162", { defaultValue: "Print label" })} </button>
               {canEdit && (
                 <button type="button" role="menuitem" className={menuItemBase} onClick={() => handleItem(onDuplicate)}>
-                  <Copy className="h-4 w-4 text-[var(--text-tertiary)]" />
-                  Duplicate
-                </button>
+                  <Copy className="h-4 w-4 text-[var(--text-tertiary)]" /> {tx("duplicate_972d57", { defaultValue: "Duplicate" })} </button>
               )}
               {canEdit && otherLocations.length > 0 && (
                 <button type="button" role="menuitem" className={menuItemBase} onClick={() => handleItem(onMove)}>
-                  <ArrowRightLeft className="h-4 w-4 text-[var(--text-tertiary)]" />
-                  Move
-                </button>
+                  <ArrowRightLeft className="h-4 w-4 text-[var(--text-tertiary)]" /> {tx("move_76cdb9", { defaultValue: "Move" })} </button>
               )}
               {showShareButton && onShare && (
                 <button type="button" role="menuitem" className={menuItemBase} onClick={() => handleItem(onShare)}>
-                  <Share2 className="h-4 w-4 text-[var(--text-tertiary)]" />
-                  Share
-                </button>
+                  <Share2 className="h-4 w-4 text-[var(--text-tertiary)]" /> {tx("share_09ca55", { defaultValue: "Share" })} </button>
               )}
               {canDelete && (
                 <>
                   <div className="my-1 border-t border-[var(--border-flat)]" />
                   <button type="button" role="menuitem" className={cn(menuItemBase, 'text-[var(--destructive)]')} onClick={() => handleItem(onDelete)}>
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </button>
+                    <Trash2 className="h-4 w-4" /> {tx("delete_f6fdbe", { defaultValue: "Delete" })} </button>
                 </>
               )}
             </div>
@@ -275,8 +265,8 @@ export function BinDetailToolbar({
         </div>
 
         {/* Close */}
-        <Tooltip content="Close" side="bottom">
-          <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close" className="bg-[var(--bg-input)]">
+        <Tooltip content={tx("close_bbfa77", { defaultValue: "Close" })} side="bottom">
+          <Button variant="ghost" size="icon" onClick={onClose} aria-label={tx("close_bbfa77", { defaultValue: "Close" })} className="bg-[var(--bg-input)]">
             <X className="h-[18px] w-[18px]" />
           </Button>
         </Tooltip>

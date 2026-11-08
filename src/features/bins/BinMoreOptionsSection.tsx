@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Disclosure } from '@/components/ui/disclosure';
 import { Textarea } from '@/components/ui/textarea';
 import { AreaPicker } from '@/features/areas/AreaPicker';
@@ -72,12 +73,13 @@ export function BinMoreOptionsSection({
   setVisibility,
   areaName,
 }: BinMoreOptionsSectionProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const secondaryInfo = getSecondaryColorInfo(cardStyle);
 
   return (
     <Disclosure
-      label="More options"
+      label={tx("more_options_86c0a3", { defaultValue: "More options" })}
       open={open}
       onOpenChange={onOpenChange}
       labelClassName="py-2 text-[var(--accent)] cursor-pointer"
@@ -89,25 +91,25 @@ export function BinMoreOptionsSection({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="bin-notes" className={sectionHeader}>Notes</label>
+          <label htmlFor="bin-notes" className={sectionHeader}>{tx("notes_704400", { defaultValue: "Notes" })}</label>
           <Textarea
             id="bin-notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Additional notes..."
+            placeholder={tx("additional_notes_d2291b", { defaultValue: "Additional notes..." })}
             maxLength={10000}
             rows={2}
           />
         </div>
 
         <div className="space-y-2">
-          <span className={sectionHeader}>Tags</span>
+          <span className={sectionHeader}>{tx("tags_848eed", { defaultValue: "Tags" })}</span>
           <TagInput tags={tags} onChange={setTags} suggestions={allTags} />
         </div>
 
         {customFieldDefs.length > 0 && (
           <div className="space-y-2">
-            <span className={sectionHeader}>Custom Fields</span>
+            <span className={sectionHeader}>{tx("custom_fields_143b17", { defaultValue: "Custom Fields" })}</span>
             <CustomFieldsEditCard
               fields={customFieldDefs}
               values={customFields}
@@ -117,7 +119,7 @@ export function BinMoreOptionsSection({
         )}
 
         <div className="space-y-3">
-          <span className={sectionHeader}>Appearance</span>
+          <span className={sectionHeader}>{tx("appearance_41def7", { defaultValue: "Appearance" })}</span>
           <BinPreviewCard
             name={name}
             color={color}
@@ -128,11 +130,11 @@ export function BinMoreOptionsSection({
             areaName={areaName}
           />
           <div className="space-y-2">
-            <span className="text-[12px] text-[var(--text-tertiary)]">Icon</span>
+            <span className="text-[12px] text-[var(--text-tertiary)]">{tx("icon_716f63", { defaultValue: "Icon" })}</span>
             <IconPicker value={icon} onChange={setIcon} />
           </div>
           <div className="space-y-2">
-            <span className="text-[12px] text-[var(--text-tertiary)]">Color</span>
+            <span className="text-[12px] text-[var(--text-tertiary)]">{tx("color_1d0c83", { defaultValue: "Color" })}</span>
             <ColorPicker
               value={color}
               onChange={setColor}
@@ -142,13 +144,13 @@ export function BinMoreOptionsSection({
             />
           </div>
           <div className="space-y-2">
-            <span className="text-[12px] text-[var(--text-tertiary)]">Style</span>
+            <span className="text-[12px] text-[var(--text-tertiary)]">{tx("style_99a0ef", { defaultValue: "Style" })}</span>
             <StylePicker value={cardStyle} color={color} onChange={setCardStyle} />
           </div>
         </div>
 
         <div className="space-y-2">
-          <span className={sectionHeader}>Visibility</span>
+          <span className={sectionHeader}>{tx("visibility_7d9ff4", { defaultValue: "Visibility" })}</span>
           <VisibilityPicker value={visibility} onChange={setVisibility} />
         </div>
       </div>

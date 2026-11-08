@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ interface SaveViewDialogProps {
 }
 
 export function SaveViewDialog({ open, onOpenChange, searchQuery, sort, filters }: SaveViewDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [viewName, setViewName] = useState('');
   const { showToast } = useToast();
 
@@ -35,17 +37,17 @@ export function SaveViewDialog({ open, onOpenChange, searchQuery, sort, filters 
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Save Search</DialogTitle>
+          <DialogTitle>{tx("save_search_13407b", { defaultValue: "Save Search" })}</DialogTitle>
         </DialogHeader>
         <Input
           value={viewName}
           onChange={(e) => setViewName(e.target.value)}
-          placeholder="View name..."
+          placeholder={tx("view_name_61e0f3", { defaultValue: "View name..." })}
           onKeyDown={(e) => { if (e.key === 'Enter' && viewName.trim()) handleSave(); }}
         />
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSave} disabled={!viewName.trim()}>Save</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
+          <Button onClick={handleSave} disabled={!viewName.trim()}>{tx("save_efc007", { defaultValue: "Save" })}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

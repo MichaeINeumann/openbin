@@ -1,5 +1,6 @@
 import { Columns3 } from 'lucide-react';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -47,6 +48,7 @@ interface ColumnVisibilityMenuProps {
 }
 
 export function ColumnVisibilityMenu({ applicableFields, visibility, onToggle, customFieldLabels }: ColumnVisibilityMenuProps) {
+  const { t: tx } = useTranslation('ui');
   const { visible, animating, close, toggle } = usePopover();
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -54,13 +56,13 @@ export function ColumnVisibilityMenu({ applicableFields, visibility, onToggle, c
 
   return (
     <div ref={menuRef} className="relative">
-      <Tooltip content="Fields" side="bottom">
+      <Tooltip content={tx("fields_e8b685", { defaultValue: "Fields" })} side="bottom">
         <Button
           variant="secondary"
           size="icon"
           onClick={toggle}
           className="shrink-0 rounded-[var(--radius-sm)]"
-          aria-label="Toggle field visibility"
+          aria-label={tx("toggle_field_visibility_1ed5b0", { defaultValue: "Toggle field visibility" })}
         >
           <Columns3 className="h-4 w-4" />
         </Button>
@@ -70,9 +72,7 @@ export function ColumnVisibilityMenu({ applicableFields, visibility, onToggle, c
           animating === 'exit' ? 'animate-popover-exit' : 'animate-popover-enter',
           'absolute right-0 mt-1 w-52 rounded-[var(--radius-md)] flat-popover overflow-hidden z-20',
         )}>
-          <div className="ui-eyebrow px-3.5 py-2">
-            Visible Fields
-          </div>
+          <div className="ui-eyebrow px-3.5 py-2"> {tx("visible_fields_993fc5", { defaultValue: "Visible Fields" })} </div>
           <FieldToggleList fields={applicableFields} visibility={visibility} onToggle={onToggle} customFieldLabels={customFieldLabels} />
         </div>
       )}

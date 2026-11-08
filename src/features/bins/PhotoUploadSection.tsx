@@ -1,5 +1,6 @@
 import { Camera, Image, Plus, X } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MAX_AI_PHOTOS } from '@/features/ai/aiConstants';
 import { cn, focusRing } from '@/lib/utils';
 
@@ -26,6 +27,7 @@ export function PhotoUploadSection({
 	analyzing,
 	fileInputRef,
 }: PhotoUploadSectionProps) {
+  const { t: tx } = useTranslation('ui');
 	const [isDragging, setIsDragging] = useState(false);
 
 	function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
@@ -78,7 +80,7 @@ export function PhotoUploadSection({
 				<div
 					role="button"
 					tabIndex={0}
-					aria-label="Add photos"
+					aria-label={tx("add_photos_a59893", { defaultValue: "Add photos" })}
 					onDragOver={handleDragOver}
 					onDragLeave={handleDragLeave}
 					onDrop={handleDrop}
@@ -100,12 +102,10 @@ export function PhotoUploadSection({
 					<Image className="h-6 w-6" />
 					<div>
 						<p className="text-[14px] font-medium">
-							<span className="sm:hidden">Tap to add photos</span>
-							<span className="hidden sm:inline">Drag &amp; drop or click to add photos</span>
+							<span className="sm:hidden">{tx("tap_to_add_photos_62db51", { defaultValue: "Tap to add photos" })}</span>
+							<span className="hidden sm:inline">{tx("drag_amp_drop_or_click_to_add_photos_9996d7", { defaultValue: "Drag & drop or click to add photos" })}</span>
 						</p>
-						<p className="text-[12px] mt-0.5 text-[var(--text-tertiary)]">
-							Multiple photos improve AI accuracy
-						</p>
+						<p className="text-[12px] mt-0.5 text-[var(--text-tertiary)]"> {tx("multiple_photos_improve_ai_accuracy_3ae561", { defaultValue: "Multiple photos improve AI accuracy" })} </p>
 					</div>
 					{onCameraClick && (
 						<button
@@ -121,9 +121,7 @@ export function PhotoUploadSection({
 								'bg-[var(--accent)] text-[var(--text-on-accent)] hover:bg-[var(--accent-hover)] active:bg-[var(--accent-active)] sm:bg-transparent sm:text-[var(--text-secondary)]'
 							)}
 						>
-							<Camera className="h-4 w-4" />
-							Camera
-						</button>
+							<Camera className="h-4 w-4" /> {tx("camera_4da9c9", { defaultValue: "Camera" })} </button>
 					)}
 				</div>
 			) : (
@@ -137,14 +135,14 @@ export function PhotoUploadSection({
 							>
 								<img
 									src={preview}
-									alt={`Preview ${i + 1}`}
+									alt={tx("preview_value0_0654a3", { defaultValue: "Preview {{value0}}", value0: i + 1 })}
 									className="h-full w-full object-cover rounded-[var(--radius-md)]"
 								/>
 								{!analyzing && (
 									<button
 										type="button"
 										onClick={() => onRemovePhoto(i)}
-										aria-label={`Remove photo ${i + 1}`}
+										aria-label={tx("remove_photo_value0_ea49d3", { defaultValue: "Remove photo {{value0}}", value0: i + 1 })}
 										className="absolute top-1 right-1 size-9 flex items-center justify-center rounded-[var(--radius-xs)] bg-[var(--overlay-button)] text-white opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity hover:bg-[var(--overlay-button-hover)] hover:text-[var(--destructive)]"
 									>
 										<X className="h-3.5 w-3.5" />
@@ -157,7 +155,7 @@ export function PhotoUploadSection({
 								type="button"
 								onClick={() => fileInputRef.current?.click()}
 								className="aspect-square flex items-center justify-center rounded-[var(--radius-md)] border-2 border-dashed border-[var(--border-subtle)] text-[var(--text-tertiary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-								aria-label="Add more photos"
+								aria-label={tx("add_more_photos_c063aa", { defaultValue: "Add more photos" })}
 							>
 								<Plus className="h-5 w-5" />
 							</button>
@@ -170,18 +168,14 @@ export function PhotoUploadSection({
 								onClick={onCameraClick}
 								className="flex-1 flex items-center justify-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-flat)] min-h-[44px] px-4 py-2.5 text-[12px] font-medium text-[var(--text-tertiary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
 							>
-								<Camera className="h-3.5 w-3.5" />
-								More photos
-							</button>
+								<Camera className="h-3.5 w-3.5" /> {tx("more_photos_a1bba5", { defaultValue: "More photos" })} </button>
 						)}
 						<button
 							type="button"
 							onClick={() => fileInputRef.current?.click()}
 							className="flex-1 flex items-center justify-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-flat)] min-h-[44px] px-4 py-2.5 text-[12px] font-medium text-[var(--text-tertiary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
 						>
-							<Image className="h-3.5 w-3.5" />
-							Add from gallery
-						</button>
+							<Image className="h-3.5 w-3.5" /> {tx("add_from_gallery_4201dd", { defaultValue: "Add from gallery" })} </button>
 					</div>
 				</div>
 			)}

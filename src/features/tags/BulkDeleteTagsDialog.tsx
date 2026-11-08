@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,6 +20,7 @@ interface BulkDeleteTagsDialogProps {
 }
 
 export function BulkDeleteTagsDialog({ open, onOpenChange, tags, binsAffected, onConfirm }: BulkDeleteTagsDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [loading, setLoading] = useState(false);
   async function handle() {
     setLoading(true);
@@ -35,19 +37,14 @@ export function BulkDeleteTagsDialog({ open, onOpenChange, tags, binsAffected, o
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            Delete {tags.length} tag{tags.length === 1 ? '' : 's'}?
+          <DialogTitle> {tx("delete_f6fdbe", { defaultValue: "Delete" })} {tags.length} {tx("tag_5e9b60", { defaultValue: "tag" })}{tags.length === 1 ? '' : 's'}?
           </DialogTitle>
-          <DialogDescription>
-            Removes {preview} from this location. ~{binsAffected} bin{binsAffected === 1 ? '' : 's'} will be updated. Children become top-level.
-          </DialogDescription>
+          <DialogDescription> {tx("removes_12c60b", { defaultValue: "Removes" })} {preview} {tx("from_this_location_7460af", { defaultValue: "from this location. ~" })}{binsAffected} {tx("bin_9a5d56", { defaultValue: "bin" })}{binsAffected === 1 ? '' : 's'} {tx("will_be_updated_children_become_top_level_8979b0", { defaultValue: "will be updated. Children become top-level." })} </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={loading}>
-            Cancel
-          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={loading}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           <Button variant="destructive" onClick={handle} disabled={loading}>
-            {loading ? 'Deleting…' : 'Delete'}
+            {loading ? tx("deleting_c7ac55", { defaultValue: "Deleting…" }) : tx("delete_f6fdbe", { defaultValue: "Delete" })}
           </Button>
         </DialogFooter>
       </DialogContent>

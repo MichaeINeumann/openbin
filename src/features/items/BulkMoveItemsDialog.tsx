@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BinPickerList } from '@/components/ui/bin-picker-list';
 import { useBinList } from '@/features/bins/useBins';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
@@ -12,6 +13,7 @@ interface BulkMoveItemsDialogProps {
 }
 
 export function BulkMoveItemsDialog({ open, onOpenChange, selectedIds, onApply }: BulkMoveItemsDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [search, setSearch] = useState('');
   const [targetId, setTargetId] = useState<string | null>(null);
   const { bins } = useBinList(undefined, 'name', undefined, !open);
@@ -27,8 +29,8 @@ export function BulkMoveItemsDialog({ open, onOpenChange, selectedIds, onApply }
         }
         onOpenChange(v);
       }}
-      title={`Move ${pluralize(selectedIds.length, 'item')}`}
-      description="Select a bin to move the items into."
+      title={tx("move_value0_74c2a8", { defaultValue: "Move {{value0}}", value0: pluralize(selectedIds.length, 'item') })}
+      description={tx("select_a_bin_to_move_the_items_into_9e4842", { defaultValue: "Select a bin to move the items into." })}
       selectedIds={selectedIds}
       onApply={async (ids) => {
         if (!targetId) return;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,6 +22,7 @@ interface LocationCreateDialogProps {
 }
 
 export function LocationCreateDialog({ open, onOpenChange }: LocationCreateDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { setActiveLocationId } = useAuth();
   const t = useTerminology();
   const { showToast } = useToast();
@@ -54,10 +56,9 @@ export function LocationCreateDialog({ open, onOpenChange }: LocationCreateDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create {t.Location}</DialogTitle>
+          <DialogTitle>{tx("create_6e157c", { defaultValue: "Create" })} {t.Location}</DialogTitle>
           <DialogDescription>
-            A {t.location} is a shared space where members can manage {t.bins} together.
-          </DialogDescription>
+            A {t.location} {tx("is_a_shared_space_where_members_can_manage_e17cec", { defaultValue: "is a shared space where members can manage" })} {t.bins} {tx("together_2f0306", { defaultValue: "together." })} </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
@@ -66,18 +67,16 @@ export function LocationCreateDialog({ open, onOpenChange }: LocationCreateDialo
               id="location-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., My House, Office"
+              placeholder={tx("e_g_my_house_office_e0b7e2", { defaultValue: "e.g., My House, Office" })}
               maxLength={255}
               autoFocus
               required
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button type="submit" disabled={!name.trim() || creating}>
-              {creating ? 'Creating...' : 'Create'}
+              {creating ? tx("creating_28ea76", { defaultValue: "Creating..." }) : tx("create_6e157c", { defaultValue: "Create" })}
             </Button>
           </DialogFooter>
         </form>
@@ -92,6 +91,7 @@ interface LocationJoinDialogProps {
 }
 
 export function LocationJoinDialog({ open, onOpenChange }: LocationJoinDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { setActiveLocationId } = useAuth();
   const t = useTerminology();
   const { showToast } = useToast();
@@ -125,29 +125,25 @@ export function LocationJoinDialog({ open, onOpenChange }: LocationJoinDialogPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Join {t.Location}</DialogTitle>
-          <DialogDescription>
-            Enter the invite code shared by a {t.location} owner to join.
-          </DialogDescription>
+          <DialogTitle>{tx("join_e0d731", { defaultValue: "Join" })} {t.Location}</DialogTitle>
+          <DialogDescription> {tx("enter_the_invite_code_shared_by_a_151431", { defaultValue: "Enter the invite code shared by a" })} {t.location} {tx("owner_to_join_9c1db3", { defaultValue: "owner to join." })} </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="invite-code">Invite Code</Label>
+            <Label htmlFor="invite-code">{tx("invite_code_6929e4", { defaultValue: "Invite Code" })}</Label>
             <Input
               id="invite-code"
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
-              placeholder="Enter invite code"
+              placeholder={tx("enter_invite_code_a64230", { defaultValue: "Enter invite code" })}
               autoFocus
               required
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button type="submit" disabled={!inviteCode.trim() || joining}>
-              {joining ? 'Joining...' : 'Join'}
+              {joining ? tx("joining_757a26", { defaultValue: "Joining..." }) : tx("join_e0d731", { defaultValue: "Join" })}
             </Button>
           </DialogFooter>
         </form>
@@ -164,6 +160,7 @@ interface LocationRenameDialogProps {
 }
 
 export function LocationRenameDialog({ locationId, currentName, open, onOpenChange }: LocationRenameDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { showToast } = useToast();
   const t = useTerminology();
   const [name, setName] = useState(currentName);
@@ -195,9 +192,8 @@ export function LocationRenameDialog({ locationId, currentName, open, onOpenChan
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Rename {t.Location}</DialogTitle>
-          <DialogDescription>
-            Enter a new name for this {t.location}.
+          <DialogTitle>{tx("rename_d3f4cb", { defaultValue: "Rename" })} {t.Location}</DialogTitle>
+          <DialogDescription> {tx("enter_a_new_name_for_this_a74dd6", { defaultValue: "Enter a new name for this" })} {t.location}.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -213,11 +209,9 @@ export function LocationRenameDialog({ locationId, currentName, open, onOpenChan
             />
           </div>
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button type="submit" disabled={!name.trim() || renaming}>
-              {renaming ? 'Saving...' : 'Save'}
+              {renaming ? tx("saving_ae7e88", { defaultValue: "Saving..." }) : tx("save_efc007", { defaultValue: "Save" })}
             </Button>
           </DialogFooter>
         </form>
@@ -236,6 +230,7 @@ interface LocationDeleteDialogProps {
 }
 
 export function LocationDeleteDialog({ locationId, locationName, binCount, areaCount, open, onOpenChange }: LocationDeleteDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId, setActiveLocationId } = useAuth();
   const { locations } = useLocationList();
   const t = useTerminology();
@@ -268,23 +263,18 @@ export function LocationDeleteDialog({ locationId, locationName, binCount, areaC
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete {t.Location}?</DialogTitle>
-          <DialogDescription>
-            This will permanently delete &quot;{locationName}&quot;
-            {assetParts.length > 0 ? <> including {assetParts.join(' and ')}, along with all photos. </> : ' and all its data. '}
-            This cannot be undone.
-          </DialogDescription>
+          <DialogTitle>{tx("delete_f6fdbe", { defaultValue: "Delete" })} {t.Location}?</DialogTitle>
+          <DialogDescription> {tx("this_will_permanently_delete_quot_e325ff", { defaultValue: "This will permanently delete \"" })}{locationName}&quot;
+            {assetParts.length > 0 ? <> {tx("including_d358da", { defaultValue: "including" })} {assetParts.join(' and ')}{tx("along_with_all_photos_d58863", { defaultValue: ", along with all photos." })} </> : tx("and_all_its_data_1aa591", { defaultValue: " and all its data. " })} {tx("this_cannot_be_undone_ad2526", { defaultValue: "This cannot be undone." })} </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
             disabled={deleting}
           >
-            {deleting ? 'Deleting...' : 'Delete'}
+            {deleting ? tx("deleting_e16cac", { defaultValue: "Deleting..." }) : tx("delete_f6fdbe", { defaultValue: "Delete" })}
           </Button>
         </DialogFooter>
       </DialogContent>

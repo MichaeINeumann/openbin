@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioOption } from '@/components/ui/radio-option';
@@ -28,6 +29,7 @@ interface BulkQuantityDialogProps {
 }
 
 export function BulkQuantityDialog({ open, onOpenChange, selectedIds, onApply }: BulkQuantityDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [op, setOp] = useState<QuantityOp>('set');
   const [value, setValue] = useState('1');
   const needsValue = OPTIONS.find((o) => o.value === op)?.needsValue ?? true;
@@ -41,7 +43,7 @@ export function BulkQuantityDialog({ open, onOpenChange, selectedIds, onApply }:
         if (!v) { setOp('set'); setValue('1'); }
         onOpenChange(v);
       }}
-      title={`Update quantity for ${pluralize(selectedIds.length, 'item')}`}
+      title={tx("update_quantity_for_value0_c63b88", { defaultValue: "Update quantity for {{value0}}", value0: pluralize(selectedIds.length, 'item') })}
       description={DESCRIPTIONS[op]}
       selectedIds={selectedIds}
       onApply={async (ids) => onApply(ids, op, needsValue ? numValue : undefined)}
@@ -63,7 +65,7 @@ export function BulkQuantityDialog({ open, onOpenChange, selectedIds, onApply }:
       {needsValue && (
         <div className="flex flex-col gap-1.5 mt-3 animate-fade-in">
           <Label htmlFor="bulk-qty-input">
-            {op === 'set' ? 'New quantity' : 'Amount'}
+            {op === 'set' ? tx("new_quantity_e046b0", { defaultValue: "New quantity" }) : tx("amount_43dc85", { defaultValue: "Amount" })}
           </Label>
           <Input
             id="bulk-qty-input"

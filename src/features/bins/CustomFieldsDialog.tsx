@@ -1,5 +1,6 @@
 import { GripVertical, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -25,6 +26,7 @@ interface CustomFieldsDialogProps {
 }
 
 export function CustomFieldsDialog({ locationId, open, onOpenChange }: CustomFieldsDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { fields } = useCustomFields(open ? locationId : null);
   const { showToast } = useToast();
   const [newName, setNewName] = useState('');
@@ -77,17 +79,13 @@ export function CustomFieldsDialog({ locationId, open, onOpenChange }: CustomFie
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Custom Fields</DialogTitle>
-          <DialogDescription>
-            Define custom fields that appear on all bins in this location.
-          </DialogDescription>
+          <DialogTitle>{tx("custom_fields_143b17", { defaultValue: "Custom Fields" })}</DialogTitle>
+          <DialogDescription> {tx("define_custom_fields_that_appear_on_all_bins_in_this_locatio_d00519", { defaultValue: "Define custom fields that appear on all bins in this location." })} </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
           {fields.length === 0 && (
-            <p className="text-[13px] text-[var(--text-tertiary)] py-2">
-              No custom fields yet. Add one below.
-            </p>
+            <p className="text-[13px] text-[var(--text-tertiary)] py-2"> {tx("no_custom_fields_yet_add_one_below_26ada9", { defaultValue: "No custom fields yet. Add one below." })} </p>
           )}
 
           {fields.map((field) => (
@@ -142,14 +140,12 @@ export function CustomFieldsDialog({ locationId, open, onOpenChange }: CustomFie
             <Input
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              placeholder="New field name"
+              placeholder={tx("new_field_name_bfbe03", { defaultValue: "New field name" })}
               maxLength={100}
               className="h-8 text-[14px]"
             />
             <Button type="submit" size="sm" disabled={!newName.trim() || adding} className="shrink-0">
-              <Plus className="h-3.5 w-3.5 mr-1" />
-              Add
-            </Button>
+              <Plus className="h-3.5 w-3.5 mr-1" /> {tx("add_61cc55", { defaultValue: "Add" })} </Button>
           </form>
         </div>
       </DialogContent>

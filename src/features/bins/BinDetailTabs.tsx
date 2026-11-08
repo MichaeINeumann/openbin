@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { OptionGroup, type OptionGroupOption } from '@/components/ui/option-group';
 import type { useDictation } from '@/lib/useDictation';
 import type { Bin, CustomField, ItemCheckout, Photo } from '@/types';
@@ -61,6 +62,7 @@ export function BinDetailTabs({
   photos,
   checkouts,
 }: BinDetailTabsProps) {
+  const { t: tx } = useTranslation('ui');
   const [tab, setTab] = useState<BinDetailTab>(() => readInitialTab());
   const tabsId = useId();
 
@@ -103,7 +105,7 @@ export function BinDetailTabs({
           onChange={handleChange}
           size="lg"
           variant="tabs"
-          aria-label="Bin sections"
+          aria-label={tx("bin_sections_e66783", { defaultValue: "Bin sections" })}
           idPrefix={tabsId}
         />
       </div>

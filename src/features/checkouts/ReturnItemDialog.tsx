@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BinPickerList } from '@/components/ui/bin-picker-list';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +23,7 @@ interface ReturnItemDialogProps {
 }
 
 export function ReturnItemDialog({ open, onOpenChange, itemName, binId, itemId, originBinName }: ReturnItemDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'origin' | 'different'>('origin');
   const [targetId, setTargetId] = useState<string | null>(null);
@@ -57,20 +59,20 @@ export function ReturnItemDialog({ open, onOpenChange, itemName, binId, itemId, 
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Return &ldquo;{itemName}&rdquo;</DialogTitle>
+          <DialogTitle>{tx("return_ldquo_9c5b25", { defaultValue: "Return “" })}{itemName}&rdquo;</DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-col gap-2">
           <RadioOption
             selected={mode === 'origin'}
             onClick={() => { setMode('origin'); setTargetId(null); }}
-            label="Original bin"
+            label={tx("original_bin_f92282", { defaultValue: "Original bin" })}
             description={originBinName}
           />
           <RadioOption
             selected={mode === 'different'}
             onClick={() => setMode('different')}
-            label="Different bin"
+            label={tx("different_bin_14d0e1", { defaultValue: "Different bin" })}
           />
         </div>
 
@@ -88,9 +90,9 @@ export function ReturnItemDialog({ open, onOpenChange, itemName, binId, itemId, 
         )}
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => handleOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => handleOpenChange(false)}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
           <Button onClick={handleReturn} disabled={loading || !canSubmit}>
-            {loading ? 'Returning…' : 'Return'}
+            {loading ? tx("returning_1f4830", { defaultValue: "Returning…" }) : 'Return'}
           </Button>
         </DialogFooter>
       </DialogContent>

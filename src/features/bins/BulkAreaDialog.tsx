@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AreaPicker } from '@/features/areas/AreaPicker';
 import { useAuth } from '@/lib/auth';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
@@ -13,6 +14,7 @@ interface BulkAreaDialogProps {
 }
 
 export function BulkAreaDialog({ open, onOpenChange, binIds, onDone }: BulkAreaDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const [areaId, setAreaId] = useState<string | null>(null);
 
@@ -25,8 +27,8 @@ export function BulkAreaDialog({ open, onOpenChange, binIds, onDone }: BulkAreaD
     <BulkUpdateDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Move to Area"
-      description={`Assign ${pluralizeBins(binIds.length)} to an area.`}
+      title={tx("move_to_area_ecf499", { defaultValue: "Move to Area" })}
+      description={tx("assign_value0_to_an_area_c528ad", { defaultValue: "Assign {{value0}} to an area.", value0: pluralizeBins(binIds.length) })}
       selectedIds={binIds}
       onApply={apply}
       onApplied={onDone}

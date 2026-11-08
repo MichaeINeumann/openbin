@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,6 +23,7 @@ export function BulkReturnOriginalDialog({
   count,
   onConfirm,
 }: BulkReturnOriginalDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [loading, setLoading] = useState(false);
   async function handle() {
     setLoading(true);
@@ -36,19 +38,14 @@ export function BulkReturnOriginalDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            Return {count} item{count === 1 ? '' : 's'} to original bin{count === 1 ? '' : 's'}?
+          <DialogTitle> {tx("return_24f096", { defaultValue: "Return" })} {count} {tx("item_3a7d97", { defaultValue: "item" })}{count === 1 ? '' : 's'} {tx("to_original_bin_1dd991", { defaultValue: "to original bin" })}{count === 1 ? '' : 's'}?
           </DialogTitle>
-          <DialogDescription>
-            Each item goes back to where it was checked out from.
-          </DialogDescription>
+          <DialogDescription> {tx("each_item_goes_back_to_where_it_was_checked_out_from_b0602b", { defaultValue: "Each item goes back to where it was checked out from." })} </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={loading}>
-            Cancel
-          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={loading}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           <Button onClick={handle} disabled={loading}>
-            {loading ? 'Returning...' : 'Return'}
+            {loading ? tx("returning_ce5f0e", { defaultValue: "Returning..." }) : 'Return'}
           </Button>
         </DialogFooter>
       </DialogContent>

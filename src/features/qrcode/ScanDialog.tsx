@@ -1,5 +1,6 @@
 import { AlertCircle, Lock, Plus, RotateCcw, ScanLine, Search, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,6 +23,7 @@ interface ScanDialogProps {
 }
 
 export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const navigate = useNavigate();
   const [error, setError] = useState<string>('');
@@ -120,7 +122,7 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Scan QR Code</DialogTitle>
+            <DialogTitle>{tx("scan_qr_code_04e3f1", { defaultValue: "Scan QR Code" })}</DialogTitle>
           </DialogHeader>
 
           {error ? (
@@ -131,13 +133,11 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
                     <AlertCircle className="h-7 w-7 text-[var(--destructive)]" />
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">Not a {t.Bin} QR Code</p>
+                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">{tx("not_a_0c03fa", { defaultValue: "Not a" })} {t.Bin} {tx("qr_code_447421", { defaultValue: "QR Code" })}</p>
                     <p className="text-[13px] text-[var(--text-tertiary)] break-all max-w-xs mx-auto leading-relaxed">{error}</p>
                   </div>
                   <Button variant="outline" onClick={handleRetry} className="mt-1">
-                    <RotateCcw className="h-4 w-4 mr-1.5" />
-                    Scan Again
-                  </Button>
+                    <RotateCcw className="h-4 w-4 mr-1.5" /> {tx("scan_again_8fd265", { defaultValue: "Scan Again" })} </Button>
                 </div>
               </CardContent>
             </Card>
@@ -149,20 +149,14 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
                     <Trash2 className="h-7 w-7 text-[var(--destructive)]" />
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">This {t.bin} was deleted</p>
-                    <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed">
-                      It may be restorable from the trash.
-                    </p>
+                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">{tx("this_7971e6", { defaultValue: "This" })} {t.bin} {tx("was_deleted_5b1035", { defaultValue: "was deleted" })}</p>
+                    <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed"> {tx("it_may_be_restorable_from_the_trash_a92e66", { defaultValue: "It may be restorable from the trash." })} </p>
                   </div>
                   <div className="flex gap-2.5 mt-1">
                     <Button variant="outline" onClick={handleRetry}>
-                      <RotateCcw className="h-4 w-4 mr-1.5" />
-                      Scan Again
-                    </Button>
+                      <RotateCcw className="h-4 w-4 mr-1.5" /> {tx("scan_again_8fd265", { defaultValue: "Scan Again" })} </Button>
                     <Button onClick={() => { onOpenChange(false); navigate('/trash'); }}>
-                      <Trash2 className="h-4 w-4 mr-1.5" />
-                      View Trash
-                    </Button>
+                      <Trash2 className="h-4 w-4 mr-1.5" /> {tx("view_trash_b448e5", { defaultValue: "View Trash" })} </Button>
                   </div>
                 </div>
               </CardContent>
@@ -175,15 +169,11 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
                     <Lock className="h-7 w-7 text-[var(--accent)]" />
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">This {t.bin} belongs to another location</p>
-                    <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed">
-                      You need to join the location that owns this {t.bin} to view it.
-                    </p>
+                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">{tx("this_7971e6", { defaultValue: "This" })} {t.bin} {tx("belongs_to_another_location_82ac4b", { defaultValue: "belongs to another location" })}</p>
+                    <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed"> {tx("you_need_to_join_the_location_that_owns_this_f0a563", { defaultValue: "You need to join the location that owns this" })} {t.bin} {tx("to_view_it_232c82", { defaultValue: "to view it." })} </p>
                   </div>
                   <Button variant="outline" onClick={handleRetry} className="mt-1">
-                    <RotateCcw className="h-4 w-4 mr-1.5" />
-                    Scan Again
-                  </Button>
+                    <RotateCcw className="h-4 w-4 mr-1.5" /> {tx("scan_again_8fd265", { defaultValue: "Scan Again" })} </Button>
                 </div>
               </CardContent>
             </Card>
@@ -195,19 +185,14 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
                     <ScanLine className="h-7 w-7 text-[var(--accent)]" />
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">{t.Bin} Not Found</p>
-                    <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed">
-                      This QR code points to a {t.bin} that doesn't exist yet.
-                    </p>
+                    <p className="text-[17px] font-semibold text-[var(--text-primary)]">{t.Bin} {tx("not_found_d205cb", { defaultValue: "Not Found" })}</p>
+                    <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed"> {tx("this_qr_code_points_to_a_549dc9", { defaultValue: "This QR code points to a" })} {t.bin} {tx("that_doesn_t_exist_yet_ff0ac9", { defaultValue: "that doesn't exist yet." })} </p>
                   </div>
                   <div className="flex gap-2.5 mt-1">
                     <Button variant="outline" onClick={handleRetry}>
-                      <RotateCcw className="h-4 w-4 mr-1.5" />
-                      Scan Again
-                    </Button>
+                      <RotateCcw className="h-4 w-4 mr-1.5" /> {tx("scan_again_8fd265", { defaultValue: "Scan Again" })} </Button>
                     <Button onClick={() => setCreateOpen(true)}>
-                      <Plus className="h-4 w-4 mr-1.5" />
-                      Create {t.Bin}
+                      <Plus className="h-4 w-4 mr-1.5" /> {tx("create_6e157c", { defaultValue: "Create" })} {t.Bin}
                     </Button>
                   </div>
                 </div>
@@ -218,14 +203,10 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
               <CardContent className="py-5">
                 {open && <Html5QrcodePlugin paused={!scanning} onScanSuccess={handleScan} />}
                 {scanning && (
-                  <p className="mt-5 text-center text-[13px] text-[var(--text-tertiary)]">
-                    Point your camera at a {t.bin} QR code
-                  </p>
+                  <p className="mt-5 text-center text-[13px] text-[var(--text-tertiary)]"> {tx("point_your_camera_at_a_3d969b", { defaultValue: "Point your camera at a" })} {t.bin} {tx("qr_code_abba02", { defaultValue: "QR code" })} </p>
                 )}
                 {!scanning && (
-                  <div className="flex items-center justify-center py-8 text-[var(--text-tertiary)]">
-                    Redirecting...
-                  </div>
+                  <div className="flex items-center justify-center py-8 text-[var(--text-tertiary)]"> {tx("redirecting_a7e1d4", { defaultValue: "Redirecting..." })} </div>
                 )}
               </CardContent>
             </Card>
@@ -233,9 +214,7 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
 
           {/* Manual lookup by short code */}
           <div className="mt-4">
-            <Label className="text-[15px] font-semibold text-[var(--text-primary)] mb-3 block">
-              Manual Lookup
-            </Label>
+            <Label className="text-[15px] font-semibold text-[var(--text-primary)] mb-3 block"> {tx("manual_lookup_5174d1", { defaultValue: "Manual Lookup" })} </Label>
             <div className="flex gap-2">
               <Input
                 value={manualCode}
@@ -249,7 +228,7 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
                     handleManualLookup();
                   }
                 }}
-                placeholder={`Enter ${t.bin} code`}
+                placeholder={tx("enter_bin_code_122d42", { defaultValue: "Enter {{bin}} code", bin: t.bin })}
                 maxLength={6}
                 disabled={manualLoading}
                 className="flex-1 font-mono uppercase tracking-widest"
@@ -259,9 +238,7 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
                 disabled={!manualCode.trim() || manualLoading}
                 className="rounded-[var(--radius-md)] shrink-0"
               >
-                <Search className="h-4 w-4 mr-1.5" />
-                Look Up
-              </Button>
+                <Search className="h-4 w-4 mr-1.5" /> {tx("look_up_281121", { defaultValue: "Look Up" })} </Button>
             </div>
             {manualError && (
               <p className="mt-2 text-[13px] text-[var(--destructive)]">{manualError}</p>

@@ -1,6 +1,7 @@
 import { ChevronDown, FolderTree, Plus } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { useDialogPortal } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -16,6 +17,7 @@ interface AreaPickerProps {
 }
 
 export function AreaPicker({ locationId, value, onChange }: AreaPickerProps) {
+  const { t: tx } = useTranslation('ui');
   const dialogPortal = useDialogPortal();
   const { areas } = useAreaList(locationId);
   const [open, setOpen] = useState(false);
@@ -139,7 +141,7 @@ export function AreaPicker({ locationId, value, onChange }: AreaPickerProps) {
           !selectedArea && 'text-[var(--text-tertiary)]'
         )}
       >
-        <span className="truncate">{selectedArea ? selectedArea.name : 'No area'}</span>
+        <span className="truncate">{selectedArea ? selectedArea.name : tx("no_area_59c975", { defaultValue: "No area" })}</span>
         <ChevronDown className={cn('h-4 w-4 text-[var(--text-tertiary)] shrink-0 transition-transform', open && 'rotate-180')} />
       </button>
 
@@ -156,7 +158,7 @@ export function AreaPicker({ locationId, value, onChange }: AreaPickerProps) {
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setHighlightIndex(-1); }}
                 onKeyDown={handleKeyDown}
-                placeholder="Search areas..."
+                placeholder={tx("search_areas_228d6f", { defaultValue: "Search areas..." })}
                 className="h-8 text-sm border-0 bg-transparent focus-visible:ring-0 focus-visible:shadow-none"
               />
             </div>
@@ -174,9 +176,7 @@ export function AreaPicker({ locationId, value, onChange }: AreaPickerProps) {
                     ? 'text-[var(--accent)] font-medium'
                     : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]',
               )}
-            >
-              No area
-            </button>
+            > {tx("no_area_59c975", { defaultValue: "No area" })} </button>
             {filtered.map((area, i) => {
               const idx = i + 1;
               const isSelected = value === area.id;
@@ -216,7 +216,7 @@ export function AreaPicker({ locationId, value, onChange }: AreaPickerProps) {
               )}
             >
               <Plus className="h-3.5 w-3.5 flex-shrink-0 text-[var(--accent)]" />
-              <span>Create new area...</span>
+              <span>{tx("create_new_area_e2ef38", { defaultValue: "Create new area..." })}</span>
             </button>
           </div>
         </div>,

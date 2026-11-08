@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/auth';
@@ -15,6 +16,7 @@ interface BulkCustomFieldsDialogProps {
 }
 
 export function BulkCustomFieldsDialog({ open, onOpenChange, binIds, onDone }: BulkCustomFieldsDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const { fields } = useCustomFields(open ? activeLocationId : null);
   const [values, setValues] = useState<Record<string, string>>({});
@@ -38,8 +40,8 @@ export function BulkCustomFieldsDialog({ open, onOpenChange, binIds, onDone }: B
     <BulkUpdateDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Set Custom Fields"
-      description={`Set custom field values for ${pluralizeBins(binIds.length)}. Only filled fields will be updated.`}
+      title={tx("set_custom_fields_5ab946", { defaultValue: "Set Custom Fields" })}
+      description={tx("set_custom_field_values_for_value0_only_filled_fields_will_b_974420", { defaultValue: "Set custom field values for {{value0}}. Only filled fields will be updated.", value0: pluralizeBins(binIds.length) })}
       selectedIds={binIds}
       onApply={apply}
       onApplied={onDone}
@@ -47,9 +49,7 @@ export function BulkCustomFieldsDialog({ open, onOpenChange, binIds, onDone }: B
     >
       <div className="space-y-3">
         {fields.length === 0 ? (
-          <p className="text-[13px] text-[var(--text-tertiary)]">
-            No custom fields defined for this location.
-          </p>
+          <p className="text-[13px] text-[var(--text-tertiary)]"> {tx("no_custom_fields_defined_for_this_location_4a17f1", { defaultValue: "No custom fields defined for this location." })} </p>
         ) : (
           fields.map((field) => (
             <div key={field.id} className="space-y-1.5">

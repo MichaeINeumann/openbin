@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { AreaPicker } from '@/features/areas/AreaPicker';
 import { getSecondaryColorInfo, setSecondaryColor } from '@/lib/cardStyle';
@@ -64,6 +65,7 @@ export function BinCreateOnboardingFields({
   canTranscribe,
   showAi,
 }: BinCreateOnboardingFieldsProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const secondaryInfo = getSecondaryColorInfo(cardStyle);
 
@@ -73,7 +75,7 @@ export function BinCreateOnboardingFields({
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder={`${t.Bin} name`}
+          placeholder={tx("bin_name_150c89", { defaultValue: "{{Bin}} name", Bin: t.Bin })}
           maxLength={255}
           required
           autoFocus
@@ -105,7 +107,7 @@ export function BinCreateOnboardingFields({
       <PhotoUploadSection {...photoUpload} />
 
       <div className="text-left">
-        <label htmlFor="bin-color" className={compactLabel}>Color</label>
+        <label htmlFor="bin-color" className={compactLabel}>{tx("color_1d0c83", { defaultValue: "Color" })}</label>
         <ColorPicker
           value={color}
           onChange={setColor}
@@ -115,11 +117,11 @@ export function BinCreateOnboardingFields({
         />
       </div>
       <div className="text-left">
-        <label htmlFor="bin-icon" className={compactLabel}>Icon</label>
+        <label htmlFor="bin-icon" className={compactLabel}>{tx("icon_716f63", { defaultValue: "Icon" })}</label>
         <IconPicker value={icon} onChange={setIcon} />
       </div>
       <div className="text-left">
-        <label htmlFor="bin-style" className={compactLabel}>Style</label>
+        <label htmlFor="bin-style" className={compactLabel}>{tx("style_99a0ef", { defaultValue: "Style" })}</label>
         <StylePicker value={cardStyle} color={color} onChange={setCardStyle} />
       </div>
     </>

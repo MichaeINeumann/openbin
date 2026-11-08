@@ -1,5 +1,6 @@
 import { Check, Mic, Square } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { LabelThreshold } from '@/components/ui/ai-progress-bar';
 import { AiProgressBar } from '@/components/ui/ai-progress-bar';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ interface DictationButtonProps {
 }
 
 export function DictationButton({ dictation }: DictationButtonProps) {
+  const { t: tx } = useTranslation('ui');
   const {
     state,
     transcript,
@@ -95,14 +97,14 @@ export function DictationButton({ dictation }: DictationButtonProps) {
 
   if (state === 'recording') {
     return (
-      <output className="shrink-0 flex items-center gap-1.5" aria-label={`Recording: ${elapsed}`}>
+      <output className="shrink-0 flex items-center gap-1.5" aria-label={tx("recording_elapsed_84a1b8", { defaultValue: "Recording: {{elapsed}}", elapsed: elapsed })}>
         <span className="text-[11px] text-[var(--text-tertiary)] tabular-nums">{elapsed}</span>
-        <Tooltip content="Stop recording">
+        <Tooltip content={tx("stop_recording_ee0d9d", { defaultValue: "Stop recording" })}>
           <button
             type="button"
             onClick={stop}
             className="relative flex items-center justify-center size-11 rounded-full bg-[var(--destructive)] text-[var(--text-on-accent)] hover:bg-[var(--destructive-hover)] active:bg-[var(--destructive-active)] transition-colors"
-            aria-label="Stop recording"
+            aria-label={tx("stop_recording_ee0d9d", { defaultValue: "Stop recording" })}
           >
             <span className="absolute inset-[-3px] rounded-full bg-[var(--destructive)]/25 animate-pulse motion-reduce:animate-none" />
             <Square className="h-3.5 w-3.5 fill-current" />
@@ -114,7 +116,7 @@ export function DictationButton({ dictation }: DictationButtonProps) {
 
   if (state === 'transcribing') {
     return (
-      <output className="w-full" aria-live="polite" aria-label="Transcribing audio">
+      <output className="w-full" aria-live="polite" aria-label={tx("transcribing_audio_44f08a", { defaultValue: "Transcribing audio" })}>
         <AiProgressBar active compact labels={TRANSCRIBE_LABELS} />
       </output>
     );
@@ -126,16 +128,14 @@ export function DictationButton({ dictation }: DictationButtonProps) {
         <div className="rounded-[var(--radius-sm)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] p-3">
           <div className="flex items-center gap-2 mb-1.5">
             <Check className="h-3.5 w-3.5 text-emerald-500" />
-            <span className="text-xs font-medium text-emerald-500">Heard:</span>
+            <span className="text-xs font-medium text-emerald-500">{tx("heard_cdcc23", { defaultValue: "Heard:" })}</span>
             <div className="flex-1" />
             {!editing && (
               <button
                 type="button"
                 onClick={handleEditClick}
                 className="text-[11px] text-[var(--text-quaternary)] underline hover:text-[var(--text-tertiary)]"
-              >
-                edit
-              </button>
+              > {tx("edit_9ead47", { defaultValue: "edit" })} </button>
             )}
           </div>
           {editing ? (
@@ -152,9 +152,7 @@ export function DictationButton({ dictation }: DictationButtonProps) {
                   type="button"
                   onClick={cancel}
                   className="text-[13px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
-                >
-                  Cancel
-                </button>
+                > {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </button>
                 <Button
                   type="button"
                   size="sm"
@@ -163,9 +161,7 @@ export function DictationButton({ dictation }: DictationButtonProps) {
                     submitEditedTranscript();
                   }}
                   disabled={!transcript?.trim()}
-                >
-                  Use this
-                </Button>
+                > {tx("use_this_b80ded", { defaultValue: "Use this" })} </Button>
               </div>
             </div>
           ) : (
@@ -179,7 +175,7 @@ export function DictationButton({ dictation }: DictationButtonProps) {
             <div className="flex-1 h-0.5 rounded-full bg-[var(--border-subtle)] overflow-hidden">
               <div className="h-full bg-[var(--accent)] rounded-full animate-[dictation-progress_1.5s_linear]" />
             </div>
-            <span className="text-[11px] text-[var(--text-quaternary)]">Parsing items...</span>
+            <span className="text-[11px] text-[var(--text-quaternary)]">{tx("parsing_items_a49637", { defaultValue: "Parsing items..." })}</span>
           </div>
         )}
       </output>
@@ -188,7 +184,7 @@ export function DictationButton({ dictation }: DictationButtonProps) {
 
   if (state === 'structuring') {
     return (
-      <output className="w-full" aria-live="polite" aria-label="Parsing items">
+      <output className="w-full" aria-live="polite" aria-label={tx("parsing_items_3f1030", { defaultValue: "Parsing items" })}>
         <AiProgressBar active compact labels={STRUCTURE_LABELS} />
       </output>
     );
@@ -199,8 +195,7 @@ export function DictationButton({ dictation }: DictationButtonProps) {
     return (
       <output className="w-full space-y-2" aria-live="polite">
         <div className="text-xs text-[var(--text-quaternary)]">
-          {structuredItems.length} item{structuredItems.length !== 1 ? 's' : ''} parsed from dictation
-        </div>
+          {structuredItems.length} {tx("item_3a7d97", { defaultValue: "item" })}{structuredItems.length !== 1 ? 's' : ''} {tx("parsed_from_dictation_e112e7", { defaultValue: "parsed from dictation" })} </div>
         <div className="flex flex-wrap gap-1.5">
           {structuredItems.map((item, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: items identified by stable index for toggle state
@@ -220,12 +215,9 @@ export function DictationButton({ dictation }: DictationButtonProps) {
           ))}
         </div>
         <div className="row pt-1">
-          <Button type="button" variant="ghost" size="sm" onClick={cancel} className="gap-0.5">
-            Cancel
-          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={cancel} className="gap-0.5"> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           <div className="flex-1" />
-          <Button type="button" size="sm" onClick={handleConfirm} disabled={selectedCount === 0}>
-            Add {selectedCount}
+          <Button type="button" size="sm" onClick={handleConfirm} disabled={selectedCount === 0}> {tx("add_61cc55", { defaultValue: "Add" })} {selectedCount}
           </Button>
         </div>
       </output>

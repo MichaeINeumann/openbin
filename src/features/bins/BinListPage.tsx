@@ -7,6 +7,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,7 @@ const UpgradeDialog = __EE__
   : (() => null) as React.FC<Record<string, unknown>>;
 
 export function BinListPage() {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const location = useLocation();
   const { search, setSearch, debouncedSearch, sort, setSort, sortDir, setSortDir, filters, setFilters, page, setPage, clearAll } = useBinSearchParams();
@@ -128,7 +130,7 @@ export function BinListPage() {
     if (!bin) return;
     setCopiedStyle({ icon: bin.icon, color: bin.color, card_style: bin.card_style });
     clearSelection();
-    showToast({ message: 'Style copied', variant: 'success' });
+    showToast({ message: tx("style_copied_c74b3a", { defaultValue: "Style copied" }), variant: 'success' });
   }, [selectedIds, bins, clearSelection, showToast]);
 
   const handlePasteStyle = useCallback(async () => {
@@ -136,7 +138,7 @@ export function BinListPage() {
     const ids = [...selectedIds];
     await Promise.all(ids.map((id) => updateBin(id, { icon: copiedStyle.icon, color: copiedStyle.color, cardStyle: copiedStyle.card_style })));
     clearSelection();
-    showToast({ message: `Style applied to ${ids.length} ${ids.length === 1 ? t.bin : t.bins}`, variant: 'success' });
+    showToast({ message: tx("style_applied_to_value0_value1_033108", { defaultValue: "Style applied to {{value0}} {{value1}}", value0: ids.length, value1: ids.length === 1 ? t.bin : t.bins }), variant: 'success' });
   }, [copiedStyle, selectedIds, clearSelection, showToast, t]);
 
   const handleBinSortChange = useCallback((column: SortOption, direction: SortDirection) => {
@@ -174,7 +176,7 @@ export function BinListPage() {
                   size="icon"
                   variant="ghost"
                   className="hidden lg:inline-flex h-10 w-10 rounded-[var(--radius-sm)]"
-                  aria-label="Scan QR code"
+                  aria-label={tx("scan_qr_code_e7d8c3", { defaultValue: "Scan QR code" })}
                 >
                   <ScanLine className="h-5 w-5" />
                 </Button>
@@ -186,21 +188,19 @@ export function BinListPage() {
                     variant="ghost"
                     size="sm"
                     className="hidden lg:inline-flex h-10 gap-1.5 rounded-[var(--radius-sm)] bg-[var(--ai-accent)]/10 dark:bg-[var(--ai-accent)]/20 text-[var(--ai-accent)] hover:bg-[var(--ai-accent)]/15 dark:hover:bg-[var(--ai-accent)]/28 active:bg-[var(--ai-accent)]/20 dark:active:bg-[var(--ai-accent)]/35 dark:border dark:border-[var(--ai-accent)]/25 ai-shimmer"
-                    aria-label="Ask AI"
+                    aria-label={tx("ask_ai_8dbaeb", { defaultValue: "Ask AI" })}
                   >
-                    <Sparkles className="h-4 w-4" />
-                    Ask AI
-                  </Button>
+                    <Sparkles className="h-4 w-4" /> {tx("ask_ai_8dbaeb", { defaultValue: "Ask AI" })} </Button>
                 </Tooltip>
               )}
             </div>
             {canCreateBin && (
-              <Tooltip content={`New ${t.bin}`} side="bottom">
+              <Tooltip content={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })} side="bottom">
                 <Button
                   onClick={() => setCreateOpen(true)}
                   size="icon"
                   className="h-10 w-10 rounded-[var(--radius-sm)]"
-                  aria-label={`New ${t.bin}`}
+                  aria-label={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })}
                 >
                   <Plus className="h-5 w-5" />
                 </Button>
@@ -231,13 +231,13 @@ export function BinListPage() {
       {!activeLocationId ? (
         <EmptyState
           icon={MapPin}
-          title={`No ${t.location} selected`}
-          subtitle={`Create or join a ${t.location} to start organizing ${t.bins}`}
+          title={tx("no_location_selected_4b7dc9", { defaultValue: "No {{location}} selected", location: t.location })}
+          subtitle={tx("create_or_join_a_location_to_start_organizing_bins_ea9d6d", { defaultValue: "Create or join a {{location}} to start organizing {{bins}}", location: t.location, bins: t.bins })}
           variant="onboard"
         >
           <Button onClick={() => navigate('/locations')} className="mt-1">
             <MapPin className="h-4 w-4 mr-2" />
-            {`Manage ${t.Locations}`}
+            {tx("manage_locations_54d9ba", { defaultValue: "Manage {{Locations}}", Locations: t.Locations })}
           </Button>
         </EmptyState>
       ) : (
@@ -250,44 +250,39 @@ export function BinListPage() {
           {error ? (
               <EmptyState
                 icon={AlertTriangle}
-                title={`Failed to load ${t.bins}`}
+                title={tx("failed_to_load_bins_93de68", { defaultValue: "Failed to load {{bins}}", bins: t.bins })}
                 subtitle={error}
               />
           ) : bins.length === 0 ? (
             search || activeCount > 0 ? (
               <EmptyState
                 icon={PackageOpen}
-                title={`No ${t.bins} match your filters`}
+                title={tx("no_bins_match_your_filters_9c117f", { defaultValue: "No {{bins}} match your filters", bins: t.bins })}
                 variant="search"
               />
             ) : (
               <EmptyState
                 icon={PackageOpen}
-                title={`No ${t.bins} yet`}
-                subtitle={`Create your first ${t.bin} to get started`}
+                title={tx("no_bins_yet_490ac3", { defaultValue: "No {{bins}} yet", bins: t.bins })}
+                subtitle={tx("create_your_first_bin_to_get_started_143c62", { defaultValue: "Create your first {{bin}} to get started", bin: t.bin })}
                 variant="onboard"
               >
                 {canCreateBin && (
                   <>
                     <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-2 text-[12px] text-[var(--text-tertiary)]">
                       <span className="inline-flex items-center gap-1.5">
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">1</span>
-                        Create {t.bin}
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">1</span> {tx("create_6e157c", { defaultValue: "Create" })} {t.bin}
                       </span>
                       <span className="opacity-30">→</span>
                       <span className="inline-flex items-center gap-1.5">
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">2</span>
-                        Add items
-                      </span>
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">2</span> {tx("add_items_d5103e", { defaultValue: "Add items" })} </span>
                       <span className="opacity-30">→</span>
                       <span className="inline-flex items-center gap-1.5">
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">3</span>
-                        Print QR
-                      </span>
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">3</span> {tx("print_qr_3d3e5d", { defaultValue: "Print QR" })} </span>
                     </div>
                     <Button onClick={() => setCreateOpen(true)} className="mt-2">
                       <Plus className="h-4 w-4 mr-2" />
-                      {`Create ${t.Bin}`}
+                      {tx("create_bin_6760de", { defaultValue: "Create {{Bin}}", Bin: t.Bin })}
                     </Button>
                   </>
                 )}
@@ -423,7 +418,7 @@ export function BinListPage() {
             open={upgradeOpen}
             onOpenChange={setUpgradeOpen}
             feature="AI Features"
-            description="AI-powered commands, analysis, and suggestions are available on the Pro plan."
+            description={tx("ai_powered_commands_analysis_and_suggestions_are_available_o_1bf24e", { defaultValue: "AI-powered commands, analysis, and suggestions are available on the Pro plan." })}
           />
         </Suspense>
       )}

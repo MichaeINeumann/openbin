@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { OptionGroup } from '@/components/ui/option-group';
@@ -91,6 +92,7 @@ export function BinFilterDialog({
   searchQuery,
   onSaveView,
 }: BinFilterDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [draft, setDraft] = useState<BinFilters>(filters);
   const [tagsExpanded, setTagsExpanded] = useState(false);
   const getTagStyle = useTagStyle();
@@ -149,14 +151,14 @@ export function BinFilterDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Filter Bins</DialogTitle>
+          <DialogTitle>{tx("filter_bins_c0d248", { defaultValue: "Filter Bins" })}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5">
           {/* Sort */}
           <div className="space-y-2.5">
             <div className="row-spread">
-              <SectionHeader label="Sort" />
+              <SectionHeader label={tx("sort_adc4e9", { defaultValue: "Sort" })} />
               <button
                 type="button"
                 onClick={() => onSortDirChange(sortDir === 'asc' ? 'desc' : 'asc')}
@@ -166,7 +168,7 @@ export function BinFilterDialog({
                 )}
               >
                 {sortDir === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-                {sortDir === 'asc' ? 'Asc' : 'Desc'}
+                {sortDir === 'asc' ? tx("asc_4fee0a", { defaultValue: "Asc" }) : tx("desc_01e635", { defaultValue: "Desc" })}
               </button>
             </div>
             <OptionGroup
@@ -180,12 +182,12 @@ export function BinFilterDialog({
           {/* Tags */}
           <div className="space-y-2.5">
             <div className="row-spread">
-              <SectionHeader label="Tags" count={draft.tags.length} />
+              <SectionHeader label={tx("tags_848eed", { defaultValue: "Tags" })} count={draft.tags.length} />
               {draft.tags.length >= 2 && (
                 <OptionGroup
                   options={[
-                    { key: 'any' as const, label: 'Any' },
-                    { key: 'all' as const, label: 'All' },
+                    { key: 'any' as const, label: tx("any_322444", { defaultValue: "Any" }) },
+                    { key: 'all' as const, label: tx("all_6a7208", { defaultValue: "All" }) },
                   ]}
                   value={draft.tagMode}
                   onChange={(mode) => setDraft((d) => ({ ...d, tagMode: mode }))}
@@ -194,7 +196,7 @@ export function BinFilterDialog({
               )}
             </div>
             {availableTags.length === 0 ? (
-              <p className="text-[13px] text-[var(--text-tertiary)] italic">No tags in this location</p>
+              <p className="text-[13px] text-[var(--text-tertiary)] italic">{tx("no_tags_in_this_location_90f8cc", { defaultValue: "No tags in this location" })}</p>
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {(() => {
@@ -235,7 +237,7 @@ export function BinFilterDialog({
                           onClick={() => setTagsExpanded((v) => !v)}
                           className="inline-flex items-center px-2.5 py-1 text-[12px] font-medium text-[var(--accent)] hover:underline cursor-pointer"
                         >
-                          {tagsExpanded ? 'Show less' : `+${hiddenCount} more`}
+                          {tagsExpanded ? tx("show_less_4c852b", { defaultValue: "Show less" }) : tx("hiddencount_more_1dd61a", { defaultValue: "+{{hiddenCount}} more", hiddenCount: hiddenCount })}
                         </button>
                       )}
                     </>
@@ -248,7 +250,7 @@ export function BinFilterDialog({
           {/* Area */}
           {areas.length > 0 && (
             <div className="space-y-2.5">
-              <SectionHeader label="Area" count={draft.areas.length} />
+              <SectionHeader label={tx("area_2745de", { defaultValue: "Area" })} count={draft.areas.length} />
               <div className="flex flex-wrap gap-1">
                 <AreaPill
                   name="Unassigned"
@@ -270,9 +272,9 @@ export function BinFilterDialog({
 
           {/* Usage — filter by last-used date */}
           <div className="space-y-2.5">
-            <SectionHeader label="Usage" count={draft.unusedSince ? 1 : 0} />
+            <SectionHeader label={tx("usage_0bb186", { defaultValue: "Usage" })} count={draft.unusedSince ? 1 : 0} />
             <div className="flex items-center gap-2">
-              <label htmlFor="unused-since-date" className="text-[13px] text-[var(--text-secondary)]">Unused since</label>
+              <label htmlFor="unused-since-date" className="text-[13px] text-[var(--text-secondary)]">{tx("unused_since_c7164b", { defaultValue: "Unused since" })}</label>
               <input
                 id="unused-since-date"
                 type="date"
@@ -287,9 +289,7 @@ export function BinFilterDialog({
                   type="button"
                   onClick={() => setDraft((d) => ({ ...d, unusedSince: undefined }))}
                   className="text-[12px] text-[var(--accent)] hover:underline"
-                >
-                  Clear
-                </button>
+                > {tx("clear_719ea3", { defaultValue: "Clear" })} </button>
               )}
             </div>
           </div>
@@ -299,21 +299,17 @@ export function BinFilterDialog({
         <DialogFooter>
           <div className="row-spread w-full">
             <div className="row">
-              <Button variant="ghost" onClick={reset}>
-                Reset
-              </Button>
+              <Button variant="ghost" onClick={reset}> {tx("reset_44c57a", { defaultValue: "Reset" })} </Button>
             </div>
             <div className="row">
               {(searchQuery || activeCount > 0) && (
                 <Button
                   variant="ghost"
                   onClick={() => { onSaveView(); onOpenChange(false); }}
-                >
-                  Save View
-                </Button>
+                > {tx("save_view_b7faf6", { defaultValue: "Save View" })} </Button>
               )}
               <Button onClick={apply}>
-                {activeCount > 0 ? `Apply (${activeCount})` : 'Apply'}
+                {activeCount > 0 ? tx("apply_activecount_967430", { defaultValue: "Apply ({{activeCount}})", activeCount: activeCount }) : tx("apply_cfea41", { defaultValue: "Apply" })}
               </Button>
             </div>
           </div>

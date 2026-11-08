@@ -1,5 +1,6 @@
 import { PackageOpen } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import type { LabelThreshold } from '@/components/ui/ai-progress-bar';
 import { AiProgressBar } from '@/components/ui/ai-progress-bar';
@@ -37,6 +38,7 @@ interface BinDetailLocationState {
 }
 
 export function BinDetailPage() {
+  const { t: tx } = useTranslation('ui');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,9 +95,8 @@ export function BinDetailPage() {
 
   if (!bin) {
     return (
-      <EmptyState icon={PackageOpen} title={`${t.Bin} not found`} subtitle="It may have been deleted or moved to another location.">
-        <Button variant="outline" onClick={() => navigate('/bins')}>
-          Back to {t.bins}
+      <EmptyState icon={PackageOpen} title={tx("bin_not_found_7b529a", { defaultValue: "{{Bin}} not found", Bin: t.Bin })} subtitle={tx("it_may_have_been_deleted_or_moved_to_another_location_fda543", { defaultValue: "It may have been deleted or moved to another location." })}>
+        <Button variant="outline" onClick={() => navigate('/bins')}> {tx("back_to_bbe651", { defaultValue: "Back to" })} {t.bins}
         </Button>
       </EmptyState>
     );
@@ -204,7 +205,7 @@ export function BinDetailPage() {
             open={upgradeOpen}
             onOpenChange={setUpgradeOpen}
             feature="AI Features"
-            description="AI-powered analysis and suggestions are available on the Pro plan."
+            description={tx("ai_powered_analysis_and_suggestions_are_available_on_the_pro_4753e6", { defaultValue: "AI-powered analysis and suggestions are available on the Pro plan." })}
           />
         </Suspense>
       )}

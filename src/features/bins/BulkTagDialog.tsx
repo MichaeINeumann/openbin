@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { apiFetch } from '@/lib/api';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
@@ -15,6 +16,7 @@ interface BulkTagDialogProps {
 }
 
 export function BulkTagDialog({ open, onOpenChange, binIds, onDone, allTags }: BulkTagDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const [tags, setTags] = useState<string[]>([]);
 
   async function apply(ids: string[]) {
@@ -43,15 +45,15 @@ export function BulkTagDialog({ open, onOpenChange, binIds, onDone, allTags }: B
     <BulkUpdateDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Add Tags"
-      description={`Add tags to ${pluralizeBins(binIds.length)}.`}
+      title={tx("add_tags_0b4440", { defaultValue: "Add Tags" })}
+      description={tx("add_tags_to_value0_13f394", { defaultValue: "Add tags to {{value0}}.", value0: pluralizeBins(binIds.length) })}
       selectedIds={binIds}
       onApply={apply}
       onApplied={onDone}
       applyDisabled={tags.length === 0}
     >
       <div className="space-y-2">
-        <Label>Tags</Label>
+        <Label>{tx("tags_848eed", { defaultValue: "Tags" })}</Label>
         <TagInput tags={tags} onChange={setTags} suggestions={allTags} />
       </div>
     </BulkUpdateDialog>

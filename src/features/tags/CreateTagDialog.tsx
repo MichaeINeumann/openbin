@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -24,6 +25,7 @@ interface CreateTagDialogProps {
 }
 
 export function CreateTagDialog({ open, onOpenChange, tagName, onConfirm, suggestions, tagParents, defaultParent }: CreateTagDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const { theme } = useTheme();
   const [name, setName] = useState('');
@@ -89,11 +91,11 @@ export function CreateTagDialog({ open, onOpenChange, tagName, onConfirm, sugges
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create new tag</DialogTitle>
+          <DialogTitle>{tx("create_new_tag_1f2dc9", { defaultValue: "Create new tag" })}</DialogTitle>
           <DialogDescription>
             {isNameEditable
-              ? 'Set up a tag with a color and optional parent grouping.'
-              : 'Choose a color and optional parent for this tag.'}
+              ? tx("set_up_a_tag_with_a_color_and_optional_parent_grouping_4d6730", { defaultValue: "Set up a tag with a color and optional parent grouping." })
+              : tx("choose_a_color_and_optional_parent_for_this_tag_e4a4cf", { defaultValue: "Choose a color and optional parent for this tag." })}
           </DialogDescription>
         </DialogHeader>
 
@@ -106,26 +108,24 @@ export function CreateTagDialog({ open, onOpenChange, tagName, onConfirm, sugges
               value={name}
               onChange={(e) => { setName(e.target.value); setError(''); }}
               onKeyDown={(e) => { if (e.key === 'Enter' && canSubmit) handleConfirm(); }}
-              placeholder="e.g. electronics"
+              placeholder={tx("e_g_electronics_072cd7", { defaultValue: "e.g. electronics" })}
               maxLength={100}
               autoFocus
             />
             {effectiveName ? (
               <div className="flex items-center gap-2">
-                <span className={categoryHeader}>Preview</span>
+                <span className={categoryHeader}>{tx("preview_f1fbb2", { defaultValue: "Preview" })}</span>
                 <Badge variant="secondary" className="text-[13px]" style={previewStyle}>
                   {effectiveName}
                 </Badge>
               </div>
             ) : (
-              <p className="text-[12px] text-[var(--text-tertiary)]">
-                Tag names are stored in lowercase.
-              </p>
+              <p className="text-[12px] text-[var(--text-tertiary)]"> {tx("tag_names_are_stored_in_lowercase_cf2406", { defaultValue: "Tag names are stored in lowercase." })} </p>
             )}
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <span className={categoryHeader}>Preview</span>
+            <span className={categoryHeader}>{tx("preview_f1fbb2", { defaultValue: "Preview" })}</span>
             <Badge variant="secondary" className="text-[13px]" style={previewStyle}>
               {tagName}
             </Badge>
@@ -133,26 +133,25 @@ export function CreateTagDialog({ open, onOpenChange, tagName, onConfirm, sugges
         )}
 
         <div className="space-y-2">
-          <Label>Color</Label>
+          <Label>{tx("color_1d0c83", { defaultValue: "Color" })}</Label>
           <HueGradientPicker value={color} onChange={setColor} />
         </div>
 
         {parentOptions.length > 0 && (
           <div className="space-y-2">
-            <Label>Parent</Label>
+            <Label>{tx("parent_23d692", { defaultValue: "Parent" })}</Label>
             <select
               value={parent}
               onChange={(e) => setParent(e.target.value)}
               className={cn(inputBase, 'h-10 focus-visible:ring-2 focus-visible:ring-[var(--accent)]')}
             >
-              <option value="">None</option>
+              <option value="">{tx("none_6eef66", { defaultValue: "None" })}</option>
               {parentOptions.map((t) => (
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
             {parent && (
-              <p className="text-[12px] text-[var(--text-tertiary)]">
-                Will be grouped under: <span className="font-medium text-[var(--text-secondary)]">{parent}</span>
+              <p className="text-[12px] text-[var(--text-tertiary)]"> {tx("will_be_grouped_under_2f737e", { defaultValue: "Will be grouped under:" })} <span className="font-medium text-[var(--text-secondary)]">{parent}</span>
               </p>
             )}
           </div>
@@ -163,9 +162,9 @@ export function CreateTagDialog({ open, onOpenChange, tagName, onConfirm, sugges
         )}
 
         <DialogFooter>
-          <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
+          <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={saving}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
           <Button onClick={handleConfirm} disabled={!canSubmit}>
-            {saving ? 'Creating\u2026' : 'Create'}
+            {saving ? tx("creating_94d7d8", { defaultValue: "Creating…" }) : tx("create_6e157c", { defaultValue: "Create" })}
           </Button>
         </DialogFooter>
       </DialogContent>

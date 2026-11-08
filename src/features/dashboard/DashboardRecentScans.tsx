@@ -25,6 +25,8 @@ function describeBin(bin: Bin, t: TFunction<'common'>): string {
 }
 
 export function DashboardRecentScans({ bins, scanTimeMap, limit = 3, showTimestamps = true }: DashboardRecentScansProps) {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const rows = bins.slice(0, limit);
@@ -33,7 +35,7 @@ export function DashboardRecentScans({ bins, scanTimeMap, limit = 3, showTimesta
 
   return (
     <section aria-labelledby="dash-recent-scans" className="flex flex-col gap-2">
-      <SectionHeader id="dash-recent-scans" icon={ScanLine} title="Recent scans" />
+      <SectionHeader id="dash-recent-scans" icon={ScanLine} title={tx("recent_scans_9c29e1", { defaultValue: "Recent scans" })} />
       <div className={cn(flatCard, 'p-2')}>
         <ul className="flex flex-col">
           {rows.map((bin) => {
@@ -66,7 +68,7 @@ export function DashboardRecentScans({ bins, scanTimeMap, limit = 3, showTimesta
                   </div>
                   {showTimestamps && time && (
                     <span className="text-[11px] text-[var(--text-tertiary)] tabular-nums shrink-0">
-                      {relativeTime(time)}
+                      {relativeTime(time, uiLanguage)}
                     </span>
                   )}
                 </button>

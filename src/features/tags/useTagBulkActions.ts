@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiFetch } from '@/lib/api';
 import { Events, notify } from '@/lib/eventBus';
 import { pluralize } from '@/lib/utils';
@@ -6,6 +7,7 @@ import { pluralize } from '@/lib/utils';
 type ToastFn = (toast: { message: string; variant?: 'error' | 'success' }) => void;
 
 export function useTagBulkActions(locationId: string | null, clearSelection: () => void, showToast: ToastFn) {
+  const { t: tx } = useTranslation('ui');
   const [isBusy, setIsBusy] = useState(false);
 
   function notifyTagsChanged() {
@@ -24,7 +26,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: `Deleted ${pluralize(tagsDeleted, 'tag')} from ${pluralize(binsUpdated, 'bin')}` });
+        showToast({ message: tx("deleted_value0_from_value1_5fec83", { defaultValue: "Deleted {{value0}} from {{value1}}", value0: pluralize(tagsDeleted, 'tag'), value1: pluralize(binsUpdated, 'bin') }) });
       } finally {
         setIsBusy(false);
       }
@@ -44,7 +46,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         notifyTagsChanged();
         clearSelection();
         const verb = parentTag ? 'Set parent' : 'Cleared parent';
-        showToast({ message: `${verb} for ${pluralize(tagsUpdated, 'tag')}` });
+        showToast({ message: tx("verb_for_value1_a8b7ff", { defaultValue: "{{verb}} for {{value1}}", verb: verb, value1: pluralize(tagsUpdated, 'tag') }) });
       } finally {
         setIsBusy(false);
       }
@@ -63,7 +65,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: `Set color for ${pluralize(tagsUpdated, 'tag')}` });
+        showToast({ message: tx("set_color_for_value0_e0e7a2", { defaultValue: "Set color for {{value0}}", value0: pluralize(tagsUpdated, 'tag') }) });
       } finally {
         setIsBusy(false);
       }
@@ -82,7 +84,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: `Merged ${pluralize(fromTags.length, 'tag')} into "${toTag}" across ${pluralize(binsUpdated, 'bin')}` });
+        showToast({ message: tx("merged_value0_into_totag_across_value2_e5070d", { defaultValue: "Merged {{value0}} into \"{{toTag}}\" across {{value2}}", value0: pluralize(fromTags.length, 'tag'), toTag: toTag, value2: pluralize(binsUpdated, 'bin') }) });
       } finally {
         setIsBusy(false);
       }

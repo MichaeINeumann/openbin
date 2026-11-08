@@ -1,5 +1,6 @@
 import { Lock } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { BinIconBadge } from '@/components/ui/bin-icon-badge';
 import { Highlight } from '@/components/ui/highlight';
@@ -43,6 +44,7 @@ export function BinTableView({
   isVisible,
   customFields,
 }: BinTableViewProps) {
+  const { t: tx } = useTranslation('ui');
   const sortedCustomFields = React.useMemo(
     () => customFields ? [...customFields].sort((a, b) => a.position - b.position) : [],
     [customFields],
@@ -56,16 +58,16 @@ export function BinTableView({
           <SortHeader label="Name" column="name" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="flex-1" />
         </div>
         {isVisible?.('area') !== false && (
-          <SortHeader label="Area" column="area" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="hidden md:flex flex-1" />
+          <SortHeader label={tx("area_2745de", { defaultValue: "Area" })} column="area" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="hidden md:flex flex-1" />
         )}
         {isVisible?.('items') !== false && (
-          <span className="hidden lg:block flex-[1.5] ui-col-header">Items</span>
+          <span className="hidden lg:block flex-[1.5] ui-col-header">{tx("items_44d25b", { defaultValue: "Items" })}</span>
         )}
         {isVisible?.('tags') !== false && (
-          <span className="hidden sm:block flex-1 ui-col-header">Tags</span>
+          <span className="hidden sm:block flex-1 ui-col-header">{tx("tags_848eed", { defaultValue: "Tags" })}</span>
         )}
         {isVisible?.('notes') && (
-          <span className="hidden lg:block flex-1 ui-col-header">Notes</span>
+          <span className="hidden lg:block flex-1 ui-col-header">{tx("notes_704400", { defaultValue: "Notes" })}</span>
         )}
         {sortedCustomFields.map((field) =>
           isVisible?.(`cf_${field.id}`) && (
@@ -75,13 +77,13 @@ export function BinTableView({
           ),
         )}
         {isVisible?.('createdBy') && (
-          <span className="hidden md:block w-24 ui-col-header">Created By</span>
+          <span className="hidden md:block w-24 ui-col-header">{tx("created_by_43de2b", { defaultValue: "Created By" })}</span>
         )}
         {isVisible?.('created') && (
-          <SortHeader label="Created" column="created" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-20 justify-end" />
+          <SortHeader label={tx("created_accf40", { defaultValue: "Created" })} column="created" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-20 justify-end" />
         )}
         {isVisible?.('updated') !== false && (
-          <SortHeader label="Updated" column="updated" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-20 justify-end" />
+          <SortHeader label={tx("updated_f2f857", { defaultValue: "Updated" })} column="updated" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-20 justify-end" />
         )}
       </TableHeader>
 

@@ -1,5 +1,6 @@
 import { ArrowRightLeft, PackageSearch, Undo2 } from 'lucide-react';
 import { lazy, Suspense, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BinIconBadge } from '@/components/ui/bin-icon-badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -38,6 +39,7 @@ const BulkReturnToBinDialog = lazy(() =>
 type CheckoutSortColumn = 'alpha' | 'time';
 
 export function CheckoutsPage() {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const { checkouts, isLoading } = useLocationCheckouts(activeLocationId ?? undefined);
   const { canWrite } = usePermissions();
@@ -92,14 +94,14 @@ export function CheckoutsPage() {
     {
       id: 'return-orig',
       icon: Undo2,
-      label: 'Return to original',
+      label: tx("return_to_original_40fd7b", { defaultValue: "Return to original" }),
       onClick: () => setOpenBulk('original'),
       group: 'primary',
     },
     {
       id: 'return-tobin',
       icon: ArrowRightLeft,
-      label: 'Return to bin',
+      label: tx("return_to_bin_12e788", { defaultValue: "Return to bin" }),
       onClick: () => setOpenBulk('tobin'),
       group: 'primary',
     },
@@ -107,14 +109,14 @@ export function CheckoutsPage() {
 
   return (
     <div className="page-content-wide">
-      <PageHeader title="Checked Out" />
+      <PageHeader title={tx("checked_out_511cbb", { defaultValue: "Checked Out" })} />
 
       {(checkouts.length > 0 || search) && (
         <SearchInput
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onClear={search ? () => setSearch('') : undefined}
-          placeholder="Search items, bins, people..."
+          placeholder={tx("search_items_bins_people_81960e", { defaultValue: "Search items, bins, people..." })}
         />
       )}
 
@@ -150,18 +152,18 @@ export function CheckoutsPage() {
         {filtered.length === 0 ? (
           <EmptyState
             icon={PackageSearch}
-            title={search ? 'No matches' : 'No items checked out'}
-            subtitle={search ? 'Try a different search' : 'Items you check out from bins will appear here'}
+            title={search ? tx("no_matches_cd0af6", { defaultValue: "No matches" }) : tx("no_items_checked_out_b825a6", { defaultValue: "No items checked out" })}
+            subtitle={search ? tx("try_a_different_search_195018", { defaultValue: "Try a different search" }) : tx("items_you_check_out_from_bins_will_appear_here_fd25db", { defaultValue: "Items you check out from bins will appear here" })}
           />
         ) : (
           <div className={cn(selectable && 'pb-16')}>
             <Table>
               <TableHeader>
                 <span className="w-6 shrink-0" aria-hidden />
-                <SortHeader label="Item" column="alpha" currentColumn={sortColumn} currentDirection={sortDirection} onSort={handleSort} className="flex-[2]" />
-                <span className="flex-1 ui-col-header">Bin</span>
-                <span className="hidden md:block flex-1 ui-col-header">By</span>
-                <SortHeader label="Time" column="time" currentColumn={sortColumn} currentDirection={sortDirection} onSort={handleSort} defaultDirection="desc" className="w-20 justify-end" />
+                <SortHeader label={tx("item_ecdda5", { defaultValue: "Item" })} column="alpha" currentColumn={sortColumn} currentDirection={sortDirection} onSort={handleSort} className="flex-[2]" />
+                <span className="flex-1 ui-col-header">{tx("bin_4c5ec7", { defaultValue: "Bin" })}</span>
+                <span className="hidden md:block flex-1 ui-col-header">{tx("by_cfadbd", { defaultValue: "By" })}</span>
+                <SortHeader label={tx("time_6c82e6", { defaultValue: "Time" })} column="time" currentColumn={sortColumn} currentDirection={sortDirection} onSort={handleSort} defaultDirection="desc" className="w-20 justify-end" />
                 {canWrite && <span className="w-10 shrink-0" />}
               </TableHeader>
 
@@ -246,6 +248,8 @@ function CheckoutRow({
   onSelect: (id: string, index: number, shiftKey: boolean) => void;
   onReturnOne: (co: ItemCheckoutWithContext) => void;
 }) {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const { handleClick, handleKeyDown, longPress } = useEntitySelectionInteraction({
     id: co.id,
@@ -261,7 +265,7 @@ function CheckoutRow({
       tabIndex={0}
       role={selectable ? 'option' : 'button'}
       aria-selected={selectable ? selected : undefined}
-      aria-label={`${co.item_name} checked out from ${co.origin_bin_name}`}
+      aria-label={tx("value0_checked_out_from_value1_a07497", { defaultValue: "{{value0}} checked out from {{value1}}", value0: co.item_name, value1: co.origin_bin_name })}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onTouchStart={longPress.onTouchStart}
@@ -294,17 +298,17 @@ function CheckoutRow({
         </span>
       </div>
       <span className="w-20 shrink-0 text-[13px] text-[var(--text-tertiary)] text-right">
-        {relativeTime(co.checked_out_at)}
+        {relativeTime(co.checked_out_at, uiLanguage)}
       </span>
       {canWrite && !selectable && (
         // biome-ignore lint/a11y/noStaticElementInteractions: stops row click propagation to return button
         <div className="w-10 shrink-0 flex justify-end" onClick={(e) => e.stopPropagation()} role="presentation">
-          <Tooltip content="Return item">
+          <Tooltip content={tx("return_item_1861c4", { defaultValue: "Return item" })}>
             <button
               type="button"
               onClick={() => onReturnOne(co)}
               className="shrink-0 p-2 rounded-[var(--radius-sm)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] transition-colors"
-              aria-label={`Return ${co.item_name}`}
+              aria-label={tx("return_value0_19dce3", { defaultValue: "Return {{value0}}", value0: co.item_name })}
             >
               <Undo2 className="h-4 w-4" />
             </button>

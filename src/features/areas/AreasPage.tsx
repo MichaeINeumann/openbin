@@ -1,5 +1,6 @@
 import { Box, Eye, FolderOpen, LogIn, MapPin, MapPinned, Plus, Shield, User, Users } from 'lucide-react';
 import { lazy, Suspense, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Crossfade } from '@/components/ui/crossfade';
@@ -38,6 +39,7 @@ const UpgradePrompt = __EE__
   : (() => null) as React.FC<Record<string, unknown>>;
 
 export function AreasPage() {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const navigate = useNavigate();
   const { user, activeLocationId, setActiveLocationId } = useAuth();
@@ -127,14 +129,12 @@ export function AreasPage() {
               onClick={() => setJoinLocationOpen(true)}
               className="h-10 px-3.5"
             >
-              <LogIn className="h-4 w-4 mr-1.5" />
-              Join
-            </Button>
+              <LogIn className="h-4 w-4 mr-1.5" /> {tx("join_e0d731", { defaultValue: "Join" })} </Button>
             <Button
               onClick={() => setCreateLocationOpen(true)}
               size="icon"
               className="h-10 w-10 rounded-[var(--radius-sm)]"
-              aria-label={`Create ${t.location}`}
+              aria-label={tx("create_location_518b3b", { defaultValue: "Create {{location}}", location: t.location })}
             >
               <Plus className="h-5 w-5" />
             </Button>
@@ -179,19 +179,15 @@ export function AreasPage() {
         {locations.length === 0 && (
           <EmptyState
             icon={MapPin}
-            title="No locations yet"
-            subtitle="Create a location or join one with an invite code"
+            title={tx("no_locations_yet_6314c7", { defaultValue: "No locations yet" })}
+            subtitle={tx("create_a_location_or_join_one_with_an_invite_code_5785c2", { defaultValue: "Create a location or join one with an invite code" })}
             variant="onboard"
           >
             <div className="flex gap-2.5">
               <Button onClick={() => setJoinLocationOpen(true)} variant="outline">
-                <LogIn className="h-4 w-4 mr-2" />
-                Join Location
-              </Button>
+                <LogIn className="h-4 w-4 mr-2" /> {tx("join_location_b103f0", { defaultValue: "Join Location" })} </Button>
               <Button onClick={() => setCreateLocationOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Location
-              </Button>
+                <Plus className="h-4 w-4 mr-2" /> {tx("create_location_9431b8", { defaultValue: "Create Location" })} </Button>
             </div>
           </EmptyState>
         )}
@@ -215,11 +211,11 @@ export function AreasPage() {
                 <div className="flex items-center gap-3 flex-wrap min-w-0">
                   <span
                     role="img"
-                    aria-label={`Your role: ${isAdmin ? 'Admin' : isViewer ? 'Viewer' : 'Member'}`}
+                    aria-label={tx("your_role_value0_9d1eb2", { defaultValue: "Your role: {{value0}}", value0: isAdmin ? 'Admin' : isViewer ? 'Viewer' : 'Member' })}
                     className={cn('inline-flex items-center gap-1.5 text-[12px] font-medium px-2 py-1 rounded-[var(--radius-full)] shrink-0', isAdmin ? 'bg-[var(--accent)]/10 text-[var(--accent)]' : 'bg-[var(--bg-input)] text-[var(--text-secondary)]')}
                   >
                     {isAdmin ? <Shield className="h-3 w-3" /> : isViewer ? <Eye className="h-3 w-3" /> : <User className="h-3 w-3" />}
-                    {isAdmin ? 'Admin' : isViewer ? 'Viewer' : 'Member'}
+                    {isAdmin ? tx("admin_4e7afe", { defaultValue: "Admin" }) : isViewer ? tx("viewer_dbad9f", { defaultValue: "Viewer" }) : tx("member_6853c9", { defaultValue: "Member" })}
                   </span>
                   <span className="text-[var(--text-tertiary)] opacity-30 shrink-0">&middot;</span>
                   <button
@@ -228,8 +224,8 @@ export function AreasPage() {
                     onClick={() => setMembersLocationId(activeLocation.id)}
                     aria-label={
                       viewerCount > 0
-                        ? `View ${memberCount} ${memberCount !== 1 ? 'members' : 'member'} and ${viewerCount} ${viewerCount !== 1 ? 'viewers' : 'viewer'}`
-                        : `View ${memberCount} ${memberCount !== 1 ? 'members' : 'member'}`
+                        ? tx("view_membercount_value1_and_viewercount_value3_20bf58", { defaultValue: "View {{memberCount}} {{value1}} and {{viewerCount}} {{value3}}", memberCount: memberCount, value1: memberCount !== 1 ? 'members' : 'member', viewerCount: viewerCount, value3: viewerCount !== 1 ? 'viewers' : 'viewer' })
+                        : tx("view_membercount_value1_19f13f", { defaultValue: "View {{memberCount}} {{value1}}", memberCount: memberCount, value1: memberCount !== 1 ? 'members' : 'member' })
                     }
                   >
                     <Users className="h-3.5 w-3.5" />
@@ -277,18 +273,18 @@ export function AreasPage() {
             {areas.length === 0 && unassignedCount === 0 ? (
               <EmptyState
                 icon={MapPinned}
-                title={`No ${t.areas} yet`}
-                subtitle={isAdmin ? `Create ${t.areas} to organize your ${t.bins} by zone` : `This ${t.location} has no ${t.areas} yet`}
+                title={tx("no_areas_yet_0a4572", { defaultValue: "No {{areas}} yet", areas: t.areas })}
+                subtitle={isAdmin ? tx("create_areas_to_organize_your_bins_by_zone_d737b0", { defaultValue: "Create {{areas}} to organize your {{bins}} by zone", areas: t.areas, bins: t.bins }) : tx("this_location_has_no_areas_yet_a3aa29", { defaultValue: "This {{location}} has no {{areas}} yet", location: t.location, areas: t.areas })}
               >
                 {isAdmin ? (
                   <Button onClick={() => setCreateAreaOpen(true)} variant="outline" size="sm">
                     <Plus className="h-3.5 w-3.5 mr-1.5" />
-                    {`Create ${t.Area}`}
+                    {tx("create_area_c810d3", { defaultValue: "Create {{Area}}", Area: t.Area })}
                   </Button>
                 ) : (
                   <Button onClick={() => navigate('/bins')} variant="outline" size="sm">
                     <Box className="h-3.5 w-3.5 mr-1.5" />
-                    {`Browse ${t.Bins}`}
+                    {tx("browse_bins_4d6bad", { defaultValue: "Browse {{Bins}}", Bins: t.Bins })}
                   </Button>
                 )}
               </EmptyState>
@@ -364,7 +360,7 @@ export function AreasPage() {
           <DialogContent>
             {__EE__ && (
               <Suspense fallback={null}>
-                <UpgradePrompt feature="Custom Fields" description="Define custom fields for your bins." upgradeAction={planInfo.upgradeAction} />
+                <UpgradePrompt feature="Custom Fields" description={tx("define_custom_fields_for_your_bins_1964cd", { defaultValue: "Define custom fields for your bins." })} upgradeAction={planInfo.upgradeAction} />
               </Suspense>
             )}
           </DialogContent>
@@ -381,18 +377,12 @@ export function AreasPage() {
       <Dialog open={!!leaveLocationId} onOpenChange={(open) => !open && setLeaveLocationId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Leave {t.Location}?</DialogTitle>
-            <DialogDescription>
-              You&apos;ll lose access to all {t.bins} and {t.areas} in &quot;{leaveTargetLocation?.name ?? ''}&quot;. You can rejoin later with an invite code.
-            </DialogDescription>
+            <DialogTitle>{tx("leave_7e3520", { defaultValue: "Leave" })} {t.Location}?</DialogTitle>
+            <DialogDescription> {tx("you_apos_ll_lose_access_to_all_1b0130", { defaultValue: "You'll lose access to all" })} {t.bins} {tx("and_cffa50", { defaultValue: "and" })} {t.areas} {tx("in_quot_d14f08", { defaultValue: "in \"" })}{leaveTargetLocation?.name ?? ''}{tx("quot_you_can_rejoin_later_with_an_invite_code_525bb6", { defaultValue: "\". You can rejoin later with an invite code." })} </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setLeaveLocationId(null)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleLeaveConfirmed}>
-              Leave
-            </Button>
+            <Button variant="ghost" onClick={() => setLeaveLocationId(null)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
+            <Button variant="destructive" onClick={handleLeaveConfirmed}> {tx("leave_7e3520", { defaultValue: "Leave" })} </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

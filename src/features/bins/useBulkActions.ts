@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { pinBin, unpinBin } from '@/features/pins/usePins';
 import { useAuth } from '@/lib/auth';
@@ -14,6 +15,7 @@ export function useBulkActions(
   showToast: (toast: { message: string; action?: { label: string; onClick: () => void } }) => void,
   t: Terminology,
 ) {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const navigate = useNavigate();
   const [isBusy, setIsBusy] = useState(false);
@@ -37,9 +39,9 @@ export function useBulkActions(
       haptic([50, 30, 50]);
       clearSelection();
       showToast({
-        message: `Deleted ${snapshots.length} ${snapshots.length !== 1 ? t.bins : t.bin}`,
+        message: tx("deleted_value0_value1_112a2e", { defaultValue: "Deleted {{value0}} {{value1}}", value0: snapshots.length, value1: snapshots.length !== 1 ? t.bins : t.bin }),
         action: {
-          label: 'Undo',
+          label: tx("undo_39fc72", { defaultValue: "Undo" }),
           onClick: async () => {
             for (const bin of snapshots) {
               await restoreBin(bin);
@@ -90,9 +92,9 @@ export function useBulkActions(
       clearSelection();
       if (ids.length === 1) {
         navigate(`/bin/${ids[0]}`);
-        showToast({ message: `Duplicated "${selected[0].name}"` });
+        showToast({ message: tx("duplicated_value0_5cbddf", { defaultValue: "Duplicated \"{{value0}}\"", value0: selected[0].name }) });
       } else {
-        showToast({ message: `Duplicated ${ids.length} ${t.bins}` });
+        showToast({ message: tx("duplicated_value0_bins_e5bbe2", { defaultValue: "Duplicated {{value0}} {{bins}}", value0: ids.length, bins: t.bins }) });
       }
     } finally {
       setIsBusy(false);
