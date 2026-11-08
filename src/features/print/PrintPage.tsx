@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import './print.css';
 import { List, Tag, Type } from 'lucide-react';
 import { useEffect } from 'react';
@@ -20,6 +21,7 @@ import { QrStyleCard } from './QrStyleCard';
 import { usePrintPageActions } from './usePrintPageActions';
 
 export function PrintPage() {
+  const { t: tx } = useTranslation('ui');
   const {
     allBins, areas, isLoading,
     selection,
@@ -105,7 +107,7 @@ export function PrintPage() {
   return (
     <>
       <div className="page-content print-hide max-w-6xl">
-        <PageHeader title="Print" back actions={<TourLauncher tourId="print-scan" />} />
+        <PageHeader title={tx("print_5b221e", { defaultValue: "Print" })} back actions={<TourLauncher tourId="print-scan" />} />
 
         <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-start gap-4">
         {/* Left column — settings */}
@@ -113,9 +115,9 @@ export function PrintPage() {
           <div data-tour="print-mode">
             <OptionGroup
               options={[
-                { key: 'labels', label: 'Labels', icon: Tag },
-                { key: 'names', label: 'Names', icon: Type },
-                { key: 'items', label: 'Item List', icon: List },
+                { key: 'labels', label: tx("labels_222898", { defaultValue: "Labels" }), icon: Tag },
+                { key: 'names', label: tx("names_2b7c08", { defaultValue: "Names" }), icon: Type },
+                { key: 'items', label: tx("item_list_9d18ae", { defaultValue: "Item List" }), icon: List },
               ]}
               value={printMode}
               onChange={handlePrintModeChange}
@@ -166,7 +168,7 @@ export function PrintPage() {
             />
           )}
 
-          {printMode === 'items' && (
+          {printMode === tx("items_7316c8", { defaultValue: "items" }) && (
             <ItemListOptionsCard
               options={itemListOptions}
               onUpdate={handleUpdateItemListOption}
@@ -175,7 +177,7 @@ export function PrintPage() {
             />
           )}
 
-          {(printMode === 'labels' || printMode === 'items') && (
+          {(printMode === 'labels' || printMode === tx("items_7316c8", { defaultValue: "items" })) && (
             <QrStyleCard
               qrStyle={qrStyle}
               onUpdateStyle={handleUpdateQrStyle}
@@ -203,7 +205,7 @@ export function PrintPage() {
       </div>
 
       <div className="print-show">
-        {printMode === 'items' ? (
+        {printMode === tx("items_7316c8", { defaultValue: "items" }) ? (
           <ItemSheet {...itemSheetProps} />
         ) : printMode === 'names' ? (
           <NameSheet {...nameSheetProps} />

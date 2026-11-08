@@ -1,4 +1,5 @@
 import { RotateCcw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
@@ -14,19 +15,20 @@ const TERM_ROWS = [
 ] as const;
 
 export function PersonalizationSection() {
+  const { t: tx } = useTranslation('ui');
   const { settings, updateSettings, resetSettings } = useAppSettings();
   const { saved, flash } = useSavedFlash();
 
   return (
     <>
       <SettingsPageHeader
-        title="Personalization"
-        description="Customize naming and branding for your workspace."
+        title={tx("personalization_f20345", { defaultValue: "Personalization" })}
+        description={tx("customize_naming_and_branding_for_your_workspace_9f1d66", { defaultValue: "Customize naming and branding for your workspace." })}
         action={<SavedBadge visible={saved} />}
       />
 
-      <SettingsSection label="App Name">
-        <FormField label="Workspace name" htmlFor="app-name" hint="Shown in the header and browser tab.">
+      <SettingsSection label={tx("app_name_4fb431", { defaultValue: "App Name" })}>
+        <FormField label={tx("workspace_name_6e0f2b", { defaultValue: "Workspace name" })} htmlFor="app-name" hint="Shown in the header and browser tab.">
           <Input
             id="app-name"
             value={settings.appName}
@@ -38,9 +40,9 @@ export function PersonalizationSection() {
       </SettingsSection>
 
       <SettingsSection
-        label="Custom Terminology"
+        label={tx("custom_terminology_3edc57", { defaultValue: "Custom Terminology" })}
         dividerAbove
-        description="Rename core concepts to match your workflow. Singular and plural are used throughout the UI."
+        description={tx("rename_core_concepts_to_match_your_workflow_singular_and_plu_3aefa1", { defaultValue: "Rename core concepts to match your workflow. Singular and plural are used throughout the UI." })}
       >
         <div className="flex flex-col gap-4">
           {TERM_ROWS.map(({ key, singular, plural, hint }) => {
@@ -61,7 +63,7 @@ export function PersonalizationSection() {
                   }}
                   onBlur={flash}
                   placeholder={singular}
-                  aria-label={`${singular} singular name`}
+                  aria-label={tx("singular_singular_name_752278", { defaultValue: "{{singular}} singular name", singular: singular })}
                 />
                 <Input
                   value={parts[1] || ''}
@@ -72,7 +74,7 @@ export function PersonalizationSection() {
                   }}
                   onBlur={flash}
                   placeholder={plural}
-                  aria-label={`${plural} plural name`}
+                  aria-label={tx("plural_plural_name_974a28", { defaultValue: "{{plural}} plural name", plural: plural })}
                 />
               </div>
             );
@@ -82,9 +84,7 @@ export function PersonalizationSection() {
 
       <div className="pt-2">
         <Button variant="outline" onClick={resetSettings}>
-          <RotateCcw className="h-4 w-4 mr-2" />
-          Reset to defaults
-        </Button>
+          <RotateCcw className="h-4 w-4 mr-2" /> {tx("reset_to_defaults_ddefe4", { defaultValue: "Reset to defaults" })} </Button>
       </div>
     </>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getAreaPath } from '@/features/areas/useAreas';
 import { resolveColor } from '@/lib/colorPalette';
 import { resolveIcon } from '@/lib/iconMap';
@@ -31,6 +32,7 @@ export function ItemSheet({
   zebraStripes,
   blankRowCount,
 }: ItemSheetProps) {
+  const { t: tx } = useTranslation('ui');
   const [qrMap, setQrMap] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(false);
 
@@ -66,17 +68,13 @@ export function ItemSheet({
 
   if (bins.length === 0) {
     return (
-      <div className="flex items-center justify-center py-8 text-[var(--text-tertiary)] text-[13px]">
-        No bins selected
-      </div>
+      <div className="flex items-center justify-center py-8 text-[var(--text-tertiary)] text-[13px]"> {tx("no_bins_selected_7d7c88", { defaultValue: "No bins selected" })} </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8 text-[var(--text-tertiary)] text-[13px]">
-        Generating…
-      </div>
+      <div className="flex items-center justify-center py-8 text-[var(--text-tertiary)] text-[13px]"> {tx("generating_11edad", { defaultValue: "Generating…" })} </div>
     );
   }
 
@@ -127,6 +125,7 @@ function BinSection({
   zebraStripes,
   blankRowCount,
 }: BinSectionProps) {
+  const { t: tx } = useTranslation('ui');
   const Icon = showIcon && bin.icon ? resolveIcon(bin.icon) : null;
   const colorPreset = bin.color ? resolveColor(bin.color) : undefined;
   const chipBg = colorPreset?.bg ?? '#e5e7eb';
@@ -197,7 +196,7 @@ function BinSection({
       )}
 
       {showEmptyPlaceholder && (
-        <p className="item-sheet-empty">No items</p>
+        <p className="item-sheet-empty">{tx("no_items_f4e124", { defaultValue: "No items" })}</p>
       )}
 
       {showTable && (
@@ -205,9 +204,9 @@ function BinSection({
           <thead>
             <tr>
               {showCheckboxes && <th className="item-sheet-checkbox-col" />}
-              <th className="item-sheet-name-col">Item</th>
-              {showQuantity && <th className="item-sheet-qty-col">Qty</th>}
-              {showNotesColumn && <th className="item-sheet-notes-col">Notes</th>}
+              <th className="item-sheet-name-col">{tx("item_ecdda5", { defaultValue: "Item" })}</th>
+              {showQuantity && <th className="item-sheet-qty-col">{tx("qty_1e5ff9", { defaultValue: "Qty" })}</th>}
+              {showNotesColumn && <th className="item-sheet-notes-col">{tx("notes_704400", { defaultValue: "Notes" })}</th>}
             </tr>
           </thead>
           <tbody>

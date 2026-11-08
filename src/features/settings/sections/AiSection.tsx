@@ -1,5 +1,6 @@
 import { Eye, EyeOff, Loader2, RotateCcw } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
@@ -67,6 +68,7 @@ function ResettableNumberField({
   inputMode,
   placeholder = 'Default',
 }: ResettableNumberFieldProps) {
+  const { t: tx } = useTranslation('ui');
   return (
     <FormField label={label} htmlFor={id} hint={hint}>
       <div className="relative">
@@ -85,7 +87,7 @@ function ResettableNumberField({
           <button
             type="button"
             onClick={() => onChange('')}
-            aria-label={`Reset ${label}`}
+            aria-label={tx("reset_label_23ebb5", { defaultValue: "Reset {{label}}", label: label })}
             className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
           >
             <RotateCcw className="h-3 w-3" />
@@ -97,6 +99,7 @@ function ResettableNumberField({
 }
 
 export function AiSection() {
+  const { t: tx } = useTranslation('ui');
   const { demoMode } = useAuth();
   const { isSelfHosted, planInfo } = usePlan();
   const { aiEnabled, aiGated, setAiEnabled } = useAiEnabled();
@@ -249,8 +252,8 @@ export function AiSection() {
   return (
     <>
       <SettingsPageHeader
-        title="AI"
-        description="Configure AI provider, models, and prompts."
+        title={tx("ai_560040", { defaultValue: "AI" })}
+        description={tx("configure_ai_provider_models_and_prompts_705cfc", { defaultValue: "Configure AI provider, models, and prompts." })}
       />
 
       {/* AI gating check */}
@@ -259,7 +262,7 @@ export function AiSection() {
           <Suspense fallback={null}>
             <UpgradePrompt
               feature="AI Features"
-              description="Enable AI-powered suggestions and commands."
+              description={tx("enable_ai_powered_suggestions_and_commands_2790d1", { defaultValue: "Enable AI-powered suggestions and commands." })}
               upgradeAction={planInfo.upgradeAction}
             />
           </Suspense>
@@ -267,10 +270,10 @@ export function AiSection() {
       ) : (
         <>
           {/* AI Features toggle */}
-          <SettingsSection label="AI Features">
+          <SettingsSection label={tx("ai_features_3eedb2", { defaultValue: "AI Features" })}>
             <SettingsRow
-              label="AI Features"
-              description="Photo analysis, item extraction, and AI commands"
+              label={tx("ai_features_3eedb2", { defaultValue: "AI Features" })}
+              description={tx("photo_analysis_item_extraction_and_ai_commands_66bcc7", { defaultValue: "Photo analysis, item extraction, and AI commands" })}
               control={
                 <Switch
                   id="ai-toggle"
@@ -294,10 +297,10 @@ export function AiSection() {
                   aiEnabled ? 'opacity-100' : 'opacity-0',
                 )}>
                   <SettingsSection
-                    label="Provider"
+                    label={tx("provider_7ceee3", { defaultValue: "Provider" })}
                     description={
                       settings === null && !touched
-                        ? 'Connect an AI provider to unlock photo analysis, item extraction from text and voice, and natural language commands for managing your bins.'
+                        ? tx("connect_an_ai_provider_to_unlock_photo_analysis_item_extract_f5f317", { defaultValue: "Connect an AI provider to unlock photo analysis, item extraction from text and voice, and natural language commands for managing your bins." })
                         : undefined
                     }
                     status={settings?.source === 'env' ? 'info' : undefined}
@@ -315,7 +318,7 @@ export function AiSection() {
                       />
 
                       <FormField
-                        label="API Key"
+                        label={tx("api_key_47acd2", { defaultValue: "API Key" })}
                         htmlFor="ai-api-key"
                         hint="Stored encrypted. Never sent to OpenBin."
                       >
@@ -331,7 +334,7 @@ export function AiSection() {
                           <button
                             type="button"
                             onClick={() => setup.setShowKey(!setup.showKey)}
-                            aria-label={setup.showKey ? 'Hide API key' : 'Show API key'}
+                            aria-label={setup.showKey ? tx("hide_api_key_29538b", { defaultValue: "Hide API key" }) : tx("show_api_key_8d24e5", { defaultValue: "Show API key" })}
                             className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors"
                           >
                             {setup.showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -340,7 +343,7 @@ export function AiSection() {
                       </FormField>
 
                       <FormField
-                        label="Model"
+                        label={tx("model_68c2cc", { defaultValue: "Model" })}
                         htmlFor="ai-model"
                         hint="Exact model ID from your provider."
                       >
@@ -354,7 +357,7 @@ export function AiSection() {
 
                       {setup.provider === 'openai-compatible' && (
                         <FormField
-                          label="Endpoint URL"
+                          label={tx("endpoint_url_65aaaa", { defaultValue: "Endpoint URL" })}
                           htmlFor="ai-endpoint"
                           hint="For Ollama, LM Studio, and OpenAI-compatible servers."
                         >
@@ -368,16 +371,14 @@ export function AiSection() {
                       )}
 
                       {touched && !setup.apiKey && !setup.model && (
-                        <p className="settings-hint" role="alert">
-                          API key and model are required.
-                        </p>
+                        <p className="settings-hint" role="alert"> {tx("api_key_and_model_are_required_8356e1", { defaultValue: "API key and model are required." })} </p>
                       )}
                     </div>
                   </SettingsSection>
 
                   {/* Task Routing */}
                   {settings && (
-                    <SettingsSection label="Task Routing" dividerAbove>
+                    <SettingsSection label={tx("task_routing_aaae5b", { defaultValue: "Task Routing" })} dividerAbove>
                       <TaskRoutingSection
                         settings={settings}
                         overrides={taskOverrides}
@@ -396,7 +397,7 @@ export function AiSection() {
                   )}
 
                   {/* Custom Prompts */}
-                  <SettingsSection label="Custom Prompts" dividerAbove>
+                  <SettingsSection label={tx("custom_prompts_f9020f", { defaultValue: "Custom Prompts" })} dividerAbove>
                     <div className="space-y-2">
                       <OptionGroup
                         options={PROMPT_TAB_META.map((tab) => ({ key: tab.key, label: tab.label, shortLabel: tab.shortLabel }))}
@@ -416,7 +417,7 @@ export function AiSection() {
                         )}
                       />
                       {demoMode && (
-                        <p className="settings-hint italic">Custom prompts are disabled for demo accounts.</p>
+                        <p className="settings-hint italic">{tx("custom_prompts_are_disabled_for_demo_accounts_60ba59", { defaultValue: "Custom prompts are disabled for demo accounts." })}</p>
                       )}
                       <Textarea
                         value={activePrompt.value || (defaultPrompts?.[activePromptTab] ?? '')}
@@ -437,19 +438,17 @@ export function AiSection() {
                             onClick={() => activePrompt.set('')}
                             className="settings-hint flex items-center gap-1 hover:text-[var(--text-secondary)] transition-colors shrink-0 ml-2"
                           >
-                            <RotateCcw className="h-3 w-3" />
-                            Reset to Default
-                          </button>
+                            <RotateCcw className="h-3 w-3" /> {tx("reset_to_default_eef3a3", { defaultValue: "Reset to Default" })} </button>
                         )}
                       </div>
                     </div>
                   </SettingsSection>
 
-                  <SettingsSection label="Advanced" dividerAbove>
+                  <SettingsSection label={tx("advanced_4d0647", { defaultValue: "Advanced" })} dividerAbove>
                     <div className="flex flex-col gap-3">
                       <ResettableNumberField
                         id="ai-temperature"
-                        label="Temperature"
+                        label={tx("temperature_0a9062", { defaultValue: "Temperature" })}
                         hint="Higher = more creative. (0.0–2.0)"
                         value={temperature}
                         onChange={setTemperature}
@@ -460,7 +459,7 @@ export function AiSection() {
                       />
                       <ResettableNumberField
                         id="ai-max-tokens"
-                        label="Max Tokens"
+                        label={tx("max_tokens_0176fa", { defaultValue: "Max Tokens" })}
                         hint="Maximum length of each response. (100–16,000)"
                         value={maxTokens}
                         onChange={setMaxTokens}
@@ -482,7 +481,7 @@ export function AiSection() {
                       />
                       <ResettableNumberField
                         id="ai-timeout"
-                        label="Request Timeout"
+                        label={tx("request_timeout_dca0c3", { defaultValue: "Request Timeout" })}
                         hint="Cancel slow requests after N seconds. Default 30."
                         value={requestTimeout}
                         onChange={setRequestTimeout}
@@ -490,13 +489,13 @@ export function AiSection() {
                         max={300}
                         step={5}
                         inputMode="numeric"
-                        placeholder="Default (30)"
+                        placeholder={tx("default_30_139ed3", { defaultValue: "Default (30)" })}
                       />
                     </div>
                   </SettingsSection>
 
                   {setup.testResult === 'success' && (
-                    <p className="text-[var(--text-sm)] text-[var(--color-success)] mb-3" aria-live="polite">Connected to {setup.model} successfully</p>
+                    <p className="text-[var(--text-sm)] text-[var(--color-success)] mb-3" aria-live="polite">{tx("connected_to_acb5e7", { defaultValue: "Connected to" })} {setup.model} {tx("successfully_85193e", { defaultValue: "successfully" })}</p>
                   )}
                   {setup.testResult === 'error' && (
                     <p className="text-[var(--text-sm)] text-[var(--destructive)] mb-3" role="alert">{testError}</p>
@@ -510,14 +509,12 @@ export function AiSection() {
                         onClick={handleTest}
                         disabled={setup.testing || !setup.apiKey || !setup.model}
                       >
-                        {setup.testing ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : null}
-                        Test Connection
-                      </Button>
+                        {setup.testing ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : null} {tx("test_connection_580f6a", { defaultValue: "Test Connection" })} </Button>
                       <Button
                         onClick={handleSave}
                         disabled={setup.saving || !setup.apiKey || !setup.model}
                       >
-                        {setup.saving ? 'Saving...' : 'Save'}
+                        {setup.saving ? tx("saving_ae7e88", { defaultValue: "Saving..." }) : tx("save_efc007", { defaultValue: "Save" })}
                       </Button>
                     </div>
                     {settings && settings.source !== 'env' && (
@@ -525,9 +522,7 @@ export function AiSection() {
                         <Button
                           variant="destructive-ghost"
                           onClick={handleRemove}
-                        >
-                          Remove AI Settings
-                        </Button>
+                        > {tx("remove_ai_settings_f2ae98", { defaultValue: "Remove AI Settings" })} </Button>
                       </div>
                     )}
                   </div>

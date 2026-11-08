@@ -1,4 +1,5 @@
 import { ChevronDown, Palette, Smile, Type } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -25,6 +26,7 @@ interface NameCardOptionsCardProps {
 }
 
 export function NameCardOptionsCard({ options, onUpdate, copies, onUpdateCopies, expanded, onExpandedChange }: NameCardOptionsCardProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   return (
@@ -38,7 +40,7 @@ export function NameCardOptionsCard({ options, onUpdate, copies, onUpdateCopies,
         >
           <div className="row">
             <Type className="h-4 w-4 text-[var(--text-tertiary)]" />
-            <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none">Name Options</Label>
+            <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none">{tx("name_options_f47ef6", { defaultValue: "Name Options" })}</Label>
           </div>
           <ChevronDown className={cn(
             'h-5 w-5 text-[var(--text-tertiary)] transition-transform duration-200',
@@ -50,8 +52,8 @@ export function NameCardOptionsCard({ options, onUpdate, copies, onUpdateCopies,
           <div className="mt-3 space-y-4">
             <div className="space-y-1 px-1">
               {([
-                { key: 'showIcon' as const, label: `${t.Bin} Icon`, icon: Smile },
-                { key: 'showColor' as const, label: 'Color Background', icon: Palette },
+                { key: 'showIcon' as const, label: tx("bin_icon_f47205", { defaultValue: "{{Bin}} Icon", Bin: t.Bin }), icon: Smile },
+                { key: 'showColor' as const, label: tx("color_background_0df4b9", { defaultValue: "Color Background" }), icon: Palette },
               ] as const).map(({ key, label, icon: Icon }) => (
                 <label key={key} htmlFor={`name-opt-${key}`} className="flex items-center gap-3 px-2 py-1.5 cursor-pointer rounded-[var(--radius-sm)] hover:bg-[var(--bg-hover)] transition-colors">
                   <Checkbox
@@ -66,11 +68,11 @@ export function NameCardOptionsCard({ options, onUpdate, copies, onUpdateCopies,
             </div>
 
             <div className="px-1">
-              <span className="text-[12px] text-[var(--text-secondary)] font-medium block mb-2">Font Sizing</span>
+              <span className="text-[12px] text-[var(--text-secondary)] font-medium block mb-2">{tx("font_sizing_939362", { defaultValue: "Font Sizing" })}</span>
               <OptionGroup
                 options={[
-                  { key: 'auto', label: 'Auto-fit' },
-                  { key: 'uniform', label: 'Uniform' },
+                  { key: 'auto', label: tx("auto_fit_6525f8", { defaultValue: "Auto-fit" }) },
+                  { key: 'uniform', label: tx("uniform_e96b0d", { defaultValue: "Uniform" }) },
                 ]}
                 value={options.sizingMode}
                 onChange={(v) => onUpdate('sizingMode', v as 'auto' | 'uniform')}
@@ -80,7 +82,7 @@ export function NameCardOptionsCard({ options, onUpdate, copies, onUpdateCopies,
 
             {options.sizingMode === 'uniform' && (
               <div className="px-1">
-                <span className="text-[12px] text-[var(--text-secondary)] font-medium block mb-2">Font Size</span>
+                <span className="text-[12px] text-[var(--text-secondary)] font-medium block mb-2">{tx("font_size_b456f4", { defaultValue: "Font Size" })}</span>
                 <OptionGroup
                   options={FONT_SCALE_PRESETS.map((p) => ({ key: String(p.value), label: p.label }))}
                   value={String(options.fontScale)}
@@ -90,7 +92,7 @@ export function NameCardOptionsCard({ options, onUpdate, copies, onUpdateCopies,
               </div>
             )}
 
-            <CopiesStepper label="Copies per card" value={copies} onChange={onUpdateCopies} />
+            <CopiesStepper label={tx("copies_per_card_2f852a", { defaultValue: "Copies per card" })} value={copies} onChange={onUpdateCopies} />
           </div>
         )}
       </CardContent>

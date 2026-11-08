@@ -1,5 +1,6 @@
 import { ChevronDown, Package } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BinIconBadge } from '@/components/ui/bin-icon-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -34,6 +35,7 @@ export function BinSelectorCard({
   expanded,
   onExpandedChange,
 }: BinSelectorCardProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   const grouped = useMemo(() => {
@@ -44,7 +46,7 @@ export function BinSelectorCard({
       if (areaBins.length > 0) groups.push({ areaId: area.id, label: area.name, depth: area.depth, bins: areaBins });
     }
     const unassigned = allBins.filter((b) => !b.area_id);
-    if (unassigned.length > 0) groups.push({ areaId: null, label: 'Unassigned', depth: 0, bins: unassigned });
+    if (unassigned.length > 0) groups.push({ areaId: null, label: tx("unassigned_e57016", { defaultValue: "Unassigned" }), depth: 0, bins: unassigned });
     return groups;
   }, [allBins, areas]);
 
@@ -59,7 +61,7 @@ export function BinSelectorCard({
             onClick={() => onExpandedChange(!expanded)}
           >
             <Package className="h-4 w-4 text-[var(--text-tertiary)] shrink-0" />
-            <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none">Select {t.Bins}</Label>
+            <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none">{tx("select_859822", { defaultValue: "Select" })} {t.Bins}</Label>
             {selectedIds.size > 0 && (
               <span className="text-[13px] text-[var(--text-tertiary)]">
                 ({selectedIds.size}/{allBins.length})
@@ -69,8 +71,8 @@ export function BinSelectorCard({
           <div className="flex items-center shrink-0">
             {allBins.length > 0 && (
               <>
-                <Button variant="ghost" size="sm" onClick={selectAll} className="text-[13px] text-[var(--accent)] h-7 px-2">All</Button>
-                <Button variant="ghost" size="sm" onClick={selectNone} className="text-[13px] text-[var(--accent)] h-7 px-2">None</Button>
+                <Button variant="ghost" size="sm" onClick={selectAll} className="text-[13px] text-[var(--accent)] h-7 px-2">{tx("all_6a7208", { defaultValue: "All" })}</Button>
+                <Button variant="ghost" size="sm" onClick={selectNone} className="text-[13px] text-[var(--accent)] h-7 px-2">{tx("none_6eef66", { defaultValue: "None" })}</Button>
               </>
             )}
             <button type="button" className="p-1" onClick={() => onExpandedChange(!expanded)}>
@@ -84,9 +86,7 @@ export function BinSelectorCard({
 
         {expanded && (
           allBins.length === 0 ? (
-            <p className="text-[13px] text-[var(--text-tertiary)] py-8 text-center">
-              No {t.bins} to print. Create some {t.bins} first.
-            </p>
+            <p className="text-[13px] text-[var(--text-tertiary)] py-8 text-center"> {tx("no_816c52", { defaultValue: "No" })} {t.bins} {tx("to_print_create_some_0075f1", { defaultValue: "to print. Create some" })} {t.bins} {tx("first_49ec08", { defaultValue: "first." })} </p>
           ) : (
             <>
               {grouped.length > 1 && (

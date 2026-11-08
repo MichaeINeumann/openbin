@@ -1,4 +1,5 @@
 import { Monitor, Moon, Sun } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { OptionGroupOption } from '@/components/ui/option-group';
 import { OptionGroup } from '@/components/ui/option-group';
 import { Select } from '@/components/ui/select';
@@ -21,22 +22,17 @@ import { SettingsPageHeader } from '../SettingsPageHeader';
 import { SettingsRow } from '../SettingsRow';
 import { SettingsSection } from '../SettingsSection';
 
-const themeOptions: OptionGroupOption<ThemePreference>[] = [
-  { key: 'light', label: 'Light', icon: Sun },
-  { key: 'dark', label: 'Dark', icon: Moon },
-  { key: 'auto', label: 'Auto', icon: Monitor },
-];
-
-function formatPageSizeLabel(v: PageSizeValue): string {
-  return v === 'all' ? 'All on one page' : `${v} per page`;
-}
-
-const ITEM_PAGE_SIZE_SELECT_OPTIONS = ITEM_PAGE_SIZE_OPTIONS.map((v) => ({
-  value: v,
-  label: formatPageSizeLabel(v),
-}));
-
 export function PreferencesSection() {
+  const { t: tx } = useTranslation('ui');
+  const themeOptions: OptionGroupOption<ThemePreference>[] = [
+    { key: 'light', label: tx('themeLight', { defaultValue: 'Light' }), icon: Sun },
+    { key: 'dark', label: tx('themeDark', { defaultValue: 'Dark' }), icon: Moon },
+    { key: 'auto', label: tx('themeAuto', { defaultValue: 'Auto' }), icon: Monitor },
+  ];
+  const ITEM_PAGE_SIZE_SELECT_OPTIONS = ITEM_PAGE_SIZE_OPTIONS.map(value => ({
+    value,
+    label: value === 'all' ? tx('allOnPage', { defaultValue: 'All on one page' }) : tx('perPage', { count: value, defaultValue: `${value} per page` }),
+  }));
   const { preference, setThemePreference } = useTheme();
   const { preferences, updatePreferences } = useUserPreferences();
   const { pageSize: itemPageSize } = useItemPageSize();
@@ -54,20 +50,20 @@ export function PreferencesSection() {
       console.error('Failed to persist language preference', err);
       setLanguage(previousLanguage);
       if (user) updateUser({ ...user, language: previousUserLanguage });
-      showToast({ message: 'Failed to save language preference', variant: 'error' });
+      showToast({ message: tx('languageSaveFailed', { defaultValue: 'Failed to save language preference' }), variant: 'error' });
     });
   }
 
   return (
     <>
       <SettingsPageHeader
-        title="Preferences"
-        description="Customize your experience."
+        title={tx("preferences_9dfd34", { defaultValue: "Preferences" })}
+        description={tx("customize_your_experience_8c8dfd", { defaultValue: "Customize your experience." })}
       />
 
-      <SettingsSection label="Appearance">
+      <SettingsSection label={tx("appearance_41def7", { defaultValue: "Appearance" })}>
         <SettingsRow
-          label="Theme"
+          label={tx("theme_a797e3", { defaultValue: "Theme" })}
           control={
             <OptionGroup
               options={themeOptions}
@@ -78,13 +74,13 @@ export function PreferencesSection() {
           }
         />
         <SettingsRow
-          label="Language"
+          label={tx("language_89b86a", { defaultValue: "Language" })}
           control={
             <Select<string>
               value={language}
               options={SUPPORTED_LANGUAGES.map((l) => ({ value: l.code, label: l.label }))}
               onChange={handleLanguageChange}
-              ariaLabel="Language"
+              ariaLabel={tx("language_89b86a", { defaultValue: "Language" })}
               size="sm"
               align="right"
             />
@@ -92,16 +88,16 @@ export function PreferencesSection() {
         />
       </SettingsSection>
 
-      <SettingsSection label="Display" dividerAbove>
+      <SettingsSection label={tx("display_574ff9", { defaultValue: "Display" })} dividerAbove>
         <SettingsRow
-          label={`Items per ${term.bin} page`}
-          description={`Number of items shown before pagination. Select "All on one page" to disable.`}
+          label={tx("items_per_bin_page_61b503", { defaultValue: "Items per {{bin}} page", bin: term.bin })}
+          description={tx("number_of_items_shown_before_pagination_select_all_on_one_pa_57624d", { defaultValue: "Number of items shown before pagination. Select \"All on one page\" to disable." })}
           control={
             <Select<PageSizeValue>
               value={itemPageSize}
               options={ITEM_PAGE_SIZE_SELECT_OPTIONS}
               onChange={setItemPageSize}
-              ariaLabel={`Items per ${term.bin} page`}
+              ariaLabel={tx("items_per_bin_page_61b503", { defaultValue: "Items per {{bin}} page", bin: term.bin })}
               size="sm"
               align="right"
             />
@@ -109,17 +105,14 @@ export function PreferencesSection() {
         />
       </SettingsSection>
 
-      <SettingsSection label="Keyboard" dividerAbove>
+      <SettingsSection label={tx("keyboard_6662c4", { defaultValue: "Keyboard" })} dividerAbove>
         <SettingsRow
-          label="Keyboard Shortcuts"
+          label={tx("keyboard_shortcuts_b46575", { defaultValue: "Keyboard Shortcuts" })}
           description={
-            <span>
-              Press{' '}
+            <span> {tx("press_ea683a", { defaultValue: "Press" })}{' '}
               <kbd className="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-[var(--radius-sm)] bg-[var(--bg-input)] font-mono text-[var(--text-xs)] text-[var(--text-secondary)] leading-none">
                 ?
-              </kbd>{' '}
-              to view all shortcuts
-            </span>
+              </kbd>{' '} {tx("to_view_all_shortcuts_d8f721", { defaultValue: "to view all shortcuts" })} </span>
           }
           control={
             <Switch
@@ -132,10 +125,10 @@ export function PreferencesSection() {
         />
       </SettingsSection>
 
-      <SettingsSection label="Usage Tracking" dividerAbove>
+      <SettingsSection label={tx("usage_tracking_ee57f7", { defaultValue: "Usage Tracking" })} dividerAbove>
         <SettingsRow
-          label="Scan QR code"
-          description="Record a usage dot when you scan a QR code"
+          label={tx("scan_qr_code_e7d8c3", { defaultValue: "Scan QR code" })}
+          description={tx("record_a_usage_dot_when_you_scan_a_qr_code_17d182", { defaultValue: "Record a usage dot when you scan a QR code" })}
           border={false}
           control={
             <Switch
@@ -145,8 +138,8 @@ export function PreferencesSection() {
           }
         />
         <SettingsRow
-          label="Manual code lookup"
-          description={`Record when you look up a ${term.bin} by typing its code`}
+          label={tx("manual_code_lookup_2bd85b", { defaultValue: "Manual code lookup" })}
+          description={tx("record_when_you_look_up_a_bin_by_typing_its_code_28453d", { defaultValue: "Record when you look up a {{bin}} by typing its code", bin: term.bin })}
           border={false}
           control={
             <Switch
@@ -156,8 +149,8 @@ export function PreferencesSection() {
           }
         />
         <SettingsRow
-          label={`View ${term.bin}`}
-          description={`Record every time you open a ${term.bin} detail page`}
+          label={tx("view_bin_460d01", { defaultValue: "View {{bin}}", bin: term.bin })}
+          description={tx("record_every_time_you_open_a_bin_detail_page_273ecb", { defaultValue: "Record every time you open a {{bin}} detail page", bin: term.bin })}
           border={false}
           control={
             <Switch
@@ -167,8 +160,8 @@ export function PreferencesSection() {
           }
         />
         <SettingsRow
-          label={`Modify ${term.bin}`}
-          description={`Record when you edit a ${term.bin}'s contents or metadata`}
+          label={tx("modify_bin_41a94f", { defaultValue: "Modify {{bin}}", bin: term.bin })}
+          description={tx("record_when_you_edit_a_bin_s_contents_or_metadata_f8b67e", { defaultValue: "Record when you edit a {{bin}}'s contents or metadata", bin: term.bin })}
           border={false}
           control={
             <Switch
@@ -178,15 +171,15 @@ export function PreferencesSection() {
           }
         />
         <SettingsRow
-          label="Default granularity"
-          description="Initial zoom level for the usage heatmap"
+          label={tx("default_granularity_abc648", { defaultValue: "Default granularity" })}
+          description={tx("initial_zoom_level_for_the_usage_heatmap_e23dda", { defaultValue: "Initial zoom level for the usage heatmap" })}
           border={false}
           control={
             <OptionGroup
               options={[
-                { key: 'daily' as const, label: 'Day' },
-                { key: 'weekly' as const, label: 'Week' },
-                { key: 'monthly' as const, label: 'Month' },
+                { key: 'daily' as const, label: tx("day_987b9c", { defaultValue: "Day" }) },
+                { key: 'weekly' as const, label: tx("week_f82be6", { defaultValue: "Week" }) },
+                { key: 'monthly' as const, label: tx("month_082bc3", { defaultValue: "Month" }) },
               ]}
               value={preferences.usage_granularity}
               onChange={(v) => updatePreferences({ usage_granularity: v })}

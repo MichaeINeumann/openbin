@@ -1,5 +1,6 @@
 import { Clock, Download, Trash2, Upload } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +32,7 @@ function StepLabel({
   id?: string;
   children: ReactNode;
 }) {
+  const { t: tx } = useTranslation('ui');
   return (
     <div className="flex items-center gap-2">
       <span
@@ -41,7 +43,7 @@ function StepLabel({
       </span>
       <span id={id} className="settings-subheading">
         {children}
-        <span className="sr-only"> (step {step} of {total})</span>
+        <span className="sr-only"> {tx("step_6801c9", { defaultValue: "(step" })} {step} {tx("of_de04fa", { defaultValue: "of" })} {total})</span>
       </span>
     </div>
   );
@@ -56,10 +58,11 @@ function LocationPickerSection({
   value: string | null;
   onChange: (id: string) => void;
 }) {
+  const { t: tx } = useTranslation('ui');
   if (locations.length <= 1) return null;
   return (
     <div className="space-y-2">
-      <span className="settings-subheading">Location</span>
+      <span className="settings-subheading">{tx("location_d219c6", { defaultValue: "Location" })}</span>
       <div className="max-h-40 overflow-y-auto">
         <LocationSelectList locations={locations} value={value} onChange={onChange} />
       </div>
@@ -68,6 +71,7 @@ function LocationPickerSection({
 }
 
 export function DataSection() {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const { activeLocationId } = useAuth();
 
@@ -128,38 +132,38 @@ export function DataSection() {
   return (
     <>
       <SettingsPageHeader
-        title="Data"
-        description="Export, import, and manage your workspace data."
+        title={tx("data_e5e429", { defaultValue: "Data" })}
+        description={tx("export_import_and_manage_your_workspace_data_f54e37", { defaultValue: "Export, import, and manage your workspace data." })}
       />
 
-      <SettingsSection label="Manage">
+      <SettingsSection label={tx("manage_bf58d1", { defaultValue: "Manage" })}>
         <SettingsRow
           icon={Clock}
-          label="Activity Log"
+          label={tx("activity_log_a3abad", { defaultValue: "Activity Log" })}
           description={
             activeLocation?.activity_retention_days
-              ? `Changes from the last ${activeLocation.activity_retention_days} days`
-              : 'Recent changes and actions'
+              ? tx("changes_from_the_last_value0_days_30dd9e", { defaultValue: "Changes from the last {{value0}} days", value0: activeLocation.activity_retention_days })
+              : tx("recent_changes_and_actions_6586a4", { defaultValue: "Recent changes and actions" })
           }
           onClick={() => navigate('/settings/activity')}
         />
         <SettingsRow
           icon={Trash2}
-          label="Trash"
+          label={tx("trash_e3bf62", { defaultValue: "Trash" })}
           description={
             activeLocation?.trash_retention_days
-              ? `Restore within ${activeLocation.trash_retention_days} days — then permanently deleted`
-              : 'Restore or permanently remove deleted bins'
+              ? tx("restore_within_value0_days_then_permanently_deleted_a67a16", { defaultValue: "Restore within {{value0}} days — then permanently deleted", value0: activeLocation.trash_retention_days })
+              : tx("restore_or_permanently_remove_deleted_bins_19f839", { defaultValue: "Restore or permanently remove deleted bins" })
           }
           onClick={() => navigate('/settings/trash')}
         />
       </SettingsSection>
 
-      <SettingsSection label="Export & Import" dividerAbove>
+      <SettingsSection label={tx("export_import_2be810", { defaultValue: "Export & Import" })} dividerAbove>
         <SettingsRow
           icon={Download}
-          label="Export"
-          description="Download a backup or spreadsheet of this workspace"
+          label={tx("export_f3e4fa", { defaultValue: "Export" })}
+          description={tx("download_a_backup_or_spreadsheet_of_this_workspace_c6fff5", { defaultValue: "Download a backup or spreadsheet of this workspace" })}
           onClick={() => {
             setSelectedLocationId(activeLocationId ?? null);
             setExportDialogOpen(true);
@@ -168,8 +172,8 @@ export function DataSection() {
         />
         <SettingsRow
           icon={Upload}
-          label="Import"
-          description="Restore from a backup or load a spreadsheet"
+          label={tx("import_d6fbc9", { defaultValue: "Import" })}
+          description={tx("restore_from_a_backup_or_load_a_spreadsheet_b3cd46", { defaultValue: "Restore from a backup or load a spreadsheet" })}
           onClick={() => {
             resetImportState();
             setSelectedLocationId(activeLocationId ?? null);
@@ -195,7 +199,7 @@ export function DataSection() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Export</DialogTitle>
+            <DialogTitle>{tx("export_f3e4fa", { defaultValue: "Export" })}</DialogTitle>
           </DialogHeader>
           <div className="space-y-5">
             <LocationPickerSection
@@ -211,34 +215,32 @@ export function DataSection() {
                   value="zip"
                   current={exportFormat}
                   onChange={setExportFormat}
-                  title="Backup (ZIP)"
-                  description="All data including photos"
+                  title={tx("backup_zip_fc18a0", { defaultValue: "Backup (ZIP)" })}
+                  description={tx("all_data_including_photos_cb0e3c", { defaultValue: "All data including photos" })}
                 />
                 <SettingsRadioCard
                   name="export-format"
                   value="json"
                   current={exportFormat}
                   onChange={setExportFormat}
-                  title="Backup (JSON)"
-                  description="Data and settings, no photos"
+                  title={tx("backup_json_a6b8ca", { defaultValue: "Backup (JSON)" })}
+                  description={tx("data_and_settings_no_photos_f36bf9", { defaultValue: "Data and settings, no photos" })}
                 />
                 <SettingsRadioCard
                   name="export-format"
                   value="csv"
                   current={exportFormat}
                   onChange={setExportFormat}
-                  title="Spreadsheet (CSV)"
-                  description="Open in Excel or Google Sheets"
+                  title={tx("spreadsheet_csv_1b5f65", { defaultValue: "Spreadsheet (CSV)" })}
+                  description={tx("open_in_excel_or_google_sheets_72e65c", { defaultValue: "Open in Excel or Google Sheets" })}
                 />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setExportDialogOpen(false)} disabled={exporting}>
-              Cancel
-            </Button>
+            <Button variant="ghost" onClick={() => setExportDialogOpen(false)} disabled={exporting}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button onClick={() => handleExport(selectedLocationId)} disabled={exporting}>
-              {exporting ? 'Exporting...' : `Export ${selectedLocationName}`}
+              {exporting ? tx("exporting_d16ade", { defaultValue: "Exporting..." }) : tx("export_selectedlocationname_4fc90a", { defaultValue: "Export {{selectedLocationName}}", selectedLocationName: selectedLocationName })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -255,7 +257,7 @@ export function DataSection() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Import</DialogTitle>
+            <DialogTitle>{tx("import_d6fbc9", { defaultValue: "Import" })}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-5">
@@ -273,55 +275,55 @@ export function DataSection() {
                   value="zip"
                   current={importFormat}
                   onChange={setImportFormat}
-                  title="Backup (ZIP)"
-                  description="All data including photos"
+                  title={tx("backup_zip_fc18a0", { defaultValue: "Backup (ZIP)" })}
+                  description={tx("all_data_including_photos_cb0e3c", { defaultValue: "All data including photos" })}
                 />
                 <SettingsRadioCard
                   name="import-format"
                   value="json"
                   current={importFormat}
                   onChange={setImportFormat}
-                  title="Backup (JSON)"
-                  description="Data and settings, no photos"
+                  title={tx("backup_json_a6b8ca", { defaultValue: "Backup (JSON)" })}
+                  description={tx("data_and_settings_no_photos_f36bf9", { defaultValue: "Data and settings, no photos" })}
                 />
                 <SettingsRadioCard
                   name="import-format"
                   value="csv"
                   current={importFormat}
                   onChange={setImportFormat}
-                  title="Spreadsheet (CSV)"
-                  description="Bins and items from a spreadsheet"
+                  title={tx("spreadsheet_csv_1b5f65", { defaultValue: "Spreadsheet (CSV)" })}
+                  description={tx("bins_and_items_from_a_spreadsheet_bfc631", { defaultValue: "Bins and items from a spreadsheet" })}
                 />
               </div>
             </div>
 
             <div className="space-y-2.5">
-              <StepLabel step={2} total={3} id="import-mode-label">Mode</StepLabel>
+              <StepLabel step={2} total={3} id="import-mode-label">{tx("mode_a7b93d", { defaultValue: "Mode" })}</StepLabel>
               <div className="flex flex-col gap-2" role="radiogroup" aria-labelledby="import-mode-label">
                 <SettingsRadioCard
                   name="import-mode"
                   value="merge"
                   current={importMode}
                   onChange={setImportMode}
-                  title="Merge"
-                  description="Add new data, skip existing"
+                  title={tx("merge_ea8f0d", { defaultValue: "Merge" })}
+                  description={tx("add_new_data_skip_existing_83cf31", { defaultValue: "Add new data, skip existing" })}
                 />
                 <SettingsRadioCard
                   name="import-mode"
                   value="replace"
                   current={importMode}
                   onChange={setImportMode}
-                  title="Replace"
-                  description="Delete all existing data first"
+                  title={tx("replace_a7cf7b", { defaultValue: "Replace" })}
+                  description={tx("delete_all_existing_data_first_20efa1", { defaultValue: "Delete all existing data first" })}
                   destructive
                 />
               </div>
             </div>
 
             <div className="space-y-2.5">
-              <StepLabel step={3} total={3}>File</StepLabel>
+              <StepLabel step={3} total={3}>{tx("file_2c3caf", { defaultValue: "File" })}</StepLabel>
               <Button variant="outline" onClick={handleImportFileClick} disabled={importing}>
-                {hasImportFile ? 'Change File' : 'Select File'}
+                {hasImportFile ? tx("change_file_106257", { defaultValue: "Change File" }) : tx("select_file_5c0c87", { defaultValue: "Select File" })}
               </Button>
               {dryRunPreview && (
                 <div className="max-h-48 overflow-y-auto space-y-1 rounded-[var(--radius-sm)] border border-[var(--border-subtle)] bg-[var(--bg-input)] p-2 text-[var(--text-sm)]">
@@ -332,7 +334,7 @@ export function DataSection() {
                     >
                       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-success)]" />
                       <span className="truncate flex-1">{b.name}</span>
-                      <span className="tabular-nums text-[var(--text-tertiary)]">{b.itemCount} items</span>
+                      <span className="tabular-nums text-[var(--text-tertiary)]">{b.itemCount} {tx("items_7316c8", { defaultValue: "items" })}</span>
                     </div>
                   ))}
                   {dryRunPreview.toSkip.map((b) => (
@@ -342,7 +344,7 @@ export function DataSection() {
                     >
                       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--text-tertiary)]" />
                       <span className="truncate flex-1">{b.name}</span>
-                      <span className="text-[var(--text-tertiary)]">skip</span>
+                      <span className="text-[var(--text-tertiary)]">{tx("skip_c7e168", { defaultValue: "skip" })}</span>
                     </div>
                   ))}
                 </div>
@@ -361,15 +363,13 @@ export function DataSection() {
                 resetImportState();
               }}
               disabled={importing}
-            >
-              Cancel
-            </Button>
+            > {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button
               variant={importMode === 'replace' ? 'destructive' : 'default'}
               onClick={() => handleConfirmImport(selectedLocationId)}
               disabled={!hasImportFile || importing}
             >
-              {importing ? 'Importing...' : importMode === 'replace' ? 'Replace & Import' : `Import ${selectedLocationName}`}
+              {importing ? tx("importing_b7353a", { defaultValue: "Importing..." }) : importMode === 'replace' ? tx("replace_import_2b5181", { defaultValue: "Replace & Import" }) : tx("import_selectedlocationname_0b4d19", { defaultValue: "Import {{selectedLocationName}}", selectedLocationName: selectedLocationName })}
             </Button>
           </DialogFooter>
         </DialogContent>

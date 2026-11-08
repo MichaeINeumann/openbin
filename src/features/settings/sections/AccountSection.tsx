@@ -1,5 +1,6 @@
 import { Calendar, Check, Copy, Eye, EyeOff, Key, Link2, Link2Off, Loader2, MapPin, Plus, Trash2 } from 'lucide-react';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -36,9 +37,9 @@ const UpgradePrompt = __EE__
   ? lazy(() => import('@/ee/UpgradePrompt').then(m => ({ default: m.UpgradePrompt })))
   : (() => null) as React.FC<Record<string, unknown>>;
 
-function formatDate(iso: string | null): string {
+function formatDate(iso: string | null, language = 'en'): string {
   if (!iso) return 'Never';
-  return new Date(iso).toLocaleDateString(undefined, {
+  return new Date(iso).toLocaleDateString(language, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -51,6 +52,8 @@ function validateDisplayName(value: string): string | undefined {
 }
 
 export function AccountSection() {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
   const { user, updateUser } = useAuth();
   const { showToast } = useToast();
   const { locations } = useLocationList();
@@ -112,7 +115,7 @@ export function AccountSection() {
       .then((data) => setOauthLinks(data.results))
       .catch((err) => {
         if (abort.signal.aborted) return;
-        showToast({ message: getErrorMessage(err, 'Failed to load connected accounts'), variant: 'error' });
+        showToast({ message: getErrorMessage(err, tx("failed_to_load_connected_accounts_4b7a88", { defaultValue: "Failed to load connected accounts" })), variant: 'error' });
       });
     return () => { abort.abort(); };
   }, [showToast]);
@@ -133,7 +136,7 @@ export function AccountSection() {
   const avatarSrc = user.avatarUrl ? `${getAvatarUrl(user.avatarUrl)}?v=${avatarKey}` : null;
 
   const memberSince = user.createdAt
-    ? new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long' })
+    ? new Date(user.createdAt).toLocaleDateString(uiLanguage, { year: 'numeric', month: 'long' })
     : 'Unknown';
 
   async function handleSaveProfile(e: React.FormEvent) {
@@ -265,11 +268,11 @@ export function AccountSection() {
   return (
     <>
       <SettingsPageHeader
-        title="Account"
-        description="Manage your profile, password, and access keys."
+        title={tx("account_85dfa3", { defaultValue: "Account" })}
+        description={tx("manage_your_profile_password_and_access_keys_865135", { defaultValue: "Manage your profile, password, and access keys." })}
       />
 
-      <SettingsSection label="Profile">
+      <SettingsSection label={tx("profile_ff4fc0", { defaultValue: "Profile" })}>
         <SettingsProfileHeader
           avatarUrl={avatarSrc}
           displayName={user.displayName || user.email}
@@ -285,7 +288,7 @@ export function AccountSection() {
               </span>
               <span className="inline-flex items-center gap-1">
                 <MapPin className="h-3 w-3" />
-                {locations.length} location{locations.length !== 1 ? 's' : ''}
+                {locations.length} {tx("location_6469ac", { defaultValue: "location" })}{locations.length !== 1 ? 's' : ''}
               </span>
             </>
           }
@@ -293,7 +296,7 @@ export function AccountSection() {
 
         <form onSubmit={handleSaveProfile} className="flex flex-col gap-3 pt-5">
           <FormField
-            label="Display Name"
+            label={tx("display_name_8d6b34", { defaultValue: "Display Name" })}
             htmlFor="profile-name"
             hint="Shown to other members of shared locations."
             error={profileErrors.displayName}
@@ -315,7 +318,7 @@ export function AccountSection() {
             />
           </FormField>
           <FormField
-            label="Email"
+            label={tx("email_84add5", { defaultValue: "Email" })}
             htmlFor="profile-email"
             hint="Optional — used for account recovery"
             error={profileErrors.email}
@@ -328,7 +331,7 @@ export function AccountSection() {
                 setEmail(e.target.value);
                 if (profileErrors.email) setProfileErrors((prev) => ({ ...prev, email: undefined }));
               }}
-              placeholder="you@example.com"
+              placeholder={tx("you_example_com_50e2b4", { defaultValue: "you@example.com" })}
               autoComplete="email"
               aria-invalid={!!profileErrors.email}
             />
@@ -338,16 +341,16 @@ export function AccountSection() {
             disabled={savingProfile || !displayName.trim() || !profileDirty}
             className="self-start mt-1"
           >
-            {savingProfile ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Saving...</> : 'Save Profile'}
+            {savingProfile ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{tx("saving_ae7e88", { defaultValue: "Saving..." })}</> : tx("save_profile_909bf3", { defaultValue: "Save Profile" })}
           </Button>
         </form>
       </SettingsSection>
 
       {hasPassword && (
-        <SettingsSection label="Password" dividerAbove>
+        <SettingsSection label={tx("password_8be3c9", { defaultValue: "Password" })} dividerAbove>
           <form onSubmit={handleChangePassword} className="flex flex-col gap-3">
             <FormField
-              label="Current Password"
+              label={tx("current_password_4d5967", { defaultValue: "Current Password" })}
               htmlFor="current-password"
               hint="Required to verify it's you."
             >
@@ -362,7 +365,7 @@ export function AccountSection() {
             </FormField>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               <FormField
-                label="New Password"
+                label={tx("new_password_4894cb", { defaultValue: "New Password" })}
                 htmlFor="new-password"
                 hint="Must meet the requirements below."
               >
@@ -383,7 +386,7 @@ export function AccountSection() {
                     type="button"
                     onClick={() => setShowNewPassword((v) => !v)}
                     className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-150"
-                    aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                    aria-label={showNewPassword ? tx("hide_password_e40123", { defaultValue: "Hide password" }) : tx("show_password_044b85", { defaultValue: "Show password" })}
                     tabIndex={-1}
                   >
                     {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -391,7 +394,7 @@ export function AccountSection() {
                 </div>
               </FormField>
               <FormField
-                label="Confirm Password"
+                label={tx("confirm_password_c2d404", { defaultValue: "Confirm Password" })}
                 htmlFor="confirm-password"
                 hint="Re-type the new password exactly."
               >
@@ -420,14 +423,14 @@ export function AccountSection() {
               disabled={savingPassword || !currentPassword || !newPassword || !confirmPassword}
               className="self-start mt-1"
             >
-              {savingPassword ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Updating...</> : 'Update Password'}
+              {savingPassword ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{tx("updating_e349e5", { defaultValue: "Updating..." })}</> : tx("update_password_61dcf3", { defaultValue: "Update Password" })}
             </Button>
           </form>
         </SettingsSection>
       )}
 
       {oauthProviders.length > 0 && (
-        <SettingsSection label="Connected Accounts" dividerAbove>
+        <SettingsSection label={tx("connected_accounts_8e3424", { defaultValue: "Connected Accounts" })} dividerAbove>
           {oauthProviders.map((provider) => {
             const link = oauthLinks.find((l) => l.provider === provider);
             const providerLabel = provider === 'google'
@@ -445,9 +448,9 @@ export function AccountSection() {
                 title={providerLabel}
                 meta={
                   <>
-                    {link ? (link.email || 'Connected') : 'Not connected'}
+                    {link ? (link.email || tx("connected_c2f9b7", { defaultValue: "Connected" })) : tx("not_connected_8b02f3", { defaultValue: "Not connected" })}
                     {link && !canUnlink && (
-                      <span id={hintId} className="block mt-0.5">Set a password to disconnect</span>
+                      <span id={hintId} className="block mt-0.5">{tx("set_a_password_to_disconnect_f66ada", { defaultValue: "Set a password to disconnect" })}</span>
                     )}
                   </>
                 }
@@ -463,26 +466,22 @@ export function AccountSection() {
                         try {
                           await apiFetch(`/api/auth/oauth/link/${provider}`, { method: 'DELETE' });
                           setOauthLinks((prev) => prev.filter((l) => l.provider !== provider));
-                          showToast({ message: `${providerLabel} disconnected`, variant: 'success' });
+                          showToast({ message: tx("providerlabel_disconnected_f75a7e", { defaultValue: "{{providerLabel}} disconnected", providerLabel: providerLabel }), variant: 'success' });
                         } catch (err) {
-                          showToast({ message: getErrorMessage(err, `Failed to disconnect ${providerLabel}`), variant: 'error' });
+                          showToast({ message: getErrorMessage(err, tx("failed_to_disconnect_providerlabel_93a351", { defaultValue: "Failed to disconnect {{providerLabel}}", providerLabel: providerLabel })), variant: 'error' });
                         } finally {
                           setUnlinking(null);
                         }
                       }}
                     >
-                      {unlinking === provider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2Off className="h-4 w-4 mr-1.5" />}
-                      Disconnect
-                    </Button>
+                      {unlinking === provider ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2Off className="h-4 w-4 mr-1.5" />} {tx("disconnect_ed28e0", { defaultValue: "Disconnect" })} </Button>
                   ) : (
                     <Button
                       variant="secondary"
                       size="sm"
                       onClick={() => { window.location.href = `/api/auth/oauth/${provider}`; }}
                     >
-                      <Link2 className="h-4 w-4 mr-1.5" />
-                      Connect
-                    </Button>
+                      <Link2 className="h-4 w-4 mr-1.5" /> {tx("connect_b65463", { defaultValue: "Connect" })} </Button>
                   )
                 }
               />
@@ -493,11 +492,11 @@ export function AccountSection() {
 
       {apiKeysGated ? (
         __EE__ && !apiKeysDismissed && (
-          <SettingsSection label="API Keys" dividerAbove>
+          <SettingsSection label={tx("api_keys_e18ffc", { defaultValue: "API Keys" })} dividerAbove>
             <Suspense fallback={null}>
               <UpgradePrompt
                 feature="API Keys"
-                description="Create API keys to integrate with external tools."
+                description={tx("create_api_keys_to_integrate_with_external_tools_dd39cc", { defaultValue: "Create API keys to integrate with external tools." })}
                 upgradeAction={planInfo.upgradeAction}
                 dismissKey="apiKeys"
               />
@@ -506,15 +505,15 @@ export function AccountSection() {
         )
       ) : (
         <SettingsSection
-          label="API Keys"
+          label={tx("api_keys_e18ffc", { defaultValue: "API Keys" })}
           dividerAbove
-          description="API keys are tied to your account and work across all your locations. Use them for smart home integrations and automation."
+          description={tx("api_keys_are_tied_to_your_account_and_work_across_all_your_l_d7dd55", { defaultValue: "API keys are tied to your account and work across all your locations. Use them for smart home integrations and automation." })}
           action={
-            <Tooltip content="Create API key" side="bottom">
+            <Tooltip content={tx("create_api_key_d7b303", { defaultValue: "Create API key" })} side="bottom">
               <Button
                 onClick={() => setCreateOpen(true)}
                 size="icon"
-                aria-label="Create API key"
+                aria-label={tx("create_api_key_d7b303", { defaultValue: "Create API key" })}
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -522,9 +521,7 @@ export function AccountSection() {
           }
         >
           {keysLoading ? null : keys.length === 0 ? (
-            <p className="settings-row-desc py-4 text-center">
-              No API keys yet. Create one to connect integrations.
-            </p>
+            <p className="settings-row-desc py-4 text-center"> {tx("no_api_keys_yet_create_one_to_connect_integrations_bbcfbe", { defaultValue: "No API keys yet. Create one to connect integrations." })} </p>
           ) : (
             keys.map((k) => (
               <SettingsListRow
@@ -533,18 +530,18 @@ export function AccountSection() {
                 title={k.name || k.key_prefix}
                 meta={
                   <>
-                    {k.key_prefix}... &middot; Created {formatDate(k.created_at)}
-                    {k.last_used_at ? ` \u00b7 Last used ${formatDate(k.last_used_at)}` : ''}
+                    {k.key_prefix}{tx("middot_created_a5f56c", { defaultValue: "... · Created" })} {formatDate(k.created_at, uiLanguage)}
+                    {k.last_used_at ? tx("last_used_value0_94d996", { defaultValue: " · Last used {{value0}}", value0: formatDate(k.last_used_at, uiLanguage) }) : ''}
                   </>
                 }
                 action={
-                  <Tooltip content="Revoke API key" side="bottom">
+                  <Tooltip content={tx("revoke_api_key_3160aa", { defaultValue: "Revoke API key" })} side="bottom">
                     <Button
                       variant="ghost"
                       size="icon"
                       className="text-[var(--destructive)] shrink-0"
                       onClick={() => setRevokeId(k.id)}
-                      aria-label="Revoke API key"
+                      aria-label={tx("revoke_api_key_3160aa", { defaultValue: "Revoke API key" })}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -557,7 +554,7 @@ export function AccountSection() {
       )}
 
       <SettingsSection
-        label="Danger Zone"
+        label={tx("danger_zone_8fc83a", { defaultValue: "Danger Zone" })}
         dividerAbove
         status="danger"
         tintLabel
@@ -572,9 +569,7 @@ export function AccountSection() {
             onClick={() => setDeleteOpen(true)}
             disabled={!!user.deletionRequestedAt}
           >
-            <Trash2 className="h-4 w-4 mr-2.5" />
-            Delete Account
-          </Button>
+            <Trash2 className="h-4 w-4 mr-2.5" /> {tx("delete_account_ee1b9a", { defaultValue: "Delete Account" })} </Button>
         </div>
       </SettingsSection>
 
@@ -583,11 +578,11 @@ export function AccountSection() {
       <Dialog open={createOpen} onOpenChange={(open) => !open && setCreateOpen(false)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{newKey ? 'API Key Created' : 'Create API Key'}</DialogTitle>
+            <DialogTitle>{newKey ? tx("api_key_created_f66b83", { defaultValue: "API Key Created" }) : tx("create_api_key_b68d55", { defaultValue: "Create API Key" })}</DialogTitle>
             <DialogDescription>
               {newKey
-                ? 'Copy this key now — it won\'t be shown again.'
-                : 'Give your key a name to help you identify it later.'}
+                ? tx("copy_this_key_now_it_won_t_be_shown_again_9f83d6", { defaultValue: "Copy this key now — it won't be shown again." })
+                : tx("give_your_key_a_name_to_help_you_identify_it_later_38b007", { defaultValue: "Give your key a name to help you identify it later." })}
             </DialogDescription>
           </DialogHeader>
           {newKey ? (
@@ -601,15 +596,13 @@ export function AccountSection() {
                   size="icon"
                   className="shrink-0"
                   onClick={handleCopy}
-                  aria-label={copied ? 'Copied' : 'Copy API key'}
+                  aria-label={copied ? tx("copied_8e3df4", { defaultValue: "Copied" }) : tx("copy_api_key_0c1a43", { defaultValue: "Copy API key" })}
                 >
                   {copied ? <Check className="h-4 w-4 text-[var(--color-success)]" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
               <DialogFooter>
-                <Button onClick={() => setCreateOpen(false)}>
-                  Done
-                </Button>
+                <Button onClick={() => setCreateOpen(false)}> {tx("done_e9b450", { defaultValue: "Done" })} </Button>
               </DialogFooter>
             </div>
           ) : (
@@ -623,15 +616,13 @@ export function AccountSection() {
                   id="key-name"
                   value={keyName}
                   onChange={(e) => setKeyName(e.target.value)}
-                  placeholder="e.g., Home Assistant, Alexa"
+                  placeholder={tx("e_g_home_assistant_alexa_9c30ff", { defaultValue: "e.g., Home Assistant, Alexa" })}
                 />
               </FormField>
               <DialogFooter>
-                <Button type="button" variant="ghost" onClick={() => setCreateOpen(false)}>
-                  Cancel
-                </Button>
+                <Button type="button" variant="ghost" onClick={() => setCreateOpen(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
                 <Button type="submit" disabled={creating}>
-                  {creating ? 'Creating...' : 'Create'}
+                  {creating ? tx("creating_28ea76", { defaultValue: "Creating..." }) : tx("create_6e157c", { defaultValue: "Create" })}
                 </Button>
               </DialogFooter>
             </form>
@@ -642,21 +633,17 @@ export function AccountSection() {
       <Dialog open={!!revokeId} onOpenChange={(open) => !open && setRevokeId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Revoke API Key?</DialogTitle>
-            <DialogDescription>
-              Any integrations using this key will stop working immediately. This cannot be undone.
-            </DialogDescription>
+            <DialogTitle>{tx("revoke_api_key_1026a0", { defaultValue: "Revoke API Key?" })}</DialogTitle>
+            <DialogDescription> {tx("any_integrations_using_this_key_will_stop_working_immediatel_7f1623", { defaultValue: "Any integrations using this key will stop working immediately. This cannot be undone." })} </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setRevokeId(null)}>
-              Cancel
-            </Button>
+            <Button variant="ghost" onClick={() => setRevokeId(null)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button
               variant="destructive"
               onClick={handleRevoke}
               disabled={revoking}
             >
-              {revoking ? 'Revoking...' : 'Revoke'}
+              {revoking ? tx("revoking_e1cd32", { defaultValue: "Revoking..." }) : tx("revoke_0be720", { defaultValue: "Revoke" })}
             </Button>
           </DialogFooter>
         </DialogContent>
