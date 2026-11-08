@@ -1,5 +1,6 @@
 import { SlidersHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Disclosure } from '@/components/ui/disclosure';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,6 +24,7 @@ interface OptionField {
 }
 
 export function ReorganizeBinsOptions({ form, itemCount }: Props) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   const optionFields: OptionField[] = useMemo(
@@ -30,9 +32,9 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
       {
         legend: 'Change level',
         options: [
-          { key: 'conservative', label: 'Light' },
-          { key: 'moderate', label: 'Moderate' },
-          { key: 'aggressive', label: 'Thorough' },
+          { key: 'conservative', label: tx("light_a36ef8", { defaultValue: "Light" }) },
+          { key: 'moderate', label: tx("moderate_ea8b09", { defaultValue: "Moderate" }) },
+          { key: 'aggressive', label: tx("thorough_d49aad", { defaultValue: "Thorough" }) },
         ],
         value: form.strictness,
         onChange: (v) => form.setStrictness(v as ReorganizeBinsForm['strictness']),
@@ -41,9 +43,9 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
       {
         legend: 'Grouping',
         options: [
-          { key: 'broad', label: 'Broad' },
-          { key: 'medium', label: 'Medium' },
-          { key: 'specific', label: 'Specific' },
+          { key: 'broad', label: tx("broad_d7d5e0", { defaultValue: "Broad" }) },
+          { key: 'medium', label: tx("medium_d40496", { defaultValue: "Medium" }) },
+          { key: 'specific', label: tx("specific_bb57ed", { defaultValue: "Specific" }) },
         ],
         value: form.granularity,
         onChange: (v) => form.setGranularity(v as ReorganizeBinsForm['granularity']),
@@ -52,9 +54,9 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
       {
         legend: 'Unmatched items',
         options: [
-          { key: 'best-fit', label: 'Best match' },
-          { key: 'multi-bin', label: 'Place in multiple' },
-          { key: 'misc-bin', label: `Misc ${t.bin}` },
+          { key: 'best-fit', label: tx("best_match_86f686", { defaultValue: "Best match" }) },
+          { key: 'multi-bin', label: tx("place_in_multiple_7e44d2", { defaultValue: "Place in multiple" }) },
+          { key: 'misc-bin', label: tx("misc_bin_9c634f", { defaultValue: "Misc {{bin}}", bin: t.bin }) },
         ],
         value: form.ambiguousPolicy,
         onChange: (v) => form.setAmbiguousPolicy(v as ReorganizeBinsForm['ambiguousPolicy']),
@@ -63,8 +65,8 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
       {
         legend: 'Duplicate items',
         options: [
-          { key: 'force-single', label: `One ${t.bin} only` },
-          { key: 'allow', label: 'Allow copies' },
+          { key: 'force-single', label: tx("one_bin_only_8c161d", { defaultValue: "One {{bin}} only", bin: t.bin }) },
+          { key: 'allow', label: tx("allow_copies_94f728", { defaultValue: "Allow copies" }) },
         ],
         value: form.duplicates,
         onChange: (v) => form.setDuplicates(v as ReorganizeBinsForm['duplicates']),
@@ -72,8 +74,8 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
       {
         legend: 'Outlier items',
         options: [
-          { key: 'force-closest', label: 'Nearest match' },
-          { key: 'dedicated', label: `Separate ${t.bin}` },
+          { key: 'force-closest', label: tx("nearest_match_1a5130", { defaultValue: "Nearest match" }) },
+          { key: 'dedicated', label: tx("separate_bin_a9fe94", { defaultValue: "Separate {{bin}}", bin: t.bin }) },
         ],
         value: form.outliers,
         onChange: (v) => form.setOutliers(v as ReorganizeBinsForm['outliers']),
@@ -87,9 +89,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
       label={
         <span className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-[var(--text-tertiary)]" />
-          <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none">
-            Options
-          </Label>
+          <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none"> {tx("options_6bf5da", { defaultValue: "Options" })} </Label>
         </span>
       }
     >
@@ -98,8 +98,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
           <Label
             htmlFor="reorg-max-bins"
             className="text-[12px] text-[var(--text-secondary)] font-medium block mb-2"
-          >
-            Number of {t.bins}
+          > {tx("number_of_093ba2", { defaultValue: "Number of" })} {t.bins}
           </Label>
           <Input
             id="reorg-max-bins"
@@ -107,7 +106,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
             min={1}
             value={form.maxBins}
             onChange={(e) => form.setMaxBins(e.target.value)}
-            placeholder="Auto"
+            placeholder={tx("auto_c614ba", { defaultValue: "Auto" })}
             aria-describedby={form.maxBinsError ? 'reorg-max-bins-error' : undefined}
             aria-invalid={!!form.maxBinsError}
           />
@@ -126,8 +125,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
           <Label
             htmlFor="reorg-min-items"
             className="text-[12px] text-[var(--text-secondary)] font-medium block mb-2"
-          >
-            Items per {t.bin}
+          > {tx("items_per_bd91d0", { defaultValue: "Items per" })} {t.bin}
           </Label>
           <div className="flex gap-2">
             <Input
@@ -136,7 +134,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
               min={1}
               value={form.minItemsPerBin}
               onChange={(e) => form.setMinItemsPerBin(e.target.value)}
-              placeholder="Min"
+              placeholder={tx("min_7eb0ce", { defaultValue: "Min" })}
               aria-invalid={!!form.rangeError}
             />
             <Input
@@ -145,8 +143,8 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
               min={1}
               value={form.maxItemsPerBin}
               onChange={(e) => form.setMaxItemsPerBin(e.target.value)}
-              placeholder="Max"
-              aria-label={`Max items per ${t.bin}`}
+              placeholder={tx("max_a95e85", { defaultValue: "Max" })}
+              aria-label={tx("max_items_per_bin_109b38", { defaultValue: "Max items per {{bin}}", bin: t.bin })}
               aria-invalid={!!form.rangeError}
             />
           </div>
@@ -161,14 +159,12 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
           <Label
             htmlFor="reorg-notes"
             className="text-[12px] text-[var(--text-secondary)] font-medium block mb-2"
-          >
-            Additional instructions
-          </Label>
+          > {tx("additional_instructions_6ad181", { defaultValue: "Additional instructions" })} </Label>
           <Textarea
             id="reorg-notes"
             value={form.userNotes}
             onChange={(e) => form.setUserNotes(e.target.value)}
-            placeholder="e.g. Keep kitchen items separate from garage tools"
+            placeholder={tx("e_g_keep_kitchen_items_separate_from_garage_tools_ae8f16", { defaultValue: "e.g. Keep kitchen items separate from garage tools" })}
             rows={2}
           />
         </div>
@@ -196,7 +192,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
         ))}
 
         <div className="mt-3 pt-3 border-t border-[var(--border-subtle)] text-[12px] text-[var(--text-tertiary)]">
-          {itemCount} item{itemCount !== 1 ? 's' : ''} across selected {t.bins}
+          {itemCount} {tx("item_3a7d97", { defaultValue: "item" })}{itemCount !== 1 ? 's' : ''} {tx("across_selected_eaf487", { defaultValue: "across selected" })} {t.bins}
         </div>
       </div>
     </Disclosure>

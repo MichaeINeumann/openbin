@@ -1,4 +1,5 @@
 import { ArrowUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { AiCreditDisplay } from '@/features/ai/AiCreditDisplay';
 import { visionWeight } from '@/lib/aiCreditCost';
@@ -28,15 +29,14 @@ export function AiCorrectionWidget({
   onSubmit,
   onReanalyze,
 }: AiCorrectionWidgetProps) {
+  const { t: tx } = useTranslation('ui');
   const trimmed = text.trim();
   const cost = trimmed ? 1 : visionWeight(photoCount);
 
   return (
     <div className="animate-fade-in space-y-1.5">
       {correctionCount >= MAX_CORRECTIONS ? (
-        <p className="text-[12px] text-[var(--text-tertiary)] italic">
-          You can still edit any field below.
-        </p>
+        <p className="text-[12px] text-[var(--text-tertiary)] italic"> {tx("you_can_still_edit_any_field_below_2b2915", { defaultValue: "You can still edit any field below." })} </p>
       ) : (
         <div className="row">
           <Input
@@ -48,7 +48,7 @@ export function AiCorrectionWidget({
                 onSubmit();
               }
             }}
-            placeholder="Optionally describe what to fix..."
+            placeholder={tx("optionally_describe_what_to_fix_d66c41", { defaultValue: "Optionally describe what to fix..." })}
             className="flex-1 h-9 text-[13px]"
           />
           {trimmed ? (
@@ -64,9 +64,7 @@ export function AiCorrectionWidget({
               type="button"
               onClick={onReanalyze}
               className="shrink-0 h-9 px-3 rounded-[var(--radius-lg)] bg-[var(--ai-accent)] text-[var(--text-on-accent)] hover:bg-[var(--ai-accent-hover)] transition-colors text-[13px] font-medium"
-            >
-              Reanalyze
-            </button>
+            > {tx("reanalyze_a7f79d", { defaultValue: "Reanalyze" })} </button>
           )}
         </div>
       )}

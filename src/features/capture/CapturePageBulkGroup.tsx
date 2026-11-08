@@ -1,5 +1,6 @@
 import { Check, Images, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { TourLauncher } from '@/features/tour/TourLauncher';
 import { cn, focusRing, pluralize } from '@/lib/utils';
@@ -19,6 +20,7 @@ function viewfinderHint(currentGroup: number, photosInCurrentGroup: number): str
 }
 
 export function CapturePageBulkGroup() {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const {
     videoRef,
@@ -106,7 +108,7 @@ export function CapturePageBulkGroup() {
                 focusRing,
                 'h-8 w-8 flex items-center justify-center text-white/90 hover:text-white focus-visible:ring-offset-2 focus-visible:ring-offset-black',
               )}
-              aria-label="Close"
+              aria-label={tx("close_bbfa77", { defaultValue: "Close" })}
             >
               <X className="h-5 w-5" />
             </button>
@@ -114,8 +116,7 @@ export function CapturePageBulkGroup() {
             <div
               aria-live="polite"
               className="text-[11px] font-medium text-white/90 tracking-wide"
-            >
-              Bin #{currentGroup + 1} · {pluralize(photosInCurrentGroup, 'photo')}
+            > {tx("bin_1752e7", { defaultValue: "Bin #" })}{currentGroup + 1} · {pluralize(photosInCurrentGroup, 'photo')}
             </div>
 
             <div className="flex items-center gap-2">
@@ -128,7 +129,7 @@ export function CapturePageBulkGroup() {
                   focusRing,
                   'h-8 w-8 flex items-center justify-center text-white/90 hover:text-white focus-visible:ring-offset-2 focus-visible:ring-offset-black',
                 )}
-                aria-label="Open photo library"
+                aria-label={tx("open_photo_library_0299ef", { defaultValue: "Open photo library" })}
               >
                 <Images className="h-5 w-5" />
               </button>
@@ -152,9 +153,7 @@ export function CapturePageBulkGroup() {
             style={{ minHeight: 56 }}
           >
             {photos.length === 0 ? (
-              <div className="px-3 py-3 text-[12px] text-white/40 italic">
-                No photos yet
-              </div>
+              <div className="px-3 py-3 text-[12px] text-white/40 italic"> {tx("no_photos_yet_44bc4a", { defaultValue: "No photos yet" })} </div>
             ) : (
               /* Outer wrapper is <div> not <ul>: groups are visual clusters; only photo <li>s are listitems */
               <div className="flex items-center gap-0 px-3 py-2">
@@ -193,7 +192,7 @@ export function CapturePageBulkGroup() {
               type="button"
               disabled={photos.length === 0}
               onClick={handleDone}
-              aria-label="Done"
+              aria-label={tx("done_e9b450", { defaultValue: "Done" })}
               className={cn(
                 focusRing,
                 'w-[54px] text-[13px] focus-visible:ring-offset-2 focus-visible:ring-offset-black',
@@ -201,9 +200,7 @@ export function CapturePageBulkGroup() {
                   ? 'font-medium text-white/35 cursor-not-allowed'
                   : 'font-semibold text-white hover:text-white/90',
               )}
-            >
-              Done
-            </button>
+            > {tx("done_e9b450", { defaultValue: "Done" })} </button>
 
             <ShutterButton
               onClick={capture}
@@ -215,7 +212,7 @@ export function CapturePageBulkGroup() {
               disabled={photosInCurrentGroup === 0}
               onClick={nextGroup}
               data-tour="capture-grouping"
-              aria-label="Next bin"
+              aria-label={tx("next_bin_a263f9", { defaultValue: "Next bin" })}
               className={cn(
                 focusRing,
                 'w-[54px] text-[9px] leading-[1.1] flex flex-col items-center gap-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-black',
@@ -225,8 +222,8 @@ export function CapturePageBulkGroup() {
               )}
             >
               <Check className="h-3 w-3" aria-hidden="true" />
-              <span>Next</span>
-              <span>bin</span>
+              <span>{tx("next_bc9819", { defaultValue: "Next" })}</span>
+              <span>{tx("bin_9a5d56", { defaultValue: "bin" })}</span>
             </button>
           </div>
         </>

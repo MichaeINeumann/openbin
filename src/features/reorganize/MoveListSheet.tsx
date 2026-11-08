@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import '@/features/print/print.css';
 import { getAreaPath } from '@/features/areas/useAreas';
 import { resolveColor } from '@/lib/colorPalette';
@@ -23,11 +24,13 @@ export function MoveListSheet({
   totalDestinationBins,
   summary,
 }: MoveListSheetProps) {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   if (sourceCards.length === 0) {
     return (
-      <div className="item-sheet-empty">No source {t.bins} selected</div>
+      <div className="item-sheet-empty">{tx("no_source_a284a4", { defaultValue: "No source" })} {t.bins} {tx("selected_835f3b", { defaultValue: "selected" })}</div>
     );
   }
 
@@ -35,11 +38,11 @@ export function MoveListSheet({
     <div className="item-sheet">
       <div className="move-list-header">
         <div className="move-list-title-row">
-          <span className="move-list-title">Move List</span>
-          <span className="move-list-date">{new Date().toLocaleDateString()}</span>
+          <span className="move-list-title">{tx("move_list_6fd697", { defaultValue: "Move List" })}</span>
+          <span className="move-list-date">{new Date().toLocaleDateString(uiLanguage)}</span>
         </div>
         <div className="move-list-counts">
-          {sourceCards.length} → {totalDestinationBins} {totalDestinationBins === 1 ? t.bin : t.bins} · {totalItems} item{totalItems !== 1 ? 's' : ''} · {totalMoves} move{totalMoves !== 1 ? 's' : ''}
+          {sourceCards.length} → {totalDestinationBins} {totalDestinationBins === 1 ? t.bin : t.bins} · {totalItems} {tx("item_3a7d97", { defaultValue: "item" })}{totalItems !== 1 ? 's' : ''} · {totalMoves} {tx("move_379d6c", { defaultValue: "move" })}{totalMoves !== 1 ? 's' : ''}
         </div>
         {summary && <p className="move-list-summary">{summary}</p>}
       </div>
@@ -57,6 +60,7 @@ interface MoveListSectionProps {
 }
 
 function MoveListSection({ card, areas }: MoveListSectionProps) {
+  const { t: tx } = useTranslation('ui');
   const bin = card.sourceBin;
   const Icon = bin.icon ? resolveIcon(bin.icon) : null;
   const colorPreset = bin.color ? resolveColor(bin.color) : undefined;
@@ -89,11 +93,11 @@ function MoveListSection({ card, areas }: MoveListSectionProps) {
             </>
           )}
           <span className="item-sheet-item-count">
-            {card.preserved ? 'will be kept' : 'will be emptied'}
+            {card.preserved ? tx("will_be_kept_ce9697", { defaultValue: "will be kept" }) : tx("will_be_emptied_a3c668", { defaultValue: "will be emptied" })}
           </span>
           <span className="move-list-meta-sep" aria-hidden="true">·</span>
           <span className="move-list-meta-count">
-            {itemTotal} item{itemTotal !== 1 ? 's' : ''}
+            {itemTotal} {tx("item_3a7d97", { defaultValue: "item" })}{itemTotal !== 1 ? 's' : ''}
           </span>
         </div>
       </div>
@@ -121,6 +125,7 @@ function MoveListCluster({
   binId: string;
   index: number;
 }) {
+  const { t: tx } = useTranslation('ui');
   const itemCount = cluster.items.length;
   return (
     <div className="move-list-cluster" data-testid={`move-list-cluster-${binId}-${index}`}>
@@ -131,7 +136,7 @@ function MoveListCluster({
           {cluster.destinationKept ? 'kept' : 'new'}
         </span>
         <span className="move-list-cluster-count">
-          {itemCount} item{itemCount !== 1 ? 's' : ''}
+          {itemCount} {tx("item_3a7d97", { defaultValue: "item" })}{itemCount !== 1 ? 's' : ''}
         </span>
         {cluster.destinationTags.length > 0 && (
           <span className="move-list-cluster-tags">

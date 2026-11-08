@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '@/components/ui/toast';
 import type { ActiveDrag, DragPayload, DropTarget, KeyboardMoveState, PointerPayload } from './photoGridTypes';
 import type { BulkAddAction, BulkAddState } from './useBulkGroupAdd';
@@ -64,6 +65,7 @@ export interface UsePhotoGridDragResult {
  *   - undo toast + auto-clear for JOIN/SPLIT/MOVE actions surfaced via state.lastToggle
  */
 export function usePhotoGridDrag({ state, dispatch }: UsePhotoGridDragArgs): UsePhotoGridDragResult {
+  const { t: tx } = useTranslation('ui');
   const { showToast } = useToast();
   const lastToggleRef = useRef<typeof state.lastToggle>(null);
   const [drag, setDrag] = useState<DragState>({ phase: 'idle' });
@@ -95,7 +97,7 @@ export function usePhotoGridDrag({ state, dispatch }: UsePhotoGridDragArgs): Use
       showToast({
         message: state.lastToggle.verb,
         duration: 4000,
-        action: { label: 'Undo', onClick: () => dispatch({ type: 'UNDO_LAST_TOGGLE' }) },
+        action: { label: tx("undo_39fc72", { defaultValue: "Undo" }), onClick: () => dispatch({ type: 'UNDO_LAST_TOGGLE' }) },
       });
       const timer = setTimeout(() => dispatch({ type: 'CLEAR_LAST_TOGGLE' }), 4000);
       return () => clearTimeout(timer);

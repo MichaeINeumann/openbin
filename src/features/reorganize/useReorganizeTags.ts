@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAiStream } from '@/features/ai/useAiStream';
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -43,6 +44,7 @@ interface BulkApplyResponse {
 }
 
 export function useReorganizeTags() {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const {
     result,
@@ -105,7 +107,7 @@ export function useReorganizeTags() {
         notify(Events.TAG_COLORS);
         return true;
       } catch (err) {
-        setApplyError(getErrorMessage(err, 'Failed to apply tag suggestions'));
+        setApplyError(getErrorMessage(err, tx("failed_to_apply_tag_suggestions_b52a02", { defaultValue: "Failed to apply tag suggestions" })));
         return false;
       } finally {
         setIsApplying(false);

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Disclosure } from '@/components/ui/disclosure';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -47,6 +48,7 @@ export function GroupReviewForm({
   aiEnabled,
   afterName,
 }: GroupReviewFormProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const nameFilled = aiFill.filled.has('name');
   const itemsFilled = aiFill.filled.has('items');
@@ -68,7 +70,7 @@ export function GroupReviewForm({
           onChange={(e) =>
             dispatch({ type: 'UPDATE_GROUP', id: group.id, changes: { name: e.target.value } })
           }
-          placeholder="e.g., Holiday Decorations"
+          placeholder={tx("e_g_holiday_decorations_877312", { defaultValue: "e.g., Holiday Decorations" })}
           className="font-medium"
         />
       </div>
@@ -100,7 +102,7 @@ export function GroupReviewForm({
       </div>
 
       <div className="space-y-2">
-        <Label>Area</Label>
+        <Label>{tx("area_2745de", { defaultValue: "Area" })}</Label>
         <AreaPicker
           locationId={locationId ?? undefined}
           value={group.areaId}
@@ -111,25 +113,25 @@ export function GroupReviewForm({
       </div>
 
       <Disclosure
-        label="More options"
+        label={tx("more_options_86c0a3", { defaultValue: "More options" })}
         labelClassName="py-2 text-[var(--accent)] cursor-pointer"
       >
         <div className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor={`notes-${group.id}`}>Notes</Label>
+            <Label htmlFor={`notes-${group.id}`}>{tx("notes_704400", { defaultValue: "Notes" })}</Label>
             <Textarea
               id={`notes-${group.id}`}
               value={group.notes}
               onChange={(e) =>
                 dispatch({ type: 'UPDATE_GROUP', id: group.id, changes: { notes: e.target.value } })
               }
-              placeholder={`Notes about this ${t.bin}...`}
+              placeholder={tx("notes_about_this_bin_cb9f7b", { defaultValue: "Notes about this {{bin}}...", bin: t.bin })}
               rows={2}
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Tags</Label>
+            <Label>{tx("tags_848eed", { defaultValue: "Tags" })}</Label>
             <TagInput
               tags={group.tags}
               onChange={(tags) =>
@@ -140,7 +142,7 @@ export function GroupReviewForm({
           </div>
 
           <div className="space-y-2">
-            <Label>Icon</Label>
+            <Label>{tx("icon_716f63", { defaultValue: "Icon" })}</Label>
             <IconPicker
               value={group.icon}
               onChange={(icon) =>
@@ -150,7 +152,7 @@ export function GroupReviewForm({
           </div>
 
           <div className="space-y-2">
-            <Label>Color</Label>
+            <Label>{tx("color_1d0c83", { defaultValue: "Color" })}</Label>
             <ColorPicker
               value={group.color}
               onChange={(color) =>

@@ -1,4 +1,5 @@
 import { Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,7 @@ export function ReorganizeTagsPreview({
   selections,
   onSelectionsChange,
 }: Props) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const effective: LenientProposal = result ?? partialResult;
   const hasTaxonomy =
@@ -65,12 +67,8 @@ export function ReorganizeTagsPreview({
     return (
       <div className="flex flex-col items-center gap-3 py-6 text-center">
         <Sparkles className="h-6 w-6 text-[var(--text-tertiary)]" />
-        <p className="text-[14px] text-[var(--text-secondary)]">
-          No tag changes suggested. Try a different change level or granularity.
-        </p>
-        <Button variant="outline" size="sm" onClick={onRegenerate}>
-          Regenerate
-        </Button>
+        <p className="text-[14px] text-[var(--text-secondary)]"> {tx("no_tag_changes_suggested_try_a_different_change_level_or_gra_3b6bfd", { defaultValue: "No tag changes suggested. Try a different change level or granularity." })} </p>
+        <Button variant="outline" size="sm" onClick={onRegenerate}> {tx("regenerate_b04c99", { defaultValue: "Regenerate" })} </Button>
       </div>
     );
   }
@@ -94,7 +92,7 @@ export function ReorganizeTagsPreview({
         <div className="flex flex-col gap-3 pb-3 border-b border-[var(--border-subtle)]">
           {effective.taxonomy.newTags.length > 0 && (
             <div>
-              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">New tags</div>
+              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">{tx("new_tags_cab7d6", { defaultValue: "New tags" })}</div>
               <div className="flex flex-wrap gap-1.5">
                 {effective.taxonomy.newTags.map((n) => {
                   const checked = selections.newTags.has(n.tag);
@@ -106,7 +104,7 @@ export function ReorganizeTagsPreview({
                       <Checkbox
                         checked={checked}
                         onCheckedChange={() => toggleSet('newTags', n.tag)}
-                        aria-label={`New tag ${n.tag}`}
+                        aria-label={tx("new_tag_value0_f5cb55", { defaultValue: "New tag {{value0}}", value0: n.tag })}
                       />
                       <Badge variant="secondary" className="text-[13px]">
                         <span>{n.tag}</span>
@@ -122,7 +120,7 @@ export function ReorganizeTagsPreview({
           )}
           {effective.taxonomy.renames.length > 0 && (
             <div>
-              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">Renames</div>
+              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">{tx("renames_df24ce", { defaultValue: "Renames" })}</div>
               <div className="flex flex-col gap-1">
                 {effective.taxonomy.renames.map((r) => {
                   const key = `${r.from}->${r.to}`;
@@ -135,7 +133,7 @@ export function ReorganizeTagsPreview({
                       <Checkbox
                         checked={checked}
                         onCheckedChange={() => toggleSet('renames', key)}
-                        aria-label={`Rename ${r.from} to ${r.to}`}
+                        aria-label={tx("rename_value0_to_value1_329bc7", { defaultValue: "Rename {{value0}} to {{value1}}", value0: r.from, value1: r.to })}
                       />
                       <span className="text-[13px]">{`${r.from} → ${r.to}`}</span>
                     </div>
@@ -146,7 +144,7 @@ export function ReorganizeTagsPreview({
           )}
           {effective.taxonomy.merges.length > 0 && (
             <div>
-              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">Merges</div>
+              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">{tx("merges_01d28a", { defaultValue: "Merges" })}</div>
               <div className="flex flex-col gap-1">
                 {effective.taxonomy.merges.map((m) => {
                   const checked = selections.merges.has(m.to);
@@ -158,7 +156,7 @@ export function ReorganizeTagsPreview({
                       <Checkbox
                         checked={checked}
                         onCheckedChange={() => toggleSet('merges', m.to)}
-                        aria-label={`Merge into ${m.to}`}
+                        aria-label={tx("merge_into_value0_32f2a5", { defaultValue: "Merge into {{value0}}", value0: m.to })}
                       />
                       <span className="text-[13px]">{`${m.from.join(', ')} → ${m.to}`}</span>
                     </div>
@@ -169,7 +167,7 @@ export function ReorganizeTagsPreview({
           )}
           {effective.taxonomy.parents.length > 0 && (
             <div>
-              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">Parent moves</div>
+              <div className="text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">{tx("parent_moves_156207", { defaultValue: "Parent moves" })}</div>
               <div className="flex flex-col gap-1">
                 {effective.taxonomy.parents.map((p) => {
                   const key = `${p.tag}->${p.parent}`;
@@ -183,9 +181,9 @@ export function ReorganizeTagsPreview({
                       <Checkbox
                         checked={checked}
                         onCheckedChange={() => toggleSet('parents', key)}
-                        aria-label={`Set parent of ${p.tag} to ${parentLabel}`}
+                        aria-label={tx("set_parent_of_value0_to_parentlabel_e5278c", { defaultValue: "Set parent of {{value0}} to {{parentLabel}}", value0: p.tag, parentLabel: parentLabel })}
                       />
-                      <span className="text-[13px]">{`${p.tag} → under ${parentLabel}`}</span>
+                      <span className="text-[13px]">{tx("value0_under_parentlabel_d837bb", { defaultValue: "{{value0}} → under {{parentLabel}}", value0: p.tag, parentLabel: parentLabel })}</span>
                     </div>
                   );
                 })}
@@ -199,8 +197,7 @@ export function ReorganizeTagsPreview({
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <div className="text-[12px] font-medium text-[var(--text-secondary)]">
-              {assignmentsChecked} of {effective.assignments.length} {t.bins} checked
-            </div>
+              {assignmentsChecked} {tx("of_de04fa", { defaultValue: "of" })} {effective.assignments.length} {t.bins} {tx("checked_75e4ae", { defaultValue: "checked" })} </div>
             <div className="flex items-center gap-3 text-[12px]">
               <button
                 type="button"
@@ -211,16 +208,12 @@ export function ReorganizeTagsPreview({
                   })
                 }
                 className="text-[var(--accent)] hover:underline"
-              >
-                Select all
-              </button>
+              > {tx("select_all_913aff", { defaultValue: "Select all" })} </button>
               <button
                 type="button"
                 onClick={() => onSelectionsChange({ ...selections, assignments: new Set() })}
                 className="text-[var(--text-tertiary)] hover:underline"
-              >
-                Select none
-              </button>
+              > {tx("select_none_618cfb", { defaultValue: "Select none" })} </button>
             </div>
           </div>
           <div className="flex flex-col divide-y divide-[var(--border-subtle)] max-h-[420px] overflow-y-auto">
@@ -267,19 +260,15 @@ export function ReorganizeTagsPreview({
       )}
 
       <div className="flex items-center justify-between gap-2 pt-3 border-t border-[var(--border-subtle)]">
-        <Button variant="ghost" size="sm" onClick={onCancel} disabled={isApplying}>
-          Cancel
-        </Button>
+        <Button variant="ghost" size="sm" onClick={onCancel} disabled={isApplying}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={onRegenerate} disabled={isApplying || isStreaming}>
-            Regenerate
-          </Button>
+          <Button variant="outline" size="sm" onClick={onRegenerate} disabled={isApplying || isStreaming}> {tx("regenerate_b04c99", { defaultValue: "Regenerate" })} </Button>
           <Button
             size="sm"
             onClick={onAccept}
             disabled={isApplying || isStreaming || (!hasTaxonomy && assignmentsChecked === 0)}
           >
-            {isApplying ? 'Applying…' : 'Apply'}
+            {isApplying ? 'Applying…' : tx("apply_cfea41", { defaultValue: "Apply" })}
           </Button>
         </div>
       </div>

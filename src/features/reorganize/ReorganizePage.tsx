@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { OptionGroup } from '@/components/ui/option-group';
@@ -28,6 +29,7 @@ const UpgradePrompt = __EE__
   : ((() => null) as React.FC<Record<string, unknown>>);
 
 export function ReorganizePage() {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const t = useTerminology();
   const { activeLocationId } = useAuth();
@@ -67,12 +69,12 @@ export function ReorganizePage() {
   if (reorganizeGated) {
     return (
       <div className="page-content max-w-6xl">
-        <PageHeader title="Reorganize" back />
+        <PageHeader title={tx("reorganize_0ab81d", { defaultValue: "Reorganize" })} back />
         {__EE__ && (
           <Suspense fallback={null}>
             <UpgradePrompt
               feature="Reorganize"
-              description={`AI-powered ${t.bin} reorganization is available on the Pro plan.`}
+              description={tx("ai_powered_bin_reorganization_is_available_on_the_pro_plan_946df2", { defaultValue: "AI-powered {{bin}} reorganization is available on the Pro plan.", bin: t.bin })}
               upgradeAction={planInfo.upgradeAction}
             />
           </Suspense>
@@ -84,7 +86,7 @@ export function ReorganizePage() {
   if (isLoading) {
     return (
       <div className="page-content max-w-6xl">
-        <PageHeader title="Reorganize" back />
+        <PageHeader title={tx("reorganize_0ab81d", { defaultValue: "Reorganize" })} back />
         <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-start gap-4">
           <div className="flex flex-col gap-4">
             {[1, 2].map((i) => (
@@ -116,7 +118,7 @@ export function ReorganizePage() {
 
   return (
     <div className="page-content max-w-6xl">
-      <PageHeader title="Reorganize" back actions={<TourLauncher tourId="reorganize" />} />
+      <PageHeader title={tx("reorganize_0ab81d", { defaultValue: "Reorganize" })} back actions={<TourLauncher tourId="reorganize" />} />
 
       <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-start gap-4">
         <div className="flex flex-col gap-4">

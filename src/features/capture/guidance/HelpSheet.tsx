@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CAMERA_TIPS } from './tips';
@@ -8,11 +9,12 @@ interface HelpSheetProps {
 }
 
 export function HelpSheet({ isOpen, onClose }: HelpSheetProps) {
+  const { t: tx } = useTranslation('ui');
 	return (
 		<Dialog open={isOpen} onOpenChange={(next) => { if (!next) onClose(); }}>
 			<DialogContent className="max-w-sm" centered>
 				<DialogHeader>
-					<DialogTitle>Photo tips</DialogTitle>
+					<DialogTitle>{tx("photo_tips_4b4e86", { defaultValue: "Photo tips" })}</DialogTitle>
 				</DialogHeader>
 				<ul className="flex flex-col gap-3">
 					{CAMERA_TIPS.map((tip) => {
@@ -38,9 +40,7 @@ export function HelpSheet({ isOpen, onClose }: HelpSheetProps) {
 						size="lg"
 						onClick={onClose}
 						className="w-full sm:w-auto"
-					>
-						Got it
-					</Button>
+					> {tx("got_it_5b8027", { defaultValue: "Got it" })} </Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

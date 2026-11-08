@@ -1,4 +1,5 @@
 import { Check, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn, flatCard, plural } from '@/lib/utils';
 import type { ExecutionResult } from './useActionExecutor';
 
@@ -8,16 +9,16 @@ interface AiTurnExecutionResultProps {
 }
 
 export function AiTurnExecutionResult({ result, onBinClick }: AiTurnExecutionResultProps) {
+  const { t: tx } = useTranslation('ui');
   const completedCount = result.completedActionIndices.length;
 
   return (
     <div className={cn(flatCard, 'ai-turn-enter p-3 space-y-2')}>
       <div className="flex items-center gap-2 text-[14px] text-[var(--text-primary)]">
         <Check className="h-4 w-4 text-[var(--color-success)]" strokeWidth={3} />
-        <span>
-          Applied {completedCount} {plural(completedCount, 'change')}
+        <span> {tx("applied_a3e4a5", { defaultValue: "Applied" })} {completedCount} {plural(completedCount, 'change')}
           {result.failedCount > 0 && (
-            <span className="text-[var(--destructive)]"> · {result.failedCount} failed</span>
+            <span className="text-[var(--destructive)]"> · {result.failedCount} {tx("failed_5f5f87", { defaultValue: "failed" })}</span>
           )}
         </span>
       </div>

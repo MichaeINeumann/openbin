@@ -1,5 +1,6 @@
 import { Check, RefreshCw, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -38,6 +39,7 @@ export function AiSuggestionsPanel({
   onApply,
   onDismiss,
 }: AiSuggestionsPanelProps) {
+  const { t: tx } = useTranslation('ui');
   const isReanalysis = !!previousResult;
   const nameDidChange = isReanalysis && nameChanged(previousResult, suggestions);
   const itemsDidChange = isReanalysis && itemsChanged(previousResult, suggestions);
@@ -61,18 +63,14 @@ export function AiSuggestionsPanel({
       <CardContent className="space-y-4">
         <div>
           <Label className="flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[var(--accent)]" />
-            AI Suggestions
-          </Label>
+            <Sparkles className="h-3.5 w-3.5 text-[var(--accent)]" /> {tx("ai_suggestions_de326d", { defaultValue: "AI Suggestions" })} </Label>
           {isReanalysis ? (
             <div className="flex items-center gap-1.5 mt-1 text-[13px] text-[var(--accent)]">
               <RefreshCw className="h-3 w-3" />
-              <span>Reanalysis complete — compare with previous results</span>
+              <span>{tx("reanalysis_complete_compare_with_previous_results_149ea9", { defaultValue: "Reanalysis complete — compare with previous results" })}</span>
             </div>
           ) : (
-            <p className="text-[13px] text-[var(--text-tertiary)] mt-0.5">
-              Select which suggestions to apply to this bin.
-            </p>
+            <p className="text-[13px] text-[var(--text-tertiary)] mt-0.5"> {tx("select_which_suggestions_to_apply_to_this_bin_972422", { defaultValue: "Select which suggestions to apply to this bin." })} </p>
           )}
         </div>
 
@@ -89,11 +87,11 @@ export function AiSuggestionsPanel({
               <div className="flex items-center gap-1.5">
                 <p className="text-[13px] font-medium text-[var(--text-secondary)]">Name</p>
                 {nameDidChange && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Changed</Badge>
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{tx("changed_cb5424", { defaultValue: "Changed" })}</Badge>
                 )}
               </div>
               <p className="text-[15px] text-[var(--text-primary)] font-semibold">{suggestions.name}</p>
-              <p className="text-[12px] text-[var(--text-tertiary)]">Current: {currentName}</p>
+              <p className="text-[12px] text-[var(--text-tertiary)]">{tx("current_19889c", { defaultValue: "Current:" })} {currentName}</p>
             </div>
           </button>
         )}
@@ -109,9 +107,9 @@ export function AiSuggestionsPanel({
             </span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
-                <p className="text-[13px] font-medium text-[var(--text-secondary)]">Items</p>
+                <p className="text-[13px] font-medium text-[var(--text-secondary)]">{tx("items_44d25b", { defaultValue: "Items" })}</p>
                 {itemsDidChange && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Changed</Badge>
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{tx("changed_cb5424", { defaultValue: "Changed" })}</Badge>
                 )}
               </div>
               <ul className="mt-1 space-y-0.5">
@@ -124,8 +122,7 @@ export function AiSuggestionsPanel({
                 ))}
               </ul>
               {currentItems.length > 0 && (
-                <p className="text-[12px] text-[var(--text-tertiary)] mt-1">
-                  Will replace current {currentItems.length} item{currentItems.length !== 1 ? 's' : ''}
+                <p className="text-[12px] text-[var(--text-tertiary)] mt-1"> {tx("will_replace_current_fde375", { defaultValue: "Will replace current" })} {currentItems.length} {tx("item_3a7d97", { defaultValue: "item" })}{currentItems.length !== 1 ? 's' : ''}
                 </p>
               )}
             </div>
@@ -137,15 +134,11 @@ export function AiSuggestionsPanel({
           <Button
             variant="ghost"
             onClick={onDismiss}
-          >
-            Dismiss
-          </Button>
+          > {tx("dismiss_70afe9", { defaultValue: "Dismiss" })} </Button>
           <Button
             onClick={handleApply}
             disabled={!anySelected}
-          >
-            Apply Selected
-          </Button>
+          > {tx("apply_selected_aadbda", { defaultValue: "Apply Selected" })} </Button>
         </div>
       </CardContent>
     </Card>

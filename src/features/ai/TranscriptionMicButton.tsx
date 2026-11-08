@@ -1,4 +1,5 @@
 import { Loader2, Mic, Square } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useCreditCostLabel } from '@/lib/aiCreditCost';
 import type { useTranscription } from '@/lib/useTranscription';
@@ -10,20 +11,21 @@ interface TranscriptionMicButtonProps {
 }
 
 export function TranscriptionMicButton({ transcription, className }: TranscriptionMicButtonProps) {
+  const { t: tx } = useTranslation('ui');
   const { state, duration, start, stop } = transcription;
   const elapsed = formatElapsed(duration);
   const { label: voiceInputLabel } = useCreditCostLabel('Voice input', 1);
 
   if (state === 'recording') {
     return (
-      <output className={cn('flex items-center gap-1.5', className)} aria-label={`Recording: ${elapsed}`}>
+      <output className={cn('flex items-center gap-1.5', className)} aria-label={tx("recording_elapsed_84a1b8", { defaultValue: "Recording: {{elapsed}}", elapsed: elapsed })}>
         <span className="text-[11px] text-[var(--text-tertiary)] tabular-nums">{elapsed}</span>
-        <Tooltip content="Stop recording">
+        <Tooltip content={tx("stop_recording_ee0d9d", { defaultValue: "Stop recording" })}>
           <button
             type="button"
             onClick={stop}
             className="relative flex items-center justify-center size-8 rounded-full bg-[var(--destructive)] text-[var(--text-on-accent)] hover:bg-[var(--destructive-hover)] active:bg-[var(--destructive-active)] transition-colors"
-            aria-label="Stop recording"
+            aria-label={tx("stop_recording_ee0d9d", { defaultValue: "Stop recording" })}
           >
             <span className="absolute inset-[-3px] rounded-full bg-[var(--destructive)]/25 animate-pulse motion-reduce:animate-none" />
             <Square className="h-3 w-3 fill-current" />
@@ -37,7 +39,7 @@ export function TranscriptionMicButton({ transcription, className }: Transcripti
     return (
       <output
         className={cn('flex items-center justify-center p-1.5 text-[var(--accent)]', className)}
-        aria-label="Transcribing audio"
+        aria-label={tx("transcribing_audio_44f08a", { defaultValue: "Transcribing audio" })}
       >
         <Loader2 className="h-5 w-5 animate-spin" />
       </output>

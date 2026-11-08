@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { KeyboardMoveState, PointerPayload } from './photoGridTypes';
 import type { Photo } from './useBulkGroupAdd';
@@ -43,6 +44,7 @@ export function StackedPhotoTile({
   onKeyDown,
   onRemove,
 }: StackedPhotoTileProps) {
+  const { t: tx } = useTranslation('ui');
   const payload: PointerPayload = {
     photoId: photo.id,
     sourceGroupId,
@@ -65,7 +67,7 @@ export function StackedPhotoTile({
     <div
       role="button"
       tabIndex={isTop ? 0 : -1}
-      aria-label={`Photo ${indexLabel} — drag to group with another photo`}
+      aria-label={tx("photo_indexlabel_drag_to_group_with_another_photo_a65f2a", { defaultValue: "Photo {{indexLabel}} — drag to group with another photo", indexLabel: indexLabel })}
       aria-grabbed={isDragging || undefined}
       onPointerDown={isTop ? (e) => onPointerDown(e, payload) : undefined}
       onKeyDown={isTop ? (e) => onKeyDown(e, keyboardPayload) : undefined}
@@ -92,7 +94,7 @@ export function StackedPhotoTile({
         src={photo.previewUrl}
         draggable={false}
         // biome-ignore lint/a11y/noRedundantAlt: accessible name must match /photo \d+/i for tests
-        alt={`Photo ${indexLabel}`}
+        alt={tx("photo_indexlabel_1a3d88", { defaultValue: "Photo {{indexLabel}}", indexLabel: indexLabel })}
         className="pointer-events-none h-full w-full rounded-[var(--radius-sm)] object-cover"
         style={{ boxShadow: shadow }}
       />
@@ -104,7 +106,7 @@ export function StackedPhotoTile({
             onRemove();
           }}
           onPointerDown={(e) => e.stopPropagation()}
-          aria-label={`Remove photo ${indexLabel}`}
+          aria-label={tx("remove_photo_indexlabel_740b8e", { defaultValue: "Remove photo {{indexLabel}}", indexLabel: indexLabel })}
           className="absolute top-1 right-1 size-8 flex items-center justify-center rounded-[var(--radius-xs)] bg-[var(--overlay-button)] text-white opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity hover:bg-[var(--overlay-button-hover)] hover:text-[var(--destructive)]"
         >
           <X className="h-4 w-4" />

@@ -1,5 +1,6 @@
 import { SwitchCamera, X } from 'lucide-react';
 import { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { TourLauncher } from '@/features/tour/TourLauncher';
 import { cn, focusRing, pluralize } from '@/lib/utils';
@@ -16,6 +17,7 @@ import { Viewfinder } from './Viewfinder';
  * (no binId — photos are stashed in the capturedPhotos store on Done).
  */
 export function CaptureSingleBinPage({ binId }: { binId?: string }) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
 
   const {
@@ -85,7 +87,7 @@ export function CaptureSingleBinPage({ binId }: { binId?: string }) {
                 focusRing,
                 'h-8 w-8 flex items-center justify-center text-white/90 hover:text-white focus-visible:ring-offset-2 focus-visible:ring-offset-black',
               )}
-              aria-label="Close"
+              aria-label={tx("close_bbfa77", { defaultValue: "Close" })}
             >
               <X className="h-5 w-5" />
             </button>
@@ -108,9 +110,7 @@ export function CaptureSingleBinPage({ binId }: { binId?: string }) {
             style={{ minHeight: 56 }}
           >
             {photos.length === 0 ? (
-              <div className="px-3 py-3 text-[12px] text-white/40 italic">
-                No photos yet
-              </div>
+              <div className="px-3 py-3 text-[12px] text-white/40 italic"> {tx("no_photos_yet_44bc4a", { defaultValue: "No photos yet" })} </div>
             ) : (
               <ul className="flex items-center gap-[2px] px-3 py-2">
                 {photos.map((photo) => (
@@ -135,7 +135,7 @@ export function CaptureSingleBinPage({ binId }: { binId?: string }) {
             <button
               type="button"
               onClick={flipCamera}
-              aria-label="Flip camera"
+              aria-label={tx("flip_camera_ed114d", { defaultValue: "Flip camera" })}
               className={cn(
                 focusRing,
                 'w-[54px] h-11 flex items-center justify-center text-white/80 hover:text-white transition-colors focus-visible:ring-offset-2 focus-visible:ring-offset-black',
@@ -157,9 +157,7 @@ export function CaptureSingleBinPage({ binId }: { binId?: string }) {
                 focusRing,
                 'w-[54px] text-[13px] font-semibold text-white hover:text-white/90 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
               )}
-            >
-              Done
-            </button>
+            > {tx("done_e9b450", { defaultValue: "Done" })} </button>
           </div>
         </>
       )}

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAiStream } from '@/features/ai/useAiStream';
 import { addBin, deleteBin, updateBin } from '@/features/bins/useBins';
 import { useAuth } from '@/lib/auth';
@@ -29,6 +30,7 @@ export type ApplyOutcome =
   | { success: false };
 
 export function useReorganize() {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const {
     result,
@@ -109,7 +111,7 @@ export function useReorganize() {
         notify(Events.AREAS);
         return { success: true, newBinIds: [...preservedIds, ...created.map((bin) => bin.id)] };
       } catch (err) {
-        setApplyError(getErrorMessage(err, 'Failed to apply reorganization'));
+        setApplyError(getErrorMessage(err, tx("failed_to_apply_reorganization_42cdb5", { defaultValue: "Failed to apply reorganization" })));
         return { success: false };
       } finally {
         setIsApplying(false);

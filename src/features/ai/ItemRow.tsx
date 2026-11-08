@@ -1,5 +1,6 @@
 import { Minus, Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -45,6 +46,7 @@ export function ItemRow({
   onToggleSelect,
   externallyRemoved = false,
 }: ItemRowProps) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -158,13 +160,13 @@ export function ItemRow({
           <SelectionCheckbox
             checked={!!selected}
             onToggle={onToggleSelect}
-            label={`Select ${displayName}`}
+            label={tx("select_displayname_fd8055", { defaultValue: "Select {{displayName}}", displayName: displayName })}
           />
         )}
         {editingName ? (
           <input
             ref={nameInputRef}
-            aria-label="Item name"
+            aria-label={tx("item_name_b56b71", { defaultValue: "Item name" })}
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
             onKeyDown={(e) => {
@@ -190,7 +192,7 @@ export function ItemRow({
           <div className="flex items-center gap-0.5 bg-[var(--bg-input)] border border-[var(--border-flat)] rounded-[var(--radius-xs)]">
             <button
               type="button"
-              aria-label="Decrement"
+              aria-label={tx("decrement_0b826d", { defaultValue: "Decrement" })}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setQtyDraft((q) => Math.max(0, q - 1))}
               className="inline-flex items-center justify-center h-7 w-7 rounded-[var(--radius-xs)] text-[var(--text-secondary)] hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)] transition-colors"
@@ -199,7 +201,7 @@ export function ItemRow({
             </button>
             <input
               ref={qtyInputRef}
-              aria-label="Quantity"
+              aria-label={tx("quantity_44f6af", { defaultValue: "Quantity" })}
               type="number"
               min={0}
               value={qtyDraft}
@@ -213,7 +215,7 @@ export function ItemRow({
             />
             <button
               type="button"
-              aria-label="Increment"
+              aria-label={tx("increment_d12f1f", { defaultValue: "Increment" })}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => setQtyDraft((q) => q + 1)}
               className="inline-flex items-center justify-center h-7 w-7 rounded-[var(--radius-xs)] text-[var(--text-secondary)] hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)] transition-colors"
@@ -256,18 +258,12 @@ export function ItemRow({
       <Dialog open={confirmRemove} onOpenChange={setConfirmRemove}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Remove item?</DialogTitle>
-            <DialogDescription>
-              This will permanently remove &quot;{displayName}&quot; from the bin.
-            </DialogDescription>
+            <DialogTitle>{tx("remove_item_32d3a5", { defaultValue: "Remove item?" })}</DialogTitle>
+            <DialogDescription> {tx("this_will_permanently_remove_quot_af8833", { defaultValue: "This will permanently remove \"" })}{displayName}{tx("quot_from_the_bin_a23ff9", { defaultValue: "\" from the bin." })} </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setConfirmRemove(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleRemove}>
-              Remove
-            </Button>
+            <Button variant="ghost" onClick={() => setConfirmRemove(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
+            <Button variant="destructive" onClick={handleRemove}> {tx("remove_e96390", { defaultValue: "Remove" })} </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

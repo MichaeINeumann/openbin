@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useTerminology } from '@/lib/terminology';
 import { cn } from '@/lib/utils';
 
@@ -7,6 +8,7 @@ interface SplitZoneProps {
 }
 
 export function SplitZone({ visible, active }: SplitZoneProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   return (
     <div
@@ -26,8 +28,7 @@ export function SplitZone({ visible, active }: SplitZoneProps) {
             : 'border-[var(--border-flat)] text-[var(--text-secondary)]',
         )}
         style={{ padding: 16, fontSize: 12, fontWeight: 500 }}
-      >
-        Drop here to put this photo in its own {t.bin}
+      > {tx("drop_here_to_put_this_photo_in_its_own_dce23b", { defaultValue: "Drop here to put this photo in its own" })} {t.bin}
       </div>
     </div>
   );

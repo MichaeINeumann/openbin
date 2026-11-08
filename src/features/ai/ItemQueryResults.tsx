@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,6 +28,7 @@ interface ItemQueryResultsProps {
 const MAX_MATCHES = 8;
 
 export function ItemQueryResults({ matches, onBinClick }: ItemQueryResultsProps) {
+  const { t: tx } = useTranslation('ui');
   const { canWrite } = usePermissions();
   const { activeLocationId } = useAuth();
   const { showToast } = useToast();
@@ -126,15 +128,11 @@ export function ItemQueryResults({ matches, onBinClick }: ItemQueryResultsProps)
       <Dialog open={confirmRemove} onOpenChange={(v) => { if (!isBusy) setConfirmRemove(v); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Remove {selection.selectionCount} {selection.selectionCount === 1 ? 'item' : 'items'}?</DialogTitle>
-            <DialogDescription>
-              This will permanently remove the selected {selection.selectionCount === 1 ? 'item' : 'items'} from their bins.
-            </DialogDescription>
+            <DialogTitle>{tx("remove_e96390", { defaultValue: "Remove" })} {selection.selectionCount} {selection.selectionCount === 1 ? tx("item_3a7d97", { defaultValue: "item" }) : tx("items_7316c8", { defaultValue: "items" })}?</DialogTitle>
+            <DialogDescription> {tx("this_will_permanently_remove_the_selected_7ae8bf", { defaultValue: "This will permanently remove the selected" })} {selection.selectionCount === 1 ? tx("item_3a7d97", { defaultValue: "item" }) : tx("items_7316c8", { defaultValue: "items" })} {tx("from_their_bins_e0699a", { defaultValue: "from their bins." })} </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setConfirmRemove(false)} disabled={isBusy}>
-              Cancel
-            </Button>
+            <Button variant="ghost" onClick={() => setConfirmRemove(false)} disabled={isBusy}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
             <Button
               variant="destructive"
               disabled={isBusy}
@@ -143,7 +141,7 @@ export function ItemQueryResults({ matches, onBinClick }: ItemQueryResultsProps)
                 setConfirmRemove(false);
               }}
             >
-              {isBusy ? 'Removing\u2026' : 'Remove'}
+              {isBusy ? tx("removing_579d7e", { defaultValue: "Removing…" }) : tx("remove_e96390", { defaultValue: "Remove" })}
             </Button>
           </DialogFooter>
         </DialogContent>

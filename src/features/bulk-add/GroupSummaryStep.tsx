@@ -1,4 +1,5 @@
 import { AlertCircle, Check, Loader2, Pencil } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { resolveColor } from '@/lib/colorPalette';
 import { useTerminology } from '@/lib/terminology';
@@ -22,6 +23,7 @@ export function GroupSummaryStep({
   onCreateAll,
   onRetryFailed,
 }: GroupSummaryStepProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   const confirmed = groups.filter((g) =>
@@ -46,20 +48,17 @@ export function GroupSummaryStep({
       <header className="space-y-1">
         <h2 className="text-[18px] font-semibold leading-tight text-[var(--text-primary)]">
           {isCreating
-            ? `Creating ${createdCount}/${totalToCreate}...`
+            ? tx("creating_createdcount_totaltocreate_e3517e", { defaultValue: "Creating {{createdCount}}/{{totalToCreate}}...", createdCount: createdCount, totalToCreate: totalToCreate })
             : allCreated
-              ? `All ${t.bins} created!`
-              : `Create ${createReady.length} ${createReady.length !== 1 ? t.Bins : t.Bin}`}
+              ? tx("all_bins_created_f890a6", { defaultValue: "All {{bins}} created!", bins: t.bins })
+              : tx("create_value0_value1_3be10b", { defaultValue: "Create {{value0}} {{value1}}", value0: createReady.length, value1: createReady.length !== 1 ? t.Bins : t.Bin })}
         </h2>
         {!isCreating && !allCreated && (
-          <p className="text-[13px] leading-snug text-[var(--text-secondary)]">
-            Tap any {t.bin} to edit before creating.
-            {unnamedCount > 0 && (
+          <p className="text-[13px] leading-snug text-[var(--text-secondary)]"> {tx("tap_any_ca2462", { defaultValue: "Tap any" })} {t.bin} {tx("to_edit_before_creating_b8dc1c", { defaultValue: "to edit before creating." })} {unnamedCount > 0 && (
               <>
                 {' '}
                 <span className="text-[var(--text-tertiary)]">
-                  {unnamedCount} unnamed {unnamedCount === 1 ? t.bin : t.bins} won't be created.
-                </span>
+                  {unnamedCount} {tx("unnamed_867b9a", { defaultValue: "unnamed" })} {unnamedCount === 1 ? t.bin : t.bins} {tx("won_t_be_created_3373fe", { defaultValue: "won't be created." })} </span>
               </>
             )}
           </p>
@@ -109,11 +108,11 @@ export function GroupSummaryStep({
                 </div>
                 <div className="text-[12px] text-[var(--text-secondary)] flex gap-2">
                   <span>
-                    {group.items.length} item{group.items.length !== 1 ? 's' : ''}
+                    {group.items.length} {tx("item_3a7d97", { defaultValue: "item" })}{group.items.length !== 1 ? 's' : ''}
                   </span>
-                  {group.photos.length > 1 && <span>· {group.photos.length} photos</span>}
+                  {group.photos.length > 1 && <span>· {group.photos.length} {tx("photos_2e58e0", { defaultValue: "photos" })}</span>}
                   {!hasName && (
-                    <span className="text-[var(--text-tertiary)]">· needs a name</span>
+                    <span className="text-[var(--text-tertiary)]">{tx("needs_a_name_c7f810", { defaultValue: "· needs a name" })}</span>
                   )}
                 </div>
               </div>
@@ -148,8 +147,7 @@ export function GroupSummaryStep({
       {/* Failed items */}
       {failed.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[13px] font-medium text-[var(--destructive)]">
-            Couldn't create {failed.length} {failed.length !== 1 ? t.bins : t.bin}
+          <p className="text-[13px] font-medium text-[var(--destructive)]"> {tx("couldn_t_create_efedaa", { defaultValue: "Couldn't create" })} {failed.length} {failed.length !== 1 ? t.bins : t.bin}
           </p>
           {failed.map((group) => (
             <div
@@ -175,16 +173,13 @@ export function GroupSummaryStep({
             <Button
               onClick={onCreateAll}
               data-tour="bulk-add-confirm"
-              aria-label={`Create ${createReady.length} ${createReady.length !== 1 ? t.Bins : t.Bin}`}
+              aria-label={tx("create_value0_value1_3be10b", { defaultValue: "Create {{value0}} {{value1}}", value0: createReady.length, value1: createReady.length !== 1 ? t.Bins : t.Bin })}
               className="w-full"
-            >
-              Create All ({createReady.length} {createReady.length !== 1 ? t.bins : t.bin})
+            > {tx("create_all_1b6f64", { defaultValue: "Create All (" })}{createReady.length} {createReady.length !== 1 ? t.bins : t.bin})
             </Button>
           )}
           {failed.length > 0 && (
-            <Button variant="ghost" onClick={onRetryFailed} className="w-full">
-              Retry {failed.length} failed
-            </Button>
+            <Button variant="ghost" onClick={onRetryFailed} className="w-full"> {tx("retry_9f5cd8", { defaultValue: "Retry" })} {failed.length} {tx("failed_5f5f87", { defaultValue: "failed" })} </Button>
           )}
         </div>
       )}

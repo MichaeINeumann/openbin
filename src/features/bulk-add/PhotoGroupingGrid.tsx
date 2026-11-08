@@ -1,5 +1,6 @@
 import { ChevronLeft } from 'lucide-react';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { AreaPicker } from '@/features/areas/AreaPicker';
@@ -34,6 +35,7 @@ export function PhotoGroupingGrid({
   onContinue,
   onBack,
 }: PhotoGroupingGridProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const sizes = useBinSizes();
   const totalPhotos = state.groups.reduce((acc, g) => acc + g.photos.length, 0);
@@ -62,24 +64,19 @@ export function PhotoGroupingGrid({
   return (
     <div className="flex flex-1 flex-col">
       <header className="mb-6 space-y-1">
-        <h2 className="text-[17px] font-semibold leading-tight text-[var(--text-primary)]">
-          One {t.bin} per stack
-        </h2>
+        <h2 className="text-[17px] font-semibold leading-tight text-[var(--text-primary)]"> {tx("one_b58b5a", { defaultValue: "One" })} {t.bin} {tx("per_stack_d64795", { defaultValue: "per stack" })} </h2>
         {!keyboardMove && (
           <p className="text-[13px] leading-snug text-[var(--text-secondary)]">
             {isSinglePhoto
-              ? `Add more photos to create several ${t.bins} at once.`
-              : `Drag photos onto each other to put them in the same ${t.bin}.`}
+              ? tx("add_more_photos_to_create_several_bins_at_once_b1ffc3", { defaultValue: "Add more photos to create several {{bins}} at once.", bins: t.bins })
+              : tx("drag_photos_onto_each_other_to_put_them_in_the_same_bin_1b7324", { defaultValue: "Drag photos onto each other to put them in the same {{bin}}.", bin: t.bin })}
           </p>
         )}
         {keyboardMove && (
-          <p className="text-[13px] leading-snug text-[var(--accent)]">
-            Moving photo {keyboardMove.indexLabel}. Press another photo, or{' '}
+          <p className="text-[13px] leading-snug text-[var(--accent)]"> {tx("moving_photo_5f0dd5", { defaultValue: "Moving photo" })} {keyboardMove.indexLabel}{tx("press_another_photo_or_06f6dd", { defaultValue: ". Press another photo, or" })}{' '}
             <kbd className="rounded border border-[var(--border-flat)] bg-[var(--bg-input)] px-1 text-[11px]">
               Esc
-            </kbd>{' '}
-            to cancel.
-          </p>
+            </kbd>{' '} {tx("to_cancel_aea2c0", { defaultValue: "to cancel." })} </p>
         )}
       </header>
 
@@ -122,8 +119,7 @@ export function PhotoGroupingGrid({
           type="button"
           onClick={onKeyboardSplit}
           className="mt-4 self-start rounded-[var(--radius-md)] border border-[var(--accent)] px-3 py-1.5 text-[13px] font-medium text-[var(--accent)] transition-colors hover:bg-[color-mix(in_srgb,var(--accent)_10%,transparent)]"
-        >
-          Move photo {keyboardMove.indexLabel} to a new {t.bin}
+        > {tx("move_photo_7f0a3b", { defaultValue: "Move photo" })} {keyboardMove.indexLabel} {tx("to_a_new_ef8ad5", { defaultValue: "to a new" })} {t.bin}
         </button>
       )}
 
@@ -143,12 +139,8 @@ export function PhotoGroupingGrid({
 
       <div className={cn('row-spread', stickyDialogFooter)}>
         <Button variant="ghost" onClick={onBack}>
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          Back
-        </Button>
-        <Button onClick={onContinue} disabled={state.groups.length === 0}>
-          Continue
-        </Button>
+          <ChevronLeft className="h-4 w-4 mr-1" /> {tx("back_b52b36", { defaultValue: "Back" })} </Button>
+        <Button onClick={onContinue} disabled={state.groups.length === 0}> {tx("continue_2e0262", { defaultValue: "Continue" })} </Button>
       </div>
 
       <output aria-live="polite" className="sr-only">

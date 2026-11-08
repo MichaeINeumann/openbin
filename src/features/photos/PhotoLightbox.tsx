@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { prefersReducedMotion } from '@/lib/reducedMotion';
@@ -17,6 +18,7 @@ interface PhotoLightboxProps {
 const SWIPE_THRESHOLD = 50;
 
 export function PhotoLightbox({ photos, initialIndex, onClose, onDelete }: PhotoLightboxProps) {
+  const { t: tx } = useTranslation('ui');
   const containerRef = useRef<HTMLDivElement>(null);
   const [animating, setAnimating] = useState<'enter' | 'exit' | null>(null);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -126,7 +128,7 @@ export function PhotoLightbox({ photos, initialIndex, onClose, onDelete }: Photo
       ref={containerRef}
       role="dialog"
       aria-modal="true"
-      aria-label={`Photo ${currentIndex + 1} of ${photos.length}: ${photo.filename}`}
+      aria-label={tx("photo_value0_of_value1_value2_5355b2", { defaultValue: "Photo {{value0}} of {{value1}}: {{value2}}", value0: currentIndex + 1, value1: photos.length, value2: photo.filename })}
       tabIndex={-1}
       className="fixed inset-0 z-[70] flex items-center justify-center outline-none"
       onTouchStart={onTouchStart}
@@ -160,18 +162,18 @@ export function PhotoLightbox({ photos, initialIndex, onClose, onDelete }: Photo
               variant="ghost"
               size="icon"
               onClick={() => onDelete(photo)}
-              aria-label="Delete photo"
+              aria-label={tx("delete_photo_fc7004", { defaultValue: "Delete photo" })}
               className="rounded-[var(--radius-sm)] h-10 w-10 bg-[var(--overlay-button)] text-white hover:bg-[var(--overlay-button-hover)] hover:text-[var(--destructive)]"
             >
               <Trash2 className="h-5 w-5" />
             </Button>
           </Tooltip>
-          <Tooltip content="Close" side="bottom">
+          <Tooltip content={tx("close_bbfa77", { defaultValue: "Close" })} side="bottom">
             <Button
               variant="ghost"
               size="icon"
               onClick={handleClose}
-              aria-label="Close"
+              aria-label={tx("close_bbfa77", { defaultValue: "Close" })}
               className="rounded-[var(--radius-sm)] h-10 w-10 bg-[var(--overlay-button)] text-white hover:bg-[var(--overlay-button-hover)]"
             >
               <X className="h-5 w-5" />
@@ -195,7 +197,7 @@ export function PhotoLightbox({ photos, initialIndex, onClose, onDelete }: Photo
               size="icon"
               onClick={goPrev}
               disabled={!hasPrev}
-              aria-label="Previous photo"
+              aria-label={tx("previous_photo_099725", { defaultValue: "Previous photo" })}
               className={cn(
                 'absolute left-2 top-1/2 -translate-y-1/2 rounded-[var(--radius-sm)] h-10 w-10 bg-[var(--overlay-button)] text-white hover:bg-[var(--overlay-button-hover)] transition-opacity',
                 !hasPrev && 'opacity-30 pointer-events-none',
@@ -208,7 +210,7 @@ export function PhotoLightbox({ photos, initialIndex, onClose, onDelete }: Photo
               size="icon"
               onClick={goNext}
               disabled={!hasNext}
-              aria-label="Next photo"
+              aria-label={tx("next_photo_fe6687", { defaultValue: "Next photo" })}
               className={cn(
                 'absolute right-2 top-1/2 -translate-y-1/2 rounded-[var(--radius-sm)] h-10 w-10 bg-[var(--overlay-button)] text-white hover:bg-[var(--overlay-button-hover)] transition-opacity',
                 !hasNext && 'opacity-30 pointer-events-none',
@@ -221,13 +223,13 @@ export function PhotoLightbox({ photos, initialIndex, onClose, onDelete }: Photo
 
         {/* Dot indicators */}
         {showNav && (
-          <nav className="flex gap-1.5 mt-4" aria-label="Photo navigation">
+          <nav className="flex gap-1.5 mt-4" aria-label={tx("photo_navigation_bde227", { defaultValue: "Photo navigation" })}>
             {photos.map((p, i) => (
               <button
                 key={p.id}
                 type="button"
                 aria-current={i === currentIndex ? 'true' : undefined}
-                aria-label={`Go to photo ${i + 1}${i === currentIndex ? ' (current)' : ''}`}
+                aria-label={tx("go_to_photo_value0_value1_bcb405", { defaultValue: "Go to photo {{value0}}{{value1}}", value0: i + 1, value1: i === currentIndex ? ' (current)' : '' })}
                 onClick={() => setCurrentIndex(i)}
                 className={cn(
                   'w-2 h-2 rounded-full transition-all duration-200',

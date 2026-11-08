@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 interface AiTurnThinkingProps {
   phase: 'parsing' | 'querying' | 'executing';
 }
@@ -9,11 +11,12 @@ const LABELS: Record<AiTurnThinkingProps['phase'], string> = {
 };
 
 export function AiTurnThinking({ phase }: AiTurnThinkingProps) {
+  const { t: tx } = useTranslation('ui');
   return (
     <output
       className="ai-turn-enter flex items-center gap-2 text-[13px] text-[var(--text-secondary)] px-1"
       aria-busy="true"
-      aria-label="AI is thinking"
+      aria-label={tx("ai_is_thinking_0fae00", { defaultValue: "AI is thinking" })}
     >
       <span className="inline-flex gap-1 items-center">
         <span
