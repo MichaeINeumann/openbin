@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,7 @@ import { useTerminology } from '@/lib/terminology';
 import { useUserPreferences } from '@/lib/userPreferences';
 
 export function ThinLocationGate() {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { setActiveLocationId } = useAuth();
   const { updatePreferences } = useUserPreferences();
@@ -37,12 +39,9 @@ export function ThinLocationGate() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--overlay-backdrop)]">
       <div className="flat-heavy rounded-[var(--radius-xl)] w-full max-w-sm mx-5 px-8 py-8">
-        <h1 className="text-[20px] font-semibold text-[var(--text-primary)] mb-1">
-          Name your first {t.location}
+        <h1 className="text-[20px] font-semibold text-[var(--text-primary)] mb-1"> {tx("name_your_first_cafbc5", { defaultValue: "Name your first" })} {t.location}
         </h1>
-        <p className="text-[14px] text-[var(--text-tertiary)] mb-5">
-          Home, garage, office — whatever fits.
-        </p>
+        <p className="text-[14px] text-[var(--text-tertiary)] mb-5"> {tx("home_garage_office_whatever_fits_e9228f", { defaultValue: "Home, garage, office — whatever fits." })} </p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <FormField label="Name" htmlFor="thin-gate-name" error={error ?? undefined}>
             <Input
@@ -50,12 +49,12 @@ export function ThinLocationGate() {
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="My Home"
+              placeholder={tx("my_home_f9f212", { defaultValue: "My Home" })}
               disabled={loading}
             />
           </FormField>
           <Button type="submit" disabled={!name.trim() || loading}>
-            {loading ? 'Creating…' : `Create ${t.location}`}
+            {loading ? tx("creating_94d7d8", { defaultValue: "Creating…" }) : tx("create_location_518b3b", { defaultValue: "Create {{location}}", location: t.location })}
           </Button>
         </form>
       </div>

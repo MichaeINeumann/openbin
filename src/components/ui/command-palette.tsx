@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { formatKeys, SHORTCUTS, type ShortcutDef } from '@/lib/shortcuts';
 import { useOverlayAnimation } from '@/lib/useOverlayAnimation';
 import { categoryHeader, cn, overlayBackdrop } from '@/lib/utils';
@@ -18,6 +19,7 @@ const CATEGORY_MAP: Record<ShortcutDef['category'], string> = {
 };
 
 export function CommandPalette({ open, onOpenChange, onAction }: CommandPaletteProps) {
+  const { t: tx } = useTranslation('ui');
   const [query, setQuery] = React.useState('');
   const [activeIndex, setActiveIndex] = React.useState(0);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -137,8 +139,8 @@ export function CommandPalette({ open, onOpenChange, onAction }: CommandPaletteP
             role="combobox"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Type a command..."
-            aria-label="Search commands"
+            placeholder={tx("type_a_command_b38a43", { defaultValue: "Type a command..." })}
+            aria-label={tx("search_commands_5ae3aa", { defaultValue: "Search commands" })}
             aria-expanded="true"
             aria-controls="command-palette-listbox"
             aria-activedescendant={flatItems[activeIndex] ? `cmd-${flatItems[activeIndex].id}` : undefined}
@@ -146,9 +148,9 @@ export function CommandPalette({ open, onOpenChange, onAction }: CommandPaletteP
           />
         </div>
         {/* Results */}
-        <div ref={listRef} id="command-palette-listbox" role="listbox" aria-label="Commands" className="overflow-y-auto max-h-[50vh] py-2">
+        <div ref={listRef} id="command-palette-listbox" role="listbox" aria-label={tx("commands_45e5f3", { defaultValue: "Commands" })} className="overflow-y-auto max-h-[50vh] py-2">
           {flatItems.length === 0 ? (
-            <p className="text-center text-[13px] text-[var(--text-tertiary)] py-6">No matching commands</p>
+            <p className="text-center text-[13px] text-[var(--text-tertiary)] py-6">{tx("no_matching_commands_65b870", { defaultValue: "No matching commands" })}</p>
           ) : (
             groups.map((group) => {
               return (

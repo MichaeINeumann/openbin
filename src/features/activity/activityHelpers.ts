@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   ArrowRightLeft,
   Image,
@@ -15,6 +16,7 @@ import {
 import type { ReactNode } from 'react';
 import { createElement } from 'react';
 import type { Terminology } from '@/lib/terminology';
+import type activityMessages from '@/locales/en/activity.json';
 import type { ActivityLogEntry } from '@/types';
 
 export type EntityTypeFilter = '' | 'bin' | 'area' | 'member' | 'location';
@@ -78,9 +80,33 @@ export function getActionBadgeLabel(action: string): string {
   return action.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
 }
 
-export function getActionLabel(entry: ActivityLogEntry, t: Terminology): string {
+export function getActionLabel(entry: ActivityLogEntry, t: Terminology, translate?: TFunction<'activity'>): string {
   const name = entry.entity_name ? `"${entry.entity_name}"` : '';
   const { action, entity_type } = entry;
+  const actionKeys: Record<string, keyof typeof activityMessages> = {
+    "create": 'create',
+    "update": 'update',
+    "delete": 'delete',
+    "restore": 'restore',
+    "permanent_delete": 'permanent_delete',
+    "move": 'move',
+    "add_photo": 'add_photo',
+    "delete_photo": 'delete_photo',
+    "join": 'join',
+    "leave": 'leave',
+    "remove_member": 'remove_member',
+    "change_role": 'change_role',
+    "regenerate_invite": 'regenerate_invite',
+    move_in: 'move', move_out: 'move',
+  };
+  if (translate && actionKeys[action]) {
+    return translate(actionKeys[action], {
+      entity: entity_type === 'bin' ? t.bin : entity_type === 'area' ? t.area : t.location,
+      name, from: entry.changes?.location?.old ?? '?', to: entry.changes?.location?.new ?? '?',
+      defaultValue: getActionLabel(entry, t),
+    });
+  }
+
 
   if (entity_type === 'bin') {
     if (action === 'create') return `created ${t.bin} ${name}`;

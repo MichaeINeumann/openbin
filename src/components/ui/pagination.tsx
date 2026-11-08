@@ -1,5 +1,6 @@
 import { Check, ChevronLeft, ChevronRight, ChevronsUpDown } from 'lucide-react';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@/components/ui/tooltip';
 import { getPageNumbers } from '@/lib/paginationUtil';
 import { useClickOutside } from '@/lib/useClickOutside';
@@ -20,6 +21,7 @@ interface PaginationProps {
 }
 
 function PageSizeSelect({ value, options, onChange }: { value: number; options: number[]; onChange: (size: number) => void }) {
+  const { t: tx } = useTranslation('ui');
   const { visible, animating, close, toggle } = usePopover();
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, close);
@@ -32,10 +34,9 @@ function PageSizeSelect({ value, options, onChange }: { value: number; options: 
         className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-sm)] text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors"
         aria-haspopup="listbox"
         aria-expanded={visible}
-        aria-label="Items per page"
+        aria-label={tx("items_per_page_6a013f", { defaultValue: "Items per page" })}
       >
-        {value} per page
-        <ChevronsUpDown className="h-3 w-3 text-[var(--text-tertiary)]" />
+        {value} {tx("per_page_a9c95f", { defaultValue: "per page" })} <ChevronsUpDown className="h-3 w-3 text-[var(--text-tertiary)]" />
       </button>
       {visible && (
         <div
@@ -79,6 +80,7 @@ export function Pagination({
   pageSizeOptions,
   onPageSizeChange,
 }: PaginationProps) {
+  const { t: tx } = useTranslation('ui');
   const pages = getPageNumbers(currentPage, totalPages);
   const showNav = totalPages > 1;
 
@@ -90,7 +92,7 @@ export function Pagination({
   if (!showNav && !showFooter) return null;
 
   return (
-    <nav aria-label="Pagination" className="flex flex-col items-center gap-2 pt-4 pb-2">
+    <nav aria-label={tx("pagination_100325", { defaultValue: "Pagination" })} className="flex flex-col items-center gap-2 pt-4 pb-2">
       {showNav && (
         <div className="flex items-center gap-1">
           {/* Previous */}
@@ -99,7 +101,7 @@ export function Pagination({
               type="button"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage <= 1}
-              aria-label="Previous page"
+              aria-label={tx("previous_page_81f547", { defaultValue: "Previous page" })}
               className={cn(
                 'flex items-center justify-center h-11 w-11 rounded-[var(--radius-md)] text-sm transition-colors',
                 currentPage <= 1
@@ -124,7 +126,7 @@ export function Pagination({
                   key={p}
                   type="button"
                   onClick={() => onPageChange(p)}
-                  aria-label={`Page ${p}`}
+                  aria-label={tx("page_p_9173ef", { defaultValue: "Page {{p}}", p: p })}
                   aria-current={p === currentPage ? 'page' : undefined}
                   className={cn(
                     'flex items-center justify-center h-11 min-w-11 px-2 rounded-[var(--radius-md)] text-sm font-medium transition-colors',
@@ -141,7 +143,7 @@ export function Pagination({
 
           {/* Mobile: page X of Y */}
           <span className="flex sm:hidden items-center px-3 text-sm text-[var(--text-secondary)]">
-            <span className="sr-only">Page {currentPage} of {totalPages}</span>
+            <span className="sr-only">{tx("page_fb0627", { defaultValue: "Page" })} {currentPage} {tx("of_de04fa", { defaultValue: "of" })} {totalPages}</span>
             <span aria-hidden="true">{currentPage} / {totalPages}</span>
           </span>
 
@@ -151,7 +153,7 @@ export function Pagination({
               type="button"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
-              aria-label="Next page"
+              aria-label={tx("next_page_4bfc19", { defaultValue: "Next page" })}
               className={cn(
                 'flex items-center justify-center h-11 w-11 rounded-[var(--radius-md)] text-sm transition-colors',
                 currentPage >= totalPages
@@ -169,8 +171,7 @@ export function Pagination({
       {showFooter && (
         <div className="flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
           {showSummary && (
-            <span>
-              Showing {rangeStart}&ndash;{rangeEnd} of {totalCount} {itemLabel}
+            <span> {tx("showing_163d81", { defaultValue: "Showing" })} {rangeStart}&ndash;{rangeEnd} {tx("of_de04fa", { defaultValue: "of" })} {totalCount} {itemLabel}
             </span>
           )}
           {pageSizeOptions && onPageSizeChange && pageSize != null && (

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn, haptic, plural } from '@/lib/utils';
 import type { UsageDay, UsageGranularity } from '@/types';
@@ -247,6 +248,7 @@ function DailyView({
   year: number;
   onDayClick?: (date: string) => void;
 }) {
+  const { t: tx } = useTranslation('ui');
   const { cells, weeks, monthPositions, activeDays } = useMemo(
     () => buildDailyGrid(data, year),
     [data, year],
@@ -259,7 +261,7 @@ function DailyView({
       key={year}
       className="flex flex-col gap-2 animate-fade-in motion-reduce:animate-none"
       role="img"
-      aria-label={`Daily usage heatmap for ${year}. ${activeDays} active ${plural(activeDays, 'day')}.`}
+      aria-label={tx("daily_usage_heatmap_for_year_activedays_active_value2_61c1e8", { defaultValue: "Daily usage heatmap for {{year}}. {{activeDays}} active {{value2}}.", year: year, activeDays: activeDays, value2: plural(activeDays, 'day') })}
     >
       <div className="overflow-x-auto scrollbar-thin -mx-1 px-1 pb-0.5" style={{ overscrollBehaviorX: 'contain' }}>
         <div className="inline-flex gap-2 items-start">
@@ -322,6 +324,7 @@ function WeeklyView({
   data: Array<{ date: string; count: number }>;
   year: number;
 }) {
+  const { t: tx } = useTranslation('ui');
   const buckets = useMemo(() => bucketByWeek(data, year), [data, year]);
   const monthPositions = useMemo(
     () => buildWeeklyMonthPositions(year, buckets.length),
@@ -338,7 +341,7 @@ function WeeklyView({
       key={year}
       className="flex flex-col gap-2 animate-fade-in motion-reduce:animate-none"
       role="img"
-      aria-label={`Weekly usage heatmap for ${year}. ${activeWeeks} active ${plural(activeWeeks, 'week')}.`}
+      aria-label={tx("weekly_usage_heatmap_for_year_activeweeks_active_value2_f3332d", { defaultValue: "Weekly usage heatmap for {{year}}. {{activeWeeks}} active {{value2}}.", year: year, activeWeeks: activeWeeks, value2: plural(activeWeeks, 'week') })}
     >
       <div className="overflow-x-auto scrollbar-thin -mx-1 px-1 pb-0.5" style={{ overscrollBehaviorX: 'contain' }}>
         <div className="inline-flex flex-col gap-1">
@@ -375,6 +378,7 @@ function MonthlyView({
   data: Array<{ date: string; count: number }>;
   year: number;
 }) {
+  const { t: tx } = useTranslation('ui');
   const buckets = useMemo(() => bucketByMonth(data, year), [data, year]);
   const activeMonths = useMemo(
     () => buckets.reduce((s, b) => s + (b.activeDays > 0 ? 1 : 0), 0),
@@ -386,7 +390,7 @@ function MonthlyView({
       key={year}
       className="flex flex-col gap-2 animate-fade-in motion-reduce:animate-none"
       role="img"
-      aria-label={`Monthly usage heatmap for ${year}. ${activeMonths} active ${plural(activeMonths, 'month')}.`}
+      aria-label={tx("monthly_usage_heatmap_for_year_activemonths_active_value2_51efad", { defaultValue: "Monthly usage heatmap for {{year}}. {{activeMonths}} active {{value2}}.", year: year, activeMonths: activeMonths, value2: plural(activeMonths, 'month') })}
     >
       <div className="grid grid-cols-12 gap-[6px]">
         {buckets.map((bucket) => {
@@ -458,6 +462,7 @@ export function InlineRetryError({
   onRetry: () => void;
   className?: string;
 }) {
+  const { t: tx } = useTranslation('ui');
   return (
     <div className={cn('flex flex-col gap-1.5', className)} role="alert">
       <p className="text-[13px] font-medium text-[var(--text-primary)] leading-snug">{title}</p>
@@ -468,9 +473,7 @@ export function InlineRetryError({
         type="button"
         onClick={onRetry}
         className="self-start -mx-2 -my-1 px-2 py-1 text-[13px] font-medium text-[var(--accent)] hover:text-[var(--accent-hover)] rounded-[var(--radius-xs)]"
-      >
-        Try again
-      </button>
+      > {tx("try_again_042c86", { defaultValue: "Try again" })} </button>
     </div>
   );
 }

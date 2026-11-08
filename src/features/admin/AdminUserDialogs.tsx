@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -24,6 +25,7 @@ interface ConfirmDialogProps {
 }
 
 function ConfirmDialog({ open, onOpenChange, title, description, confirmLabel, confirmVariant = 'default', onConfirm }: ConfirmDialogProps) {
+  const { t: tx } = useTranslation('ui');
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -32,7 +34,7 @@ function ConfirmDialog({ open, onOpenChange, title, description, confirmLabel, c
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
           <Button variant={confirmVariant} onClick={onConfirm}>{confirmLabel}</Button>
         </DialogFooter>
       </DialogContent>
@@ -46,6 +48,7 @@ interface AdminUserDialogsProps {
 }
 
 export function AdminUserDialogs({ detail, actions }: AdminUserDialogsProps) {
+  const { t: tx } = useTranslation('ui');
   const email = <strong>{detail.email}</strong>;
 
   return (
@@ -53,9 +56,9 @@ export function AdminUserDialogs({ detail, actions }: AdminUserDialogsProps) {
       <ConfirmDialog
         open={actions.suspendOpen}
         onOpenChange={actions.setSuspendOpen}
-        title="Suspend User"
-        description={<>Suspend {email}? They will be immediately logged out and unable to access the app.</>}
-        confirmLabel="Suspend"
+        title={tx("suspend_user_36ad57", { defaultValue: "Suspend User" })}
+        description={<>{tx("suspend_b24247", { defaultValue: "Suspend" })} {email}{tx("they_will_be_immediately_logged_out_and_unable_to_access_the_882ce8", { defaultValue: "? They will be immediately logged out and unable to access the app." })}</>}
+        confirmLabel={tx("suspend_b24247", { defaultValue: "Suspend" })}
         confirmVariant="destructive"
         onConfirm={actions.handleSuspend}
       />
@@ -63,9 +66,9 @@ export function AdminUserDialogs({ detail, actions }: AdminUserDialogsProps) {
       <ConfirmDialog
         open={actions.revokeSessionsOpen}
         onOpenChange={actions.setRevokeSessionsOpen}
-        title="Revoke All Sessions"
-        description={<>This will log {email} out of all devices immediately.</>}
-        confirmLabel="Revoke Sessions"
+        title={tx("revoke_all_sessions_b84b88", { defaultValue: "Revoke All Sessions" })}
+        description={<>{tx("this_will_log_93f735", { defaultValue: "This will log" })} {email} {tx("out_of_all_devices_immediately_730534", { defaultValue: "out of all devices immediately." })}</>}
+        confirmLabel={tx("revoke_sessions_70ced2", { defaultValue: "Revoke Sessions" })}
         confirmVariant="destructive"
         onConfirm={actions.handleRevokeSessions}
       />
@@ -73,9 +76,9 @@ export function AdminUserDialogs({ detail, actions }: AdminUserDialogsProps) {
       <ConfirmDialog
         open={actions.revokeKeysOpen}
         onOpenChange={actions.setRevokeKeysOpen}
-        title="Revoke All API Keys"
-        description={<>This will immediately invalidate all API keys for {email}. Any integrations using these keys will stop working.</>}
-        confirmLabel="Revoke All Keys"
+        title={tx("revoke_all_api_keys_17eb87", { defaultValue: "Revoke All API Keys" })}
+        description={<>{tx("this_will_immediately_invalidate_all_api_keys_for_6856e0", { defaultValue: "This will immediately invalidate all API keys for" })} {email}{tx("any_integrations_using_these_keys_will_stop_working_fe1aea", { defaultValue: ". Any integrations using these keys will stop working." })}</>}
+        confirmLabel={tx("revoke_all_keys_f3a78a", { defaultValue: "Revoke All Keys" })}
         confirmVariant="destructive"
         onConfirm={actions.handleRevokeAllApiKeys}
       />
@@ -83,9 +86,9 @@ export function AdminUserDialogs({ detail, actions }: AdminUserDialogsProps) {
       <ConfirmDialog
         open={actions.deleteOpen}
         onOpenChange={actions.setDeleteOpen}
-        title="Delete User"
-        description={<>Permanently delete {email}? This cannot be undone. All their data will be removed.</>}
-        confirmLabel="Delete"
+        title={tx("delete_user_0a0a90", { defaultValue: "Delete User" })}
+        description={<>{tx("permanently_delete_2eea1f", { defaultValue: "Permanently delete" })} {email}{tx("this_cannot_be_undone_all_their_data_will_be_removed_813316", { defaultValue: "? This cannot be undone. All their data will be removed." })}</>}
+        confirmLabel={tx("delete_f6fdbe", { defaultValue: "Delete" })}
         confirmVariant="destructive"
         onConfirm={actions.handleDelete}
       />
@@ -93,44 +96,44 @@ export function AdminUserDialogs({ detail, actions }: AdminUserDialogsProps) {
       <ConfirmDialog
         open={actions.regenKeyOpen}
         onOpenChange={actions.setRegenKeyOpen}
-        title="Regenerate API Key"
-        description={<>This will revoke all existing API keys for {email} and create a new one.</>}
-        confirmLabel="Regenerate"
+        title={tx("regenerate_api_key_e7bcc8", { defaultValue: "Regenerate API Key" })}
+        description={<>{tx("this_will_revoke_all_existing_api_keys_for_e69af3", { defaultValue: "This will revoke all existing API keys for" })} {email} {tx("and_create_a_new_one_c702dd", { defaultValue: "and create a new one." })}</>}
+        confirmLabel={tx("regenerate_b04c99", { defaultValue: "Regenerate" })}
         onConfirm={actions.handleRegenerateApiKey}
       />
 
       <ConfirmDialog
         open={actions.pendingPlan !== null}
         onOpenChange={(open) => { if (!open) actions.setPendingPlan(null); }}
-        title="Change Plan"
-        description={<>Change {email}&apos;s plan from {capitalize(detail.plan)} to {actions.pendingPlan ? capitalize(actions.pendingPlan) : ''}?</>}
-        confirmLabel="Confirm"
+        title={tx("change_plan_9e6dfc", { defaultValue: "Change Plan" })}
+        description={<>{tx("change_64fbd9", { defaultValue: "Change" })} {email}{tx("apos_s_plan_from_afeae5", { defaultValue: "&apos;s plan from" })} {capitalize(detail.plan)} {tx("to_4374aa", { defaultValue: "to" })} {actions.pendingPlan ? capitalize(actions.pendingPlan) : ''}?</>}
+        confirmLabel={tx("confirm_04a212", { defaultValue: "Confirm" })}
         onConfirm={actions.confirmPlanChange}
       />
 
       <ConfirmDialog
         open={actions.pendingStatus !== null}
         onOpenChange={(open) => { if (!open) actions.setPendingStatus(null); }}
-        title="Change Subscription Status"
-        description={<>Change {email}&apos;s status from {capitalize(detail.status)} to {actions.pendingStatus ? capitalize(actions.pendingStatus) : ''}?</>}
-        confirmLabel="Confirm"
+        title={tx("change_subscription_status_a5ae41", { defaultValue: "Change Subscription Status" })}
+        description={<>{tx("change_64fbd9", { defaultValue: "Change" })} {email}{tx("apos_s_status_from_820b0c", { defaultValue: "&apos;s status from" })} {capitalize(detail.status)} {tx("to_4374aa", { defaultValue: "to" })} {actions.pendingStatus ? capitalize(actions.pendingStatus) : ''}?</>}
+        confirmLabel={tx("confirm_04a212", { defaultValue: "Confirm" })}
         onConfirm={actions.confirmStatusChange}
       />
 
       <Dialog open={actions.editOpen} onOpenChange={(open) => !open && actions.setEditOpen(false)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
+            <DialogTitle>{tx("edit_user_0e4572", { defaultValue: "Edit User" })}</DialogTitle>
           </DialogHeader>
           <form onSubmit={actions.handleEdit} className="space-y-5">
-            <FormField label="Display Name" htmlFor="edit-displayName">
+            <FormField label={tx("display_name_8d6b34", { defaultValue: "Display Name" })} htmlFor="edit-displayName">
               <Input
                 id="edit-displayName"
                 value={actions.editForm.displayName}
                 onChange={(e) => actions.setEditForm((f) => ({ ...f, displayName: e.target.value }))}
               />
             </FormField>
-            <FormField label="Email" htmlFor="edit-email">
+            <FormField label={tx("email_84add5", { defaultValue: "Email" })} htmlFor="edit-email">
               <Input
                 id="edit-email"
                 type="email"
@@ -138,18 +141,18 @@ export function AdminUserDialogs({ detail, actions }: AdminUserDialogsProps) {
                 onChange={(e) => actions.setEditForm((f) => ({ ...f, email: e.target.value }))}
               />
             </FormField>
-            <FormField label="New Password" htmlFor="edit-password">
+            <FormField label={tx("new_password_4894cb", { defaultValue: "New Password" })} htmlFor="edit-password">
               <Input
                 id="edit-password"
                 type="password"
                 value={actions.editForm.password}
                 onChange={(e) => actions.setEditForm((f) => ({ ...f, password: e.target.value }))}
-                placeholder="Leave blank to keep current"
+                placeholder={tx("leave_blank_to_keep_current_600a66", { defaultValue: "Leave blank to keep current" })}
               />
             </FormField>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => actions.setEditOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={actions.saving}>{actions.saving ? 'Saving...' : 'Save'}</Button>
+              <Button type="button" variant="outline" onClick={() => actions.setEditOpen(false)}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
+              <Button type="submit" disabled={actions.saving}>{actions.saving ? tx("saving_ae7e88", { defaultValue: "Saving..." }) : tx("save_efc007", { defaultValue: "Save" })}</Button>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Disclosure } from '@/components/ui/disclosure';
 import { OptionGroup, type OptionGroupOption } from '@/components/ui/option-group';
 import { SearchInput } from '@/components/ui/search-input';
@@ -35,6 +36,7 @@ export function ActivityFilterBar({
   searchQuery,
   onSearchChange,
 }: ActivityFilterBarProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { activeLocationId } = useAuth();
   const { members } = useLocationMembers(activeLocationId);
@@ -50,10 +52,10 @@ export function ActivityFilterBar({
       <select
         value={userId}
         onChange={(e) => onUserIdChange(e.target.value)}
-        aria-label="Filter by user"
+        aria-label={tx("filter_by_user_0b6fa3", { defaultValue: "Filter by user" })}
         className={filterControl}
       >
-        <option value="">All users</option>
+        <option value="">{tx("all_users_ce832d", { defaultValue: "All users" })}</option>
         {members.map((m) => (
           <option key={m.user_id} value={m.user_id}>
             {m.display_name || m.email}
@@ -64,14 +66,14 @@ export function ActivityFilterBar({
         type="date"
         value={dateFrom}
         onChange={(e) => onDateFromChange(e.target.value)}
-        aria-label="From date"
+        aria-label={tx("from_date_3b5d11", { defaultValue: "From date" })}
         className={filterControl}
       />
       <input
         type="date"
         value={dateTo}
         onChange={(e) => onDateToChange(e.target.value)}
-        aria-label="To date"
+        aria-label={tx("to_date_af244d", { defaultValue: "To date" })}
         className={filterControl}
       />
     </div>
@@ -80,7 +82,7 @@ export function ActivityFilterBar({
   return (
     <div className="flex flex-col gap-2 mb-4">
       <SearchInput
-        placeholder="Search activity..."
+        placeholder={tx("search_activity_f084d3", { defaultValue: "Search activity..." })}
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
         onClear={searchQuery ? () => onSearchChange('') : undefined}
@@ -99,7 +101,7 @@ export function ActivityFilterBar({
 
       <div className="lg:hidden">
         <Disclosure
-          label={<span>{hasActiveFilters ? 'Filters (active)' : 'Filters'}</span>}
+          label={<span>{hasActiveFilters ? tx("filters_active_effdfe", { defaultValue: "Filters (active)" }) : tx("filters_96e578", { defaultValue: "Filters" })}</span>}
           indicator={!!hasActiveFilters}
           defaultOpen={!!hasActiveFilters}
         >

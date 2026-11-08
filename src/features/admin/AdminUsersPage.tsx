@@ -1,5 +1,6 @@
 import { BarChart3, Globe, Lock, Mail, Search, Settings, UserPlus, Users } from 'lucide-react';
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const AdminMetricsSection = __EE__
 const PAGE_SIZE = 25;
 
 export function AdminUsersPage() {
+  const { t: tx } = useTranslation('ui');
   const { user } = useAuth();
   const { isSelfHosted } = usePlan();
   const { showToast } = useToast();
@@ -68,19 +70,19 @@ export function AdminUsersPage() {
     if (!deleteTarget) return;
     try {
       await deleteUser(deleteTarget.id);
-      showToast({ message: `User ${deleteTarget.email} deleted`, variant: 'success' });
+      showToast({ message: tx("user_value0_deleted_cb7e5e", { defaultValue: "User {{value0}} deleted", value0: deleteTarget.email }), variant: 'success' });
       setDeleteTarget(null);
     } catch (err) {
-      showToast({ message: getErrorMessage(err, 'Failed to delete user'), variant: 'error' });
+      showToast({ message: getErrorMessage(err, tx("failed_to_delete_user_121656", { defaultValue: "Failed to delete user" })), variant: 'error' });
     }
   }, [deleteTarget, deleteUser, showToast]);
 
   const handleRegistrationChange = useCallback(async (mode: string) => {
     try {
       await updateRegistrationMode(mode as 'open' | 'invite' | 'closed');
-      showToast({ message: `Registration mode set to ${mode}`, variant: 'success' });
+      showToast({ message: tx("registration_mode_set_to_mode_1b97a5", { defaultValue: "Registration mode set to {{mode}}", mode: mode }), variant: 'success' });
     } catch (err) {
-      showToast({ message: getErrorMessage(err, 'Failed to update registration mode'), variant: 'error' });
+      showToast({ message: getErrorMessage(err, tx("failed_to_update_registration_mode_f30ba6", { defaultValue: "Failed to update registration mode" })), variant: 'error' });
     }
   }, [updateRegistrationMode, showToast]);
 
@@ -93,11 +95,11 @@ export function AdminUsersPage() {
         displayName: createForm.displayName || undefined,
         isAdmin: createForm.isAdmin,
       });
-      showToast({ message: `User ${createForm.email} created`, variant: 'success' });
+      showToast({ message: tx("user_value0_created_3e033b", { defaultValue: "User {{value0}} created", value0: createForm.email }), variant: 'success' });
       setCreateOpen(false);
       setCreateForm({ email: '', password: '', displayName: '', isAdmin: false });
     } catch (err) {
-      showToast({ message: getErrorMessage(err, 'Failed to create user'), variant: 'error' });
+      showToast({ message: getErrorMessage(err, tx("failed_to_create_user_22e17f", { defaultValue: "Failed to create user" })), variant: 'error' });
     } finally {
       setCreateLoading(false);
     }
@@ -112,18 +114,16 @@ export function AdminUsersPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <p className="text-[15px] font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
-              {registration.locked ? <Lock className="h-3.5 w-3.5" /> : <Globe className="h-3.5 w-3.5" />}
-              Registration
-            </p>
+              {registration.locked ? <Lock className="h-3.5 w-3.5" /> : <Globe className="h-3.5 w-3.5" />} {tx("registration_b233e7", { defaultValue: "Registration" })} </p>
             {registration.locked && (
-              <p className="text-[13px] text-[var(--text-tertiary)] mt-0.5">Locked by REGISTRATION_MODE env var</p>
+              <p className="text-[13px] text-[var(--text-tertiary)] mt-0.5">{tx("locked_by_registration_mode_env_var_093e7f", { defaultValue: "Locked by REGISTRATION_MODE env var" })}</p>
             )}
           </div>
           <OptionGroup
             options={[
-              { key: 'open' as const, label: 'Open', icon: UserPlus, disabled: registration.locked, disabledTitle: 'Locked by env var' },
-              { key: 'invite' as const, label: 'Invite', icon: Mail, disabled: registration.locked, disabledTitle: 'Locked by env var' },
-              { key: 'closed' as const, label: 'Closed', icon: Lock, disabled: registration.locked, disabledTitle: 'Locked by env var' },
+              { key: 'open' as const, label: tx("open_cf9b77", { defaultValue: "Open" }), icon: UserPlus, disabled: registration.locked, disabledTitle: 'Locked by env var' },
+              { key: 'invite' as const, label: tx("invite_b13660", { defaultValue: "Invite" }), icon: Mail, disabled: registration.locked, disabledTitle: 'Locked by env var' },
+              { key: 'closed' as const, label: tx("closed_88d86b", { defaultValue: "Closed" }), icon: Lock, disabled: registration.locked, disabledTitle: 'Locked by env var' },
             ]}
             value={registration.mode}
             onChange={handleRegistrationChange}
@@ -136,15 +136,15 @@ export function AdminUsersPage() {
   return (
     <div className="page-content-wide">
       <PageHeader
-        title="Admin"
+        title={tx("admin_4e7afe", { defaultValue: "Admin" })}
         back
         actions={
           <div className="flex items-center gap-2">
             {__EE__ && !isSelfHosted && (
               <OptionGroup
                 options={[
-                  { key: 'users' as const, label: 'Users', icon: Users },
-                  { key: 'metrics' as const, label: 'Metrics', icon: BarChart3 },
+                  { key: 'users' as const, label: tx("users_57f2b1", { defaultValue: "Users" }), icon: Users },
+                  { key: 'metrics' as const, label: tx("metrics_ddf6a1", { defaultValue: "Metrics" }), icon: BarChart3 },
                 ]}
                 value={tab}
                 onChange={setTab}
@@ -155,9 +155,7 @@ export function AdminUsersPage() {
               System
             </Button>
             <Button variant="outline" size="sm" onClick={() => setCreateOpen(true)}>
-              <UserPlus className="h-3.5 w-3.5 mr-1.5" />
-              Create User
-            </Button>
+              <UserPlus className="h-3.5 w-3.5 mr-1.5" /> {tx("create_user_b25c91", { defaultValue: "Create User" })} </Button>
           </div>
         }
       />
@@ -172,13 +170,13 @@ export function AdminUsersPage() {
           {/* Section label */}
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-[var(--text-secondary)]" />
-            <h2 className="text-[17px] font-semibold text-[var(--text-primary)]">Users</h2>
+            <h2 className="text-[17px] font-semibold text-[var(--text-primary)]">{tx("users_57f2b1", { defaultValue: "Users" })}</h2>
             <Badge variant="secondary" className="text-[11px]">{count}</Badge>
           </div>
 
           <div className="flex items-center gap-2">
             <SearchInput
-              placeholder="Search users..."
+              placeholder={tx("search_users_8cdc4c", { defaultValue: "Search users..." })}
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               onClear={search ? () => { setSearch(''); setPage(1); } : undefined}
@@ -224,8 +222,8 @@ export function AdminUsersPage() {
           ) : users.length === 0 ? (
             <EmptyState
               icon={Search}
-              title="No users found"
-              subtitle={search ? 'Try a different search term' : undefined}
+              title={tx("no_users_found_612eb3", { defaultValue: "No users found" })}
+              subtitle={search ? tx("try_a_different_search_term_39d642", { defaultValue: "Try a different search term" }) : undefined}
               variant="search"
             />
           ) : (
@@ -265,14 +263,12 @@ export function AdminUsersPage() {
       <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
-            <DialogDescription>
-              Permanently delete <strong>{deleteTarget?.email}</strong>? This cannot be undone. All their data will be removed.
-            </DialogDescription>
+            <DialogTitle>{tx("delete_user_0a0a90", { defaultValue: "Delete User" })}</DialogTitle>
+            <DialogDescription> {tx("permanently_delete_2eea1f", { defaultValue: "Permanently delete" })} <strong>{deleteTarget?.email}</strong>{tx("this_cannot_be_undone_all_their_data_will_be_removed_813316", { defaultValue: "? This cannot be undone. All their data will be removed." })} </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{tx("delete_f6fdbe", { defaultValue: "Delete" })}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -286,31 +282,31 @@ export function AdminUsersPage() {
       }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create User</DialogTitle>
-            <DialogDescription>Create a new user account.</DialogDescription>
+            <DialogTitle>{tx("create_user_b25c91", { defaultValue: "Create User" })}</DialogTitle>
+            <DialogDescription>{tx("create_a_new_user_account_f307c2", { defaultValue: "Create a new user account." })}</DialogDescription>
           </DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); handleCreate(); }} className="space-y-5">
-            <FormField label="Email" htmlFor="create-email">
+            <FormField label={tx("email_84add5", { defaultValue: "Email" })} htmlFor="create-email">
               <Input
                 id="create-email"
                 type="email"
                 value={createForm.email}
                 onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
-                placeholder="Email"
+                placeholder={tx("email_84add5", { defaultValue: "Email" })}
                 autoComplete="email"
               />
             </FormField>
-            <FormField label="Password" htmlFor="create-password" hint="8+ characters, mixed case, one digit">
+            <FormField label={tx("password_8be3c9", { defaultValue: "Password" })} htmlFor="create-password" hint="8+ characters, mixed case, one digit">
               <Input
                 id="create-password"
                 type="password"
                 value={createForm.password}
                 onChange={(e) => setCreateForm((f) => ({ ...f, password: e.target.value }))}
-                placeholder="Password"
+                placeholder={tx("password_8be3c9", { defaultValue: "Password" })}
                 autoComplete="new-password"
               />
             </FormField>
-            <FormField label="Display Name" htmlFor="create-displayName">
+            <FormField label={tx("display_name_8d6b34", { defaultValue: "Display Name" })} htmlFor="create-displayName">
               <Input
                 id="create-displayName"
                 value={createForm.displayName}
@@ -323,12 +319,12 @@ export function AdminUsersPage() {
                 checked={createForm.isAdmin}
                 onCheckedChange={(checked) => setCreateForm((f) => ({ ...f, isAdmin: checked }))}
               />
-              <Label>Admin</Label>
+              <Label>{tx("admin_4e7afe", { defaultValue: "Admin" })}</Label>
             </div>
             <DialogFooter>
-              <Button variant="outline" type="button" onClick={() => setCreateOpen(false)}>Cancel</Button>
+              <Button variant="outline" type="button" onClick={() => setCreateOpen(false)}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
               <Button type="submit" disabled={!createForm.email || !createForm.password || createLoading}>
-                {createLoading ? 'Creating...' : 'Create'}
+                {createLoading ? tx("creating_28ea76", { defaultValue: "Creating..." }) : tx("create_6e157c", { defaultValue: "Create" })}
               </Button>
             </DialogFooter>
           </form>

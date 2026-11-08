@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { isEditableTarget } from '@/lib/useKeyboardShortcuts';
 import { cn } from '@/lib/utils';
@@ -57,6 +58,7 @@ interface TourOverlayProps {
 }
 
 export function TourOverlay({ tour, context }: TourOverlayProps) {
+  const { t: tx } = useTranslation('ui');
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
   const [positioned, setPositioned] = useState(false);
@@ -131,7 +133,7 @@ export function TourOverlay({ tour, context }: TourOverlayProps) {
       style={{ pointerEvents: 'none' }}
       role="dialog"
       aria-modal="true"
-      aria-label="Guided tour"
+      aria-label={tx("guided_tour_5a0d30", { defaultValue: "Guided tour" })}
     >
       {/* SVG mask always mounted; only the hole moves — prevents flashing between steps.
           `pointer-events: none` on the wrapper lets clicks pass through the dim so users
@@ -230,17 +232,13 @@ export function TourOverlay({ tour, context }: TourOverlayProps) {
           <div className="flex items-center gap-2">
             {currentStep > 0 ? (
               <Button variant="ghost" size="sm" onClick={prev} className="gap-0.5">
-                <ChevronLeft className="h-3.5 w-3.5" />
-                Back
-              </Button>
+                <ChevronLeft className="h-3.5 w-3.5" /> {tx("back_b52b36", { defaultValue: "Back" })} </Button>
             ) : (
               <button
                 type="button"
                 onClick={skip}
                 className="text-[13px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
-              >
-                Skip tour
-              </button>
+              > {tx("skip_tour_57bc79", { defaultValue: "Skip tour" })} </button>
             )}
             <div className="flex-1" />
             <Button
@@ -249,7 +247,7 @@ export function TourOverlay({ tour, context }: TourOverlayProps) {
               onClick={isLast ? skip : next}
               className="gap-1"
             >
-              {customButton ?? (isLast ? 'Done' : 'Next')}
+              {customButton ?? (isLast ? 'Done' : tx("next_bc9819", { defaultValue: "Next" }))}
               {!isLast && !customButton && <ChevronRight className="h-3.5 w-3.5" />}
             </Button>
           </div>

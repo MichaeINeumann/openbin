@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Highlight } from '@/components/ui/highlight';
@@ -25,6 +26,8 @@ const CHIP_CLASS =
   'text-[11px] px-1.5 py-0.5 rounded-[var(--radius-xs)] bg-[var(--bg-elevated)] text-[var(--text-tertiary)] whitespace-nowrap';
 
 export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, searchQuery = '', currentEntityId }: ActivityTableViewProps) {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const t = useTerminology();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -43,11 +46,11 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
       <Table>
         <TableHeader>
           <span className="w-8 shrink-0" />
-          <span className="hidden lg:block w-[72px] shrink-0 ui-col-header">Action</span>
-          <span className="flex-[2] ui-col-header">Description</span>
-          <span className="hidden lg:block flex-1 ui-col-header">User</span>
-          <span className="hidden lg:block w-[72px] shrink-0 ui-col-header">Type</span>
-          <span className="w-20 shrink-0 ui-col-header text-right">Time</span>
+          <span className="hidden lg:block w-[72px] shrink-0 ui-col-header">{tx("action_97c89a", { defaultValue: "Action" })}</span>
+          <span className="flex-[2] ui-col-header">{tx("description_55f8eb", { defaultValue: "Description" })}</span>
+          <span className="hidden lg:block flex-1 ui-col-header">{tx("user_9f8a23", { defaultValue: "User" })}</span>
+          <span className="hidden lg:block w-[72px] shrink-0 ui-col-header">{tx("type_3deb74", { defaultValue: "Type" })}</span>
+          <span className="w-20 shrink-0 ui-col-header text-right">{tx("time_6c82e6", { defaultValue: "Time" })}</span>
           <span className="w-5 shrink-0" />
         </TableHeader>
 
@@ -140,7 +143,7 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
                 </div>
 
                 <span className="w-20 shrink-0 text-[12px] text-[var(--text-tertiary)] text-right">
-                  {relativeTime(entry.created_at)}
+                  {relativeTime(entry.created_at, uiLanguage)}
                 </span>
 
                 <div className="w-5 shrink-0 flex justify-center">

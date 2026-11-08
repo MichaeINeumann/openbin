@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { categoryHeader, cn, firstName, formatDate } from '@/lib/utils';
 import type { ActivityLogEntry } from '@/types';
@@ -9,6 +10,8 @@ interface ActivityRowDetailProps {
 }
 
 export function ActivityRowDetail({ entry, onNavigate }: ActivityRowDetailProps) {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
   const changeDiffs = renderChangeDiff(entry);
 
   return (
@@ -30,7 +33,7 @@ export function ActivityRowDetail({ entry, onNavigate }: ActivityRowDetailProps)
 
       {changeDiffs && changeDiffs.length > 0 && (
         <div className="mb-2.5">
-          <div className={cn(categoryHeader, 'mb-1.5')}>Changes</div>
+          <div className={cn(categoryHeader, 'mb-1.5')}>{tx("changes_8aa57d", { defaultValue: "Changes" })}</div>
           <div className="flex flex-col gap-1.5">
             {changeDiffs.map((d) => (
               <div key={d.field} className="flex items-baseline gap-2 text-[12px] flex-wrap">
@@ -53,16 +56,15 @@ export function ActivityRowDetail({ entry, onNavigate }: ActivityRowDetailProps)
       )}
 
       <div className={cn('flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[var(--text-tertiary)]', changeDiffs && 'pt-2 border-t border-[var(--border-subtle)]')}>
-        <span title={entry.display_name}>User: {firstName(entry.display_name)}</span>
-        <span>Auth: {entry.auth_method === 'api_key' && entry.api_key_name ? `API: ${entry.api_key_name}` : entry.auth_method ?? 'unknown'}</span>
-        <span>{formatDate(entry.created_at)}</span>
+        <span title={entry.display_name}>{tx("user_3123a0", { defaultValue: "User:" })} {firstName(entry.display_name)}</span>
+        <span>{tx("auth_37bedd", { defaultValue: "Auth:" })} {entry.auth_method === 'api_key' && entry.api_key_name ? `API: ${entry.api_key_name}` : entry.auth_method ?? 'unknown'}</span>
+        <span>{formatDate(entry.created_at, uiLanguage)}</span>
         {onNavigate && (
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onNavigate(); }}
             className="text-[var(--accent)] hover:underline font-medium"
-          >
-            View {entry.entity_type}
+          > {tx("view_69bd4e", { defaultValue: "View" })} {entry.entity_type}
           </button>
         )}
       </div>
