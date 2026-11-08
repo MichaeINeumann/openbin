@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { localizeErrorMessage } from './errorMessages';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,9 +41,9 @@ export function haptic(pattern: number | number[] = 10) {
 
 /** Extract a human-readable message from an unknown catch value. */
 export function getErrorMessage(err: unknown, fallback = 'Something went wrong'): string {
-  if (err instanceof Error) return err.message;
-  if (typeof err === 'string') return err;
-  return fallback;
+  if (err instanceof Error) return localizeErrorMessage(err.message);
+  if (typeof err === 'string') return localizeErrorMessage(err);
+  return localizeErrorMessage(fallback);
 }
 
 /** Format a byte count as B/KB/MB/GB with one-decimal precision. */
@@ -109,9 +110,22 @@ export const rowAction =
   'shrink-0 flex items-center justify-center size-11 text-[var(--text-tertiary)] opacity-30 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity';
 
 /** Human-readable relative time string from an ISO timestamp (e.g. "5m ago", "3d ago"). */
-export function relativeTime(iso: string | null): string {
+export function relativeTime(iso: string | null, language = 'en'): string {
   if (!iso) return '—';
   const ms = Date.now() - new Date(iso).getTime();
+  if (!Number.isFinite(ms)) return '—';
+  if (language !== 'en') {
+    const formatter = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+    const minutes = Math.floor(ms / 60000);
+    if (minutes < 1) return formatter.format(0, 'second');
+    if (minutes < 60) return formatter.format(-minutes, 'minute');
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return formatter.format(-hours, 'hour');
+    const days = Math.floor(hours / 24);
+    if (days < 30) return formatter.format(-days, 'day');
+    const months = Math.floor(days / 30);
+    return months < 12 ? formatter.format(-months, 'month') : formatter.format(-Math.floor(months / 12), 'year');
+  }
   const mins = Math.floor(ms / 60000);
   if (mins < 1) return 'just now';
   if (mins < 60) return `${mins}m ago`;
@@ -125,7 +139,8 @@ export function relativeTime(iso: string | null): string {
 }
 
 /** Short numeric date string (M/D/YYYY) from an ISO timestamp. */
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string, language = 'en'): string {
   const date = new Date(dateStr);
+  if (language !== 'en') return date.toLocaleDateString(language);
   return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 }

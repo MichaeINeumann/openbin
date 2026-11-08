@@ -1,5 +1,6 @@
 import { Events, notify } from '@/lib/eventBus';
 import type { CheckoutAction } from '@/types';
+import { localizeErrorMessage } from './errorMessages';
 
 const API_BASE = '';
 const CSRF_COOKIE = 'openbin-csrf';
@@ -32,7 +33,7 @@ export class ApiError extends Error {
     upgradeAction?: CheckoutAction | null,
     details?: Record<string, unknown>,
   ) {
-    super(message);
+    super(localizeErrorMessage(message));
     this.name = 'ApiError';
     this.status = status;
     this.code = code;

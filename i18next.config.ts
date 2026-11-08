@@ -17,7 +17,7 @@ import { defineConfig } from 'i18next-cli';
 // job to migrate. Including them would make the linter demand a full-file
 // migration neither this PR nor its scope calls for.
 export default defineConfig({
-  locales: ['en', 'nb'],
+  locales: ['de-DE', 'en', 'nb'],
   extract: {
     input: [
       'src/features/auth/**/*.{ts,tsx}',
@@ -26,6 +26,6 @@ export default defineConfig({
     ignore: ['**/__tests__/**', '**/*.test.{ts,tsx}'],
     output: 'src/locales/{{language}}/{{namespace}}.json',
     primaryLanguage: 'en',
-    secondaryLanguages: ['nb'],
+    secondaryLanguages: ['de-DE', 'nb'],
   },
 });

@@ -1,0 +1,15 @@
+{
+  "create": "created {{entity}} {{name}}",
+  "update": "updated {{entity}} {{name}}",
+  "delete": "deleted {{entity}} {{name}}",
+  "restore": "restored {{entity}} {{name}}",
+  "permanent_delete": "permanently deleted {{entity}} {{name}}",
+  "move": "moved {{entity}} {{name}} from {{from}} to {{to}}",
+  "add_photo": "added photo to {{entity}} {{name}}",
+  "delete_photo": "removed photo from {{entity}} {{name}}",
+  "join": "joined the {{entity}}",
+  "leave": "left the {{entity}}",
+  "remove_member": "removed {{name}}",
+  "change_role": "changed role for {{name}}",
+  "regenerate_invite": "regenerated invite code"
+}

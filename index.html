@@ -27,10 +27,7 @@
       // reads/writes (see src/lib/i18n.ts).
       (function() {
         var lang = localStorage.getItem('openbin-language');
-        if (!lang) {
-          var nav = navigator.language || 'en';
-          lang = nav.slice(0, 2) === 'nb' || nav.slice(0, 2) === 'no' ? 'nb' : 'en';
-        }
+        if (['de-DE', 'en', 'nb'].indexOf(lang) === -1) lang = 'de-DE';
         var rtl = ['ar', 'he', 'fa', 'ur'].indexOf(lang) !== -1;
         document.documentElement.lang = lang;
         document.documentElement.dir = rtl ? 'rtl' : 'ltr';

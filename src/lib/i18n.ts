@@ -15,31 +15,34 @@ export interface SupportedLanguage {
 // no shared package), guarded against drift by
 // src/lib/__tests__/languageAllowlist.test.ts.
 export const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
+  { code: 'de-DE', label: 'Deutsch' },
   { code: 'en', label: 'English' },
   { code: 'nb', label: 'Norsk (bokmål)' },
 ];
 
 const SUPPORTED_LANGUAGE_CODES = SUPPORTED_LANGUAGES.map((l) => l.code);
 
-i18next
+export const i18nReady = i18next
   .use(LanguageDetector)
   .use(resourcesToBackend((lng: string, ns: string) => import(`../locales/${lng}/${ns}.json`)))
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    ns: ['common'],
+    lng: (() => {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+        return stored && SUPPORTED_LANGUAGE_CODES.includes(stored) ? stored : 'de-DE';
+      } catch { return 'de-DE'; }
+    })(),
+    ns: ['common', 'auth', 'ui', 'activity', 'errors'],
     defaultNS: 'common',
-    // Without these, a browser reporting a region-tagged locale (e.g. "en-US",
-    // "nb-NO") is accepted verbatim by the detector instead of being matched
-    // against our bare-code list — i18n.language then never equals any
-    // SUPPORTED_LANGUAGES code, so the Preferences language dropdown can't
-    // find a matching option and renders blank.
     supportedLngs: SUPPORTED_LANGUAGE_CODES,
-    load: 'languageOnly',
+    load: 'currentOnly',
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'],
       lookupLocalStorage: STORAGE_KEYS.LANGUAGE,
       caches: ['localStorage'],
+      convertDetectedLanguage: (code: string) => SUPPORTED_LANGUAGE_CODES.includes(code) ? code : 'de-DE',
     },
     interpolation: {
       escapeValue: false,

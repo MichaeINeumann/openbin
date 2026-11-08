@@ -2,8 +2,12 @@ import { type RenderResult, render } from '@testing-library/react';
 import i18next from 'i18next';
 import type { ReactElement } from 'react';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
+import deAuth from '@/locales/de-DE/auth.json';
+import deCommon from '@/locales/de-DE/common.json';
+import deUi from '@/locales/de-DE/ui.json';
 import enAuth from '@/locales/en/auth.json';
 import enCommon from '@/locales/en/common.json';
+import enUi from '@/locales/en/ui.json';
 import nbAuth from '@/locales/nb/auth.json';
 import nbCommon from '@/locales/nb/common.json';
 
@@ -22,7 +26,8 @@ function createTestI18n() {
     ns: ['common', 'auth'],
     defaultNS: 'common',
     resources: {
-      en: { common: enCommon, auth: enAuth },
+      'de-DE': { common: deCommon, auth: deAuth, ui: deUi },
+      en: { common: enCommon, auth: enAuth, ui: enUi },
       nb: { common: nbCommon, auth: nbAuth },
     },
     interpolation: { escapeValue: false },

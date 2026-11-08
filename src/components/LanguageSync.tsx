@@ -14,10 +14,11 @@ export function LanguageSync() {
   const { language } = useLanguage();
 
   useEffect(() => {
-    if (user?.language && user.language !== language) {
-      setLanguage(user.language);
+    const preferred = user?.language || 'de-DE';
+    if (user && preferred !== language) {
+      setLanguage(preferred);
     }
-  }, [user?.language, language]);
+  }, [user, language]);
 
   return null;
 }

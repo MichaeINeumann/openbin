@@ -1,0 +1,15 @@
+{
+  "create": "hat {{entity}} {{name}} erstellt",
+  "update": "hat {{entity}} {{name}} aktualisiert",
+  "delete": "hat {{entity}} {{name}} gelöscht",
+  "restore": "hat {{entity}} {{name}} wiederhergestellt",
+  "permanent_delete": "hat {{entity}} {{name}} endgültig gelöscht",
+  "move": "hat {{entity}} {{name}} von {{from}} nach {{to}} verschoben",
+  "add_photo": "hat ein Foto zu {{entity}} {{name}} hinzugefügt",
+  "delete_photo": "hat ein Foto aus {{entity}} {{name}} entfernt",
+  "join": "ist beigetreten: {{entity}}",
+  "leave": "hat verlassen: {{entity}}",
+  "remove_member": "hat {{name}} entfernt",
+  "change_role": "hat die Rolle von {{name}} geändert",
+  "regenerate_invite": "hat den Einladungscode erneuert"
+}

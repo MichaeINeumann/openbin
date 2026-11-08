@@ -2,6 +2,8 @@ import '@testing-library/jest-dom';
 import { cloneElement, createElement, Fragment, type ReactElement, type ReactNode } from 'react';
 import { vi } from 'vitest';
 
+localStorage.setItem('openbin-language', 'en');
+
 // Global default: components under test get a lightweight `t()` that
 // resolves to the English defaultValue (or the raw key if no defaultValue
 // was passed), so existing component tests asserting on literal English
@@ -11,7 +13,7 @@ import { vi } from 'vitest';
 // (src/test/i18nTestUtils.tsx), which loads the real JSON resources.
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, opts?: { defaultValue?: string }) => opts?.defaultValue ?? key,
+    t: (key: string, opts?: Record<string, unknown> & { defaultValue?: string }) => (opts?.defaultValue ?? key).replace(/{{(\w+)}}/g, (match, name) => String(opts?.[name] ?? match)),
     i18n: { language: 'en', changeLanguage: vi.fn() },
   }),
   initReactI18next: { type: '3rdParty', init: vi.fn() },
