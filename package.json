@@ -10,11 +10,12 @@
     "dev:server": "cd server && npm run dev",
     "dev:all": "npx concurrently -n api,web -c blue,green \"npm run dev:server\" \"npm run dev\"",
     "dev:cloud:all": "npx concurrently -n api,web -c blue,green \"npm run dev:server\" \"npm run dev:cloud\"",
-    "build": "tsc && cp server/openapi.yaml public/api-docs/openapi.yaml && vite build",
+    "build": "tsc && node scripts/sync-openapi.mjs && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "npx biome check src/",
+    "check:i18n": "node scripts/check-i18n.mjs",
     "check": "tsc --noEmit && cd server && npx tsc --noEmit",
     "prepare": "husky"
   },
@@ -30,7 +31,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^17.0.11",
-    "react-router-dom": "^6.30.3",
+    "react-router-dom": "^7.18.5",
     "tailwind-merge": "^3.4.0",
     "uuid": "^13.0.0"
   },
@@ -48,7 +49,7 @@
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^5.1.4",
     "concurrently": "^9.2.1",
-    "happy-dom": "^20.8.9",
+    "happy-dom": "^21.0.4",
     "husky": "^9.1.7",
     "i18next-cli": "^1.67.8",
     "lint-staged": "^16.4.0",
@@ -61,5 +62,9 @@
   "lint-staged": {
     "src/**/*.{ts,tsx}": "npx biome check --no-errors-on-unmatched",
     "server/src/**/*.{ts,tsx}": "npx biome check --no-errors-on-unmatched"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "@swc/core@1.16.22": true
   }
 }

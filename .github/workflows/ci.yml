@@ -41,6 +41,9 @@ jobs:
       - name: Type check (client)
         run: npx tsc --noEmit
 
+      - name: German catalog parity and interpolation
+        run: npm run check:i18n
+
       - name: i18n lint (missing/unused translation keys)
         run: npx i18next-cli lint
 
