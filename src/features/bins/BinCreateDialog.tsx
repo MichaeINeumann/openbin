@@ -8,8 +8,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/toast';
-import { compressImage } from '@/features/photos/compressImage';
-import { addPhoto } from '@/features/photos/usePhotos';
+import { summarizePhotoUploadFailures, uploadPhotosToBin } from '@/features/photos/photoUpload';
+import { notifyPhotosChanged } from '@/features/photos/usePhotos';
 import { useAuth } from '@/lib/auth';
 import { useTerminology } from '@/lib/terminology';
 import type { BinCreateFormData } from './BinCreateForm';
@@ -66,20 +66,12 @@ export function BinCreateDialog({ open, onOpenChange, prefillName, allTags: allT
         customFields: data.customFields,
       });
       if (data.photos.length > 0) {
-        const results = await Promise.all(
-          data.photos.map((p) =>
-            compressImage(p)
-              .then((compressed) => addPhoto(id, compressed instanceof File
-                ? compressed
-                : new File([compressed], p.name, { type: compressed.type || 'image/jpeg' })))
-              .then(() => true)
-              .catch(() => false)
-          )
-        );
-        const failCount = results.filter((ok) => !ok).length;
-        if (failCount > 0) {
-          showToast({ message: tx('photos_uploadFailedCountBin', { count: failCount }), variant: 'error' });
-        }
+        // Bounded concurrency + the server's real reason instead of a bare
+        // "x failed" — parallel Promise.all used to race the per-bin cap.
+        const { failures } = await uploadPhotosToBin(id, data.photos);
+        notifyPhotosChanged();
+        const message = summarizePhotoUploadFailures(failures, tx);
+        if (message) showToast({ message, variant: 'error', duration: 8000 });
       }
       setSuccessInfo([{
         id,

@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { describePhotoUploadError } from '@/features/photos/photoUpload';
 import { addPhoto } from '@/features/photos/usePhotos';
-import { getErrorMessage } from '@/lib/utils';
 
 export type PhotoStatus = 'pending' | 'uploading' | 'uploaded' | 'failed';
 
@@ -62,7 +62,7 @@ export function useCapture(binId?: string) {
               ? {
                   ...p,
                   status: 'failed' as const,
-                  error: getErrorMessage(err, tx("upload_failed_ad0d06", { defaultValue: "Upload failed" })),
+                  error: describePhotoUploadError(err, tx),
                 }
               : p,
           ),

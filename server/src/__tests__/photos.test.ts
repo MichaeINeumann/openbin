@@ -2,6 +2,7 @@ import type { Express } from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../index.js';
+import { config } from '../lib/config.js';
 import { createTestBin, createTestLocation, createTestUser, TEST_PNG } from './helpers.js';
 
 let app: Express;
@@ -162,5 +163,47 @@ describe('DELETE /api/photos/:id', () => {
     expect(afterRes.status).toBe(200);
     expect(afterRes.body.count).toBe(0);
     expect(afterRes.body.results).toEqual([]);
+  });
+});
+
+describe('POST /api/bins/:id/photos limits', () => {
+  it('enforces the per-bin cap even when uploads run in parallel', async () => {
+    const { token } = await createTestUser(app);
+    const location = await createTestLocation(app, token);
+    const bin = await createTestBin(app, token, location.id);
+
+    const max = config.maxPhotosPerBin;
+    const results = await Promise.all(
+      Array.from({ length: max + 3 }, () => uploadPhoto(app, token, bin.id)),
+    );
+
+    const created = results.filter((r) => r.status === 201);
+    const rejected = results.filter((r) => r.status !== 201);
+    expect(created).toHaveLength(max);
+    expect(rejected).toHaveLength(3);
+    for (const r of rejected) {
+      expect(r.status).toBe(413);
+      expect(r.body.error).toBe('BIN_PHOTO_LIMIT');
+    }
+
+    const list = await request(app)
+      .get('/api/photos')
+      .query({ bin_id: bin.id })
+      .set('Authorization', `Bearer ${token}`);
+    expect(list.body.count).toBe(max);
+  });
+
+  it('rejects unsupported image types with 422 instead of 500', async () => {
+    const { token } = await createTestUser(app);
+    const location = await createTestLocation(app, token);
+    const bin = await createTestBin(app, token, location.id);
+
+    const res = await request(app)
+      .post(`/api/bins/${bin.id}/photos`)
+      .set('Authorization', `Bearer ${token}`)
+      .attach('photo', Buffer.from('not really heic'), { filename: 'IMG_0001.heic', contentType: 'image/heic' });
+
+    expect(res.status).toBe(422);
+    expect(res.body.error).toBe('VALIDATION_ERROR');
   });
 });

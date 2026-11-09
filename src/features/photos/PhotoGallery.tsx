@@ -1,4 +1,4 @@
-import { Loader2, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,10 @@ import { useToast } from '@/components/ui/toast';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn, focusRing, getErrorMessage } from '@/lib/utils';
 import type { Photo } from '@/types';
-import { compressImage } from './compressImage';
 import { DeletePhotoDialog } from './DeletePhotoDialog';
 import { PhotoLightbox } from './PhotoLightbox';
-import { addPhoto, deletePhoto, getPhotoThumbUrl, notifyPhotosChanged, usePhotos } from './usePhotos';
+import { summarizePhotoUploadFailures, uploadPhotosToBin } from './photoUpload';
+import { deletePhoto, getPhotoThumbUrl, notifyPhotosChanged, usePhotos } from './usePhotos';
 
 const UPLOAD_CONCURRENCY = 3;
 
@@ -33,9 +33,12 @@ function isAcceptedPhoto(file: File): boolean {
 interface PhotoGalleryProps {
   binId: string;
   variant?: 'card' | 'inline';
+  /** When set, each photo gets an AI action that extracts its items and adds
+   *  them to the bin — without reanalysing every other photo. */
+  onAnalyzePhotos?: (photoIds: string[]) => void;
 }
 
-export function PhotoGallery({ binId, variant = 'card' }: PhotoGalleryProps) {
+export function PhotoGallery({ binId, variant = 'card', onAnalyzePhotos }: PhotoGalleryProps) {
   const { t: tx } = useTranslation('ui');
   const { photos } = usePhotos(binId);
   const { showToast } = useToast();
@@ -67,41 +70,29 @@ export function PhotoGallery({ binId, variant = 'card' }: PhotoGalleryProps) {
     }
 
     setUploadingCount(imageFiles.length);
-    let errorCount = 0;
-
-    // Process uploads with bounded concurrency
-    const queue = [...imageFiles];
-    const uploadOne = async () => {
-      let file = queue.shift();
-      while (file) {
-        try {
-          const compressed = await compressImage(file);
-          const compressedFile = new File([compressed], file.name, { type: compressed.type });
-          await addPhoto(binId, compressedFile, { silent: true });
-        } catch {
-          errorCount++;
-        } finally {
-          setUploadingCount((c) => c - 1);
-        }
-        file = queue.shift();
-      }
-    };
-
-    const workers = Array.from(
-      { length: Math.min(UPLOAD_CONCURRENCY, imageFiles.length) },
-      () => uploadOne(),
-    );
-    await Promise.all(workers);
+    const { uploadedIds, failures } = await uploadPhotosToBin(binId, imageFiles, {
+      concurrency: UPLOAD_CONCURRENCY,
+      onSettled: () => setUploadingCount((c) => c - 1),
+    });
 
     notifyPhotosChanged();
-    if (errorCount > 0) {
+    const failureMessage = summarizePhotoUploadFailures(failures, tx);
+    if (failureMessage) {
+      showToast({ message: failureMessage, variant: 'error', duration: 8000 });
+    }
+    if (uploadedIds.length > 0 && onAnalyzePhotos) {
       showToast({
-        message: tx('photos_uploadFailedCount', { count: errorCount }),
-        variant: 'error',
+        message: tx('photos_uploadedCount', { count: uploadedIds.length, defaultValue: '{{count}} photo(s) uploaded' }),
+        variant: 'success',
+        duration: 8000,
+        action: {
+          label: tx('photos_extractItemsAction', { defaultValue: 'Detect items' }),
+          onClick: () => onAnalyzePhotos(uploadedIds),
+        },
       });
     }
     if (inputRef.current) inputRef.current.value = '';
-  }, [binId, showToast, tx]);
+  }, [binId, showToast, tx, onAnalyzePhotos]);
 
   const handleDelete = useCallback(async (photo: Photo) => {
     try {
@@ -146,6 +137,19 @@ export function PhotoGallery({ binId, variant = 'card' }: PhotoGalleryProps) {
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </Tooltip>
+            {onAnalyzePhotos && (
+              <Tooltip content={tx('photos_extractItemsFromPhoto', { defaultValue: 'Detect items in this photo and add them' })}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onAnalyzePhotos([photo.id])}
+                  className="absolute bottom-1 left-1 h-8 w-8 rounded-[var(--radius-xs)] bg-[var(--overlay-button)] text-white opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-visible:opacity-100 transition-opacity hover:bg-[var(--overlay-button-hover)] hover:text-[var(--ai-accent)]"
+                  aria-label={tx('photos_extractItemsFromPhoto', { defaultValue: 'Detect items in this photo and add them' })}
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                </Button>
+              </Tooltip>
+            )}
           </div>
         ))}
         {uploadingCount > 0 && Array.from({ length: uploadingCount }, (_, i) => (

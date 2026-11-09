@@ -22,7 +22,7 @@ import { apiLimiter, authLimiter, joinLimiter, registerLimiter, sensitiveAuthLim
 import { isRestoreInProgress } from './lib/restore.js';
 import { tryAuthenticate } from './middleware/auth.js';
 import { maintenanceGate } from './middleware/maintenance.js';
-import { requestLogger } from './middleware/requestLogger.js';
+import { recordErrorForLog, requestLogger } from './middleware/requestLogger.js';
 import { requireCurrentConsent } from './middleware/requireCurrentConsent.js';
 import { requireActiveSubscription } from './middleware/requirePlan.js';
 import activityRoutes from './routes/activity.js';
@@ -253,6 +253,11 @@ export function createApp(opts?: { mountEeRoutes?: (app: express.Express) => voi
 
   // Global error handler
   app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    if (err instanceof HttpError) {
+      recordErrorForLog(res, { code: err.code, message: err.message });
+    } else if (err instanceof multer.MulterError) {
+      recordErrorForLog(res, { code: err.code, message: err.message });
+    }
     if (err instanceof PlanRestrictedError) {
       res.status(err.statusCode).json({
         error: err.code,

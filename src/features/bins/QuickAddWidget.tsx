@@ -1,4 +1,4 @@
-import { Check, ChevronLeft, Loader2, Plus, Sparkles } from 'lucide-react';
+import { Camera, Check, ChevronLeft, Loader2, Plus, Sparkles } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { LabelThreshold } from '@/components/ui/ai-progress-bar';
@@ -38,6 +38,14 @@ const QUICK_ADD_LABELS: LabelThreshold[] = [
 export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictation, canTranscribe, variant = 'card', isEmptyList }: QuickAddWidgetProps) {
   const { t: tx } = useTranslation('ui');
   const inputRef = useRef<HTMLInputElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const showPhotoButton = quickAdd.photoSupported && (aiEnabled || aiGated);
+  const photoLabel = tx('quickAdd_addFromPhoto', { defaultValue: 'Add items from a photo' });
+  const photoProgressLabels: LabelThreshold[] = [
+    [0, tx('quickAdd_photoProgressUpload', { defaultValue: 'Uploading photo…' })],
+    [15, tx('quickAdd_photoProgressIdentify', { defaultValue: 'Identifying items…' })],
+    [60, tx('quickAdd_photoProgressAlmost', { defaultValue: 'Almost done…' })],
+  ];
   const isRecording = dictation?.state === 'recording';
   const isInline = variant === 'inline';
   const hasValue = quickAdd.value.trim().length > 0;
@@ -121,6 +129,18 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
               </button>
             </Tooltip>
           )}
+          {!isRecording && showPhotoButton && (
+            <Tooltip content={photoLabel}>
+              <button
+                type="button"
+                onClick={aiGated ? onUpgrade : () => photoInputRef.current?.click()}
+                className="shrink-0 flex items-center justify-center size-11 rounded-[var(--radius-lg)] text-[var(--text-tertiary)] hover:bg-[var(--bg-active)] transition-colors"
+                aria-label={photoLabel}
+              >
+                <Camera className="h-4 w-4" />
+              </button>
+            </Tooltip>
+          )}
           {canTranscribe && dictation && (dictation.state === 'idle' || isRecording) && (
             <DictationButton dictation={dictation} />
           )}
@@ -180,6 +200,38 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
               )}
               {quickAdd.isStructuring ? tx("extracting_9a5349", { defaultValue: "Extracting..." }) : tx("extract_items_5dd358", { defaultValue: "Extract Items" })}
             </Button>
+          </div>
+        </div>
+      )}
+
+      {showPhotoButton && (
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = '';
+            if (file) quickAdd.handlePhotoFile(file);
+          }}
+        />
+      )}
+
+      {quickAdd.state === 'photo' && (
+        <div className={panelClass}>
+          {(quickAdd.photoUploading || quickAdd.isAnalyzingPhoto) && (
+            <AiProgressBar active compact labels={photoProgressLabels} />
+          )}
+          {quickAdd.photoError && !quickAdd.isAnalyzingPhoto && (
+            <p className="text-[13px] text-[var(--destructive)]">{quickAdd.photoError}</p>
+          )}
+          <div className="row">
+            <button
+              type="button"
+              onClick={quickAdd.cancelExpanded}
+              className="text-[13px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+            > {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </button>
           </div>
         </div>
       )}

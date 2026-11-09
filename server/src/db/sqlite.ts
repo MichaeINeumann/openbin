@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
 import Database from 'better-sqlite3';
 import { deserializeRow } from './shared.js';
 import type { DatabaseEngine, QueryResult, TxQueryFn } from './types.js';
@@ -190,22 +191,21 @@ export function createSqliteEngine(): DatabaseEngine {
     },
 
     async withTransaction<T>(fn: (query: TxQueryFn) => Promise<T>): Promise<T> {
-      const instance = getSqliteDb();
-      instance.exec('BEGIN');
-      try {
-        const txQuery: TxQueryFn = async <R = Record<string, any>>(
-          sql: string,
-          params?: unknown[],
-        ): Promise<QueryResult<R>> => {
-          return runQuery<R>(sql, params);
-        };
-        const result = await fn(txQuery);
-        instance.exec('COMMIT');
-        return result;
-      } catch (err) {
-        instance.exec('ROLLBACK');
-        throw err;
+      // better-sqlite3 has a single connection. Two requests awaiting inside
+      // their own transaction would otherwise interleave and the second
+      // BEGIN fails with "cannot start a transaction within a transaction"
+      // (seen as random 500s on parallel photo uploads). Queue them instead.
+      if (txContext.getStore()?.active) {
+        throw new Error('Nested withTransaction() is not supported');
       }
+      const run = txQueue.then(() => {
+        // Object, not a boolean: work spawned inside fn inherits the store but
+        // may run after COMMIT — it must then be free to open its own tx.
+        const ctx = { active: true };
+        return txContext.run(ctx, () => runTransaction(fn)).finally(() => { ctx.active = false; });
+      });
+      txQueue = run.catch(() => undefined);
+      return run;
     },
 
     async close(): Promise<void> {
@@ -215,4 +215,26 @@ export function createSqliteEngine(): DatabaseEngine {
       }
     },
   };
+}
+
+const txContext = new AsyncLocalStorage<{ active: boolean }>();
+let txQueue: Promise<unknown> = Promise.resolve();
+
+async function runTransaction<T>(fn: (query: TxQueryFn) => Promise<T>): Promise<T> {
+  const instance = getSqliteDb();
+  instance.exec('BEGIN');
+  try {
+    const txQuery: TxQueryFn = async <R = Record<string, any>>(
+      sql: string,
+      params?: unknown[],
+    ): Promise<QueryResult<R>> => {
+      return runQuery<R>(sql, params);
+    };
+    const result = await fn(txQuery);
+    instance.exec('COMMIT');
+    return result;
+  } catch (err) {
+    instance.exec('ROLLBACK');
+    throw err;
+  }
 }
