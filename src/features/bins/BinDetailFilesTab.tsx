@@ -1,5 +1,6 @@
 import { Paperclip } from 'lucide-react';
 import { lazy, Suspense, useId } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/components/ui/empty-state';
 import { AttachmentsList } from '@/features/attachments/AttachmentsList';
 import { useAttachments } from '@/features/attachments/useAttachments';
@@ -21,6 +22,7 @@ interface BinDetailFilesTabProps {
 }
 
 export function BinDetailFilesTab({ binId, photos, canEdit }: BinDetailFilesTabProps) {
+  const { t: tx } = useTranslation('ui');
   const attachmentsOn = isAttachmentsEnabled();
   const { planInfo, isGated } = usePlan();
   const attachmentsGated = isGated('attachments');
@@ -41,8 +43,8 @@ export function BinDetailFilesTab({ binId, photos, canEdit }: BinDetailFilesTabP
     return (
       <EmptyState
         icon={Paperclip}
-        title="No files"
-        subtitle="Photos and attachments added to this bin will appear here."
+        title={tx("no_files_ccc17f", { defaultValue: "No files" })}
+        subtitle={tx("photos_and_attachments_added_to_this_bin_will_appear_here_5bbd5d", { defaultValue: "Photos and attachments added to this bin will appear here." })}
         compact
       />
     );
@@ -53,9 +55,7 @@ export function BinDetailFilesTab({ binId, photos, canEdit }: BinDetailFilesTabP
       {showPhotos && (
         <section aria-labelledby={showSectionLabels ? photosLabelId : undefined} className="flex flex-col gap-1">
           {showSectionLabels && (
-            <h3 id={photosLabelId} className={sectionHeader}>
-              Photos
-            </h3>
+            <h3 id={photosLabelId} className={sectionHeader}> {tx("photos_c8b2e8", { defaultValue: "Photos" })} </h3>
           )}
           <PhotoGallery binId={binId} variant="inline" />
         </section>
@@ -63,15 +63,13 @@ export function BinDetailFilesTab({ binId, photos, canEdit }: BinDetailFilesTabP
       {showAttachments && (
         <section aria-labelledby={showSectionLabels ? docsLabelId : undefined} className="flex flex-col gap-1">
           {showSectionLabels && (
-            <h3 id={docsLabelId} className={sectionHeader}>
-              Documents
-            </h3>
+            <h3 id={docsLabelId} className={sectionHeader}> {tx("documents_687c82", { defaultValue: "Documents" })} </h3>
           )}
           {__EE__ && attachmentsGated && canEdit && (
             <Suspense fallback={null}>
               <UpgradePrompt
                 feature="Document Attachments"
-                description="Upload PDFs, spreadsheets, and other files to bins."
+                description={tx("upload_pdfs_spreadsheets_and_other_files_to_bins_e00610", { defaultValue: "Upload PDFs, spreadsheets, and other files to bins." })}
                 upgradeAction={planInfo.upgradeAction}
                 dismissKey="attachments"
               />

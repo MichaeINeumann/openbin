@@ -1,5 +1,6 @@
 import { Columns3 } from 'lucide-react';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -14,19 +15,20 @@ interface AdminColumnVisibilityMenuProps {
 }
 
 export function AdminColumnVisibilityMenu({ visibility, onToggle }: AdminColumnVisibilityMenuProps) {
+  const { t: tx } = useTranslation('ui');
   const { visible, animating, close, toggle } = usePopover();
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, close);
 
   return (
     <div ref={menuRef} className="relative">
-      <Tooltip content="Columns" side="bottom">
+      <Tooltip content={tx("columns_cf723c", { defaultValue: "Columns" })} side="bottom">
         <Button
           variant="secondary"
           size="icon"
           onClick={toggle}
           className="shrink-0 rounded-[var(--radius-sm)]"
-          aria-label="Toggle column visibility"
+          aria-label={tx("toggle_column_visibility_717649", { defaultValue: "Toggle column visibility" })}
         >
           <Columns3 className="h-4 w-4" />
         </Button>
@@ -36,9 +38,7 @@ export function AdminColumnVisibilityMenu({ visibility, onToggle }: AdminColumnV
           animating === 'exit' ? 'animate-popover-exit' : 'animate-popover-enter',
           'absolute right-0 mt-1 w-52 max-h-80 overflow-y-auto rounded-[var(--radius-md)] flat-popover z-20',
         )}>
-          <div className="ui-eyebrow px-3.5 py-2">
-            Visible Columns
-          </div>
+          <div className="ui-eyebrow px-3.5 py-2"> {tx("visible_columns_fb1705", { defaultValue: "Visible Columns" })} </div>
           {TOGGLEABLE_FIELDS.map((field) => (
             <label
               key={field}

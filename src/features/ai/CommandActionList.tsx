@@ -1,4 +1,5 @@
 import { AlertTriangle, Check, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useTerminology } from '@/lib/terminology';
 import { cn, plural } from '@/lib/utils';
 import { describeAction, getActionIcon, isDestructiveAction } from './commandActionUtils';
@@ -21,6 +22,7 @@ export function CommandActionList({
   confirmDestructive,
   destructiveCount,
 }: CommandActionListProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   return (
@@ -33,9 +35,7 @@ export function CommandActionList({
       )}
 
       {actions.length === 0 ? (
-        <p className="text-[14px] text-[var(--text-tertiary)] py-4 text-center">
-          No matching {t.bins} found, or the command was ambiguous. Try using exact {t.bin} names.
-        </p>
+        <p className="text-[14px] text-[var(--text-tertiary)] py-4 text-center"> {tx("no_matching_96b6c8", { defaultValue: "No matching" })} {t.bins} {tx("found_or_the_command_was_ambiguous_try_using_exact_e5b850", { defaultValue: "found, or the command was ambiguous. Try using exact" })} {t.bin} {tx("names_e048f8", { defaultValue: "names." })} </p>
       ) : (
         <ul className="space-y-1.5">
           {actions.map((action, i) => {
@@ -73,7 +73,7 @@ export function CommandActionList({
                     !checked ? 'text-[var(--text-tertiary)] line-through'
                       : destructive ? 'text-[var(--destructive)]' : 'text-[var(--text-primary)]',
                   )}>
-                    {describeAction(action, t)}
+                    {describeAction(action, t, tx)}
                   </span>
                 </button>
               </li>
@@ -86,8 +86,7 @@ export function CommandActionList({
         <div className="flex items-start gap-2 rounded-[var(--radius-sm)] bg-[var(--destructive)]/10 px-3 py-2">
           <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-[var(--destructive)]" />
           <p className="text-[13px] text-[var(--destructive)]">
-            {destructiveCount} destructive {plural(destructiveCount, 'action')} selected. Click apply again to confirm.
-          </p>
+            {destructiveCount} {tx("destructive_10f096", { defaultValue: "destructive" })} {plural(destructiveCount, 'action')} {tx("selected_click_apply_again_to_confirm_58ca92", { defaultValue: "selected. Click apply again to confirm." })} </p>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { getPhotoThumbUrl } from '@/features/photos/usePhotos';
 import { useTagStyle } from '@/features/tags/useTagStyle';
@@ -19,6 +20,7 @@ export function BinPreviewCard({ name, color, items, tags, icon, cardStyle, area
   className?: string;
   fixedSize?: boolean;
 }) {
+  const { t: tx } = useTranslation('ui');
   const { theme } = useTheme();
   const getTagStyle = useTagStyle();
   const renderProps = getCardRenderProps(color, cardStyle ?? '', theme);
@@ -53,16 +55,16 @@ export function BinPreviewCard({ name, color, items, tags, icon, cardStyle, area
     <div className="flex items-start gap-3">
       <div className="min-w-0 flex-1">
         <h3 className="font-semibold text-[15px] text-[var(--text-primary)] truncate leading-snug" style={nameStyle}>
-          {name || <span>My bin</span>}
+          {name || <span>{tx("my_bin_83f44d", { defaultValue: "My bin" })}</span>}
         </h3>
         {showArea && (
           <p className="text-[12px] text-[var(--text-tertiary)] truncate leading-relaxed" style={secondaryStyle}>
-            {areaName || (fixedSize ? 'Area' : ' ')}
+            {areaName || (fixedSize ? tx("area_2745de", { defaultValue: "Area" }) : ' ')}
           </p>
         )}
         {showItems && (
           <p className="mt-1 text-[13px] text-[var(--text-tertiary)] line-clamp-1 leading-relaxed" style={secondaryStyle}>
-            {items.length > 0 ? items.join(', ') : fixedSize ? 'Item one, item two, item three' : ' '}
+            {items.length > 0 ? items.join(', ') : fixedSize ? tx("item_one_item_two_item_three_210e3f", { defaultValue: "Item one, item two, item three" }) : ' '}
           </p>
         )}
         {showTags && (

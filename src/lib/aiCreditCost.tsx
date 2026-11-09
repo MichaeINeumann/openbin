@@ -1,7 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import type { ProgressTone } from '@/components/ui/progress-bar';
 import type { PlanInfo, SubscriptionStatus } from '@/types';
 import { usePlan } from './usePlan';
-import { cn, pluralize } from './utils';
+import { cn } from './utils';
 
 // Mirror of the server-side weights. Kept as a small duplicate (instead
 // of a shared package) because the cost is ~10 lines of arithmetic and
@@ -82,10 +83,11 @@ export function formatCreditCompactSuffix(estimate: CreditEstimate | null): stri
  *  `computeCreditEstimate` returns null and the suffixes collapse to ''
  *  — the label degrades to "baseLabel · N credits" without a gate. */
 export function useCreditCostLabel(baseLabel: string, cost: number): { label: string; compactSuffix: string } {
+  const { t: tx } = useTranslation('ui');
   const { planInfo } = usePlan();
   const estimate = computeCreditEstimate(cost, planInfo.aiCredits, planInfo.status);
   return {
-    label: `${baseLabel} · ${pluralize(cost, 'credit')}${formatCreditSuffix(estimate)}`,
+    label: `${baseLabel} · ${tx('count_credits', { count: cost })}${formatCreditSuffix(estimate)}`,
     compactSuffix: formatCreditCompactSuffix(estimate),
   };
 }
@@ -96,10 +98,11 @@ interface CreditCostProps {
 }
 
 export function CreditCost({ cost, className }: CreditCostProps): JSX.Element | null {
+  const { t: tx } = useTranslation('ui');
   if (cost <= 0) return null;
   return (
     <span className={cn('text-xs text-zinc-500 dark:text-zinc-400', className)}>
-      Uses {pluralize(cost, 'credit')}
+      {tx('aiCredits_uses', { credits: tx('count_credits', { count: cost }) })}
     </span>
   );
 }

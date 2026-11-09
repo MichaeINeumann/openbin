@@ -1,5 +1,6 @@
 import { ArrowUpFromLine, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -54,18 +55,19 @@ function TagRowMenu({
   onDelete: () => void;
   onSetParent?: (tag: string) => void;
 }) {
+  const { t: tx } = useTranslation('ui');
   const { visible, animating, toggle, close } = usePopover();
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, close);
 
   return (
     <div ref={ref} className="relative">
-      <Tooltip content="Tag actions">
+      <Tooltip content={tx("tag_actions_ad81bd", { defaultValue: "Tag actions" })}>
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); toggle(); }}
           className="h-9 w-9 rounded-[var(--radius-lg)] flex items-center justify-center hover:bg-[var(--bg-active)] transition-colors shrink-0 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]"
-          aria-label={`Actions for tag ${tag}`}
+          aria-label={tx("actions_for_tag_tag_84e1dd", { defaultValue: "Actions for tag {{tag}}", tag: tag })}
         >
           <MoreHorizontal className="h-4 w-4 text-[var(--text-tertiary)]" />
         </button>
@@ -80,27 +82,21 @@ function TagRowMenu({
             onClick={(e) => { e.stopPropagation(); close(); onRename(); }}
             className={menuItemClass}
           >
-            <Pencil className="h-4 w-4 text-[var(--text-tertiary)]" />
-            Rename
-          </button>
+            <Pencil className="h-4 w-4 text-[var(--text-tertiary)]" /> {tx("rename_d3f4cb", { defaultValue: "Rename" })} </button>
           {onSetParent && !hasChildren && (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); close(); onSetParent(tag); }}
               className={menuItemClass}
             >
-              <ArrowUpFromLine className="h-4 w-4 text-[var(--text-tertiary)]" />
-              Set Parent...
-            </button>
+              <ArrowUpFromLine className="h-4 w-4 text-[var(--text-tertiary)]" /> {tx("set_parent_e3df53", { defaultValue: "Set Parent..." })} </button>
           )}
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); close(); onDelete(); }}
             className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] text-[var(--destructive)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer outline-none focus-visible:bg-[var(--bg-hover)]"
           >
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
+            <Trash2 className="h-4 w-4" /> {tx("delete_f6fdbe", { defaultValue: "Delete" })} </button>
         </div>
       )}
     </div>
@@ -146,6 +142,7 @@ function TagRow({
   selected,
   onSelect,
 }: TagRowProps) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const t = useTerminology();
   const { handleClick, handleKeyDown, longPress } = useEntitySelectionInteraction({
@@ -161,7 +158,7 @@ function TagRow({
       tabIndex={0}
       role={selectable ? 'option' : 'button'}
       aria-selected={selectable ? selected : undefined}
-      aria-label={`Filter by tag: ${tag}`}
+      aria-label={tx("filter_by_tag_tag_fac321", { defaultValue: "Filter by tag: {{tag}}", tag: tag })}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onTouchStart={longPress.onTouchStart}
@@ -253,6 +250,7 @@ export function TagTableView({
   selectedIds,
   onSelect,
 }: TagTableViewProps) {
+  const { t: tx } = useTranslation('ui');
   const parentSet = useMemo(() => {
     const set = new Set<string>();
     for (const [, parent] of tagParents) set.add(parent);
@@ -305,8 +303,8 @@ export function TagTableView({
         {/* Header */}
         <TableHeader>
           <span className="w-6 shrink-0" aria-hidden />
-          <SortHeader label="Tag" column="alpha" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="flex-[2]" />
-          <SortHeader label="Count" column="count" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-20 justify-end" />
+          <SortHeader label={tx("tag_982963", { defaultValue: "Tag" })} column="alpha" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="flex-[2]" />
+          <SortHeader label={tx("count_66e129", { defaultValue: "Count" })} column="count" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-20 justify-end" />
           <span className="w-10 shrink-0" />
           {showActionsCol && <span className="w-10 shrink-0" />}
         </TableHeader>

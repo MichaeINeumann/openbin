@@ -1,5 +1,6 @@
 import { Check, ShoppingCart, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BinIconBadge } from '@/components/ui/bin-icon-badge';
 import { Button } from '@/components/ui/button';
 import { Crossfade } from '@/components/ui/crossfade';
@@ -50,6 +51,7 @@ function sortEntries(
 }
 
 export function ShoppingListPage() {
+  const { t: tx } = useTranslation('ui');
   const { activeLocationId } = useAuth();
   const { canWrite } = usePermissions();
   const { showToast } = useToast();
@@ -79,7 +81,7 @@ export function ShoppingListPage() {
       await addToShoppingList(locationId, name);
       setNewName('');
     } catch {
-      showToast({ message: 'Failed to add', variant: 'error' });
+      showToast({ message: tx('shopping_addFailed'), variant: 'error' });
     }
   }
 
@@ -88,14 +90,14 @@ export function ShoppingListPage() {
       const result = await markAsBought(entry.id);
       if (result.restored) {
         showToast({
-          message: `Added back to ${entry.origin_bin_name ?? 'bin'}`,
+          message: tx('shopping_restored', { name: entry.origin_bin_name ?? tx('bin_4c5ec7') }),
           variant: 'success',
         });
       } else {
-        showToast({ message: 'Marked bought' });
+        showToast({ message: tx('shopping_markedBought') });
       }
     } catch {
-      showToast({ message: 'Failed to mark bought', variant: 'error' });
+      showToast({ message: tx('shopping_boughtFailed'), variant: 'error' });
     }
   }
 
@@ -103,14 +105,14 @@ export function ShoppingListPage() {
     try {
       await removeFromShoppingList(entry.id);
     } catch {
-      showToast({ message: 'Failed to remove', variant: 'error' });
+      showToast({ message: tx('shopping_removeFailed'), variant: 'error' });
     }
   }
 
   return (
     <div className="page-content-wide">
       <PageHeader
-        title="Shopping List"
+        title={tx("shopping_list_6160f4", { defaultValue: "Shopping List" })}
         actions={
           canWrite && locationId ? (
             <div className="flex items-center gap-2">
@@ -123,16 +125,14 @@ export function ShoppingListPage() {
                     void handleAdd();
                   }
                 }}
-                placeholder="Add an item…"
+                placeholder={tx("add_an_item_657acf", { defaultValue: "Add an item…" })}
                 className="max-w-xs"
               />
               <Button
                 type="button"
                 onClick={() => void handleAdd()}
                 disabled={!newName.trim()}
-              >
-                Add
-              </Button>
+              > {tx("add_61cc55", { defaultValue: "Add" })} </Button>
             </div>
           ) : undefined
         }
@@ -143,7 +143,7 @@ export function ShoppingListPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onClear={search ? () => setSearch('') : undefined}
-          placeholder="Search items..."
+          placeholder={tx("search_items_e2c0a6", { defaultValue: "Search items..." })}
         />
       )}
 
@@ -189,11 +189,11 @@ export function ShoppingListPage() {
         {visibleEntries.length === 0 ? (
           <EmptyState
             icon={ShoppingCart}
-            title={search ? 'No items match your search' : 'No items on your shopping list'}
+            title={search ? tx("no_items_match_your_search_3abfe2", { defaultValue: "No items match your search" }) : tx("no_items_on_your_shopping_list_993728", { defaultValue: "No items on your shopping list" })}
             subtitle={
               search
-                ? 'Try a different search term'
-                : "When you remove an item from a bin, the undo toast offers an 'Add to list' shortcut. Items you add here also show up."
+                ? tx("try_a_different_search_term_39d642", { defaultValue: "Try a different search term" })
+                : tx("when_you_remove_an_item_from_a_bin_the_undo_toast_offers_an__597b5f", { defaultValue: "When you remove an item from a bin, the undo toast offers an 'Add to list' shortcut. Items you add here also show up." })
             }
             variant={search ? 'search' : undefined}
           />
@@ -201,7 +201,7 @@ export function ShoppingListPage() {
           <Table>
             <TableHeader>
               <SortHeader
-                label="Item"
+                label={tx("item_ecdda5", { defaultValue: "Item" })}
                 column="alpha"
                 currentColumn={sortColumn}
                 currentDirection={sortDirection}
@@ -209,7 +209,7 @@ export function ShoppingListPage() {
                 className="flex-[2]"
               />
               <SortHeader
-                label="Bin"
+                label={tx("bin_4c5ec7", { defaultValue: "Bin" })}
                 column="bin"
                 currentColumn={sortColumn}
                 currentDirection={sortDirection}
@@ -256,11 +256,11 @@ export function ShoppingListPage() {
                   </div>
                   {canWrite && (
                     <div className="w-10 shrink-0 flex justify-end">
-                      <Tooltip content="Mark bought">
+                      <Tooltip content={tx("mark_bought_6d601e", { defaultValue: "Mark bought" })}>
                         <button
                           type="button"
                           onClick={() => void handleBought(entry)}
-                          aria-label={`Mark ${entry.name} bought`}
+                          aria-label={tx("mark_value0_bought_bf9480", { defaultValue: "Mark {{value0}} bought", value0: entry.name })}
                           className="h-9 w-9 rounded-[var(--radius-lg)] flex items-center justify-center text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]"
                         >
                           <Check className="h-4 w-4" />
@@ -270,11 +270,11 @@ export function ShoppingListPage() {
                   )}
                   {canWrite && (
                     <div className="w-10 shrink-0 flex justify-end">
-                      <Tooltip content="Remove">
+                      <Tooltip content={tx("remove_e96390", { defaultValue: "Remove" })}>
                         <button
                           type="button"
                           onClick={() => void handleRemove(entry)}
-                          aria-label={`Remove ${entry.name}`}
+                          aria-label={tx("remove_value0_494593", { defaultValue: "Remove {{value0}}", value0: entry.name })}
                           className="h-9 w-9 rounded-[var(--radius-lg)] flex items-center justify-center text-[var(--text-tertiary)] hover:bg-[var(--bg-active)] transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]"
                         >
                           <X className="h-4 w-4" />

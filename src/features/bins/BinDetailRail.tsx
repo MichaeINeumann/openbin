@@ -1,5 +1,6 @@
 import { Check, Copy, Pencil } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
@@ -42,6 +43,7 @@ export function BinDetailRail({
   allTags,
   activeLocationId,
 }: BinDetailRailProps) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const getTagStyle = useTagStyle();
   const { showToast } = useToast();
@@ -76,10 +78,10 @@ export function BinDetailRail({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="sr-only">Bin details</h2>
+      <h2 className="sr-only">{tx("bin_details_bd9cd4", { defaultValue: "Bin details" })}</h2>
 
       <div className={cn(META_FIELD, autoSave.savedFields.has('notes') && 'animate-save-flash')}>
-        <label htmlFor="detail-notes" className={sectionHeader}>Notes</label>
+        <label htmlFor="detail-notes" className={sectionHeader}>{tx("notes_704400", { defaultValue: "Notes" })}</label>
         {canEdit ? (
           <Textarea
             id="detail-notes"
@@ -92,14 +94,14 @@ export function BinDetailRail({
             maxLength={10000}
             rows={1}
             className="[field-sizing:content] text-[15px] leading-relaxed"
-            placeholder="Add notes..."
+            placeholder={tx("add_notes_a21d2f", { defaultValue: "Add notes..." })}
           />
         ) : bin.notes ? (
           <p className="text-[15px] text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
             {bin.notes}
           </p>
         ) : (
-          <p className="text-[15px] text-[var(--text-tertiary)]">No notes</p>
+          <p className="text-[15px] text-[var(--text-tertiary)]">{tx("no_notes_f03eb1", { defaultValue: "No notes" })}</p>
         )}
       </div>
 
@@ -111,11 +113,11 @@ export function BinDetailRail({
               {bin.short_code}
             </span>
             <div className="flex items-center gap-0.5 shrink-0">
-              <Tooltip content={copied ? 'Copied!' : 'Copy code'}>
+              <Tooltip content={copied ? tx("copied_b7c3ca", { defaultValue: "Copied!" }) : tx("copy_code_6c1069", { defaultValue: "Copy code" })}>
                 <button
                   type="button"
                   onClick={handleCopyCode}
-                  aria-label="Copy code"
+                  aria-label={tx("copy_code_6c1069", { defaultValue: "Copy code" })}
                   className={RAIL_ICON_BTN}
                 >
                   {copied ? (
@@ -126,11 +128,11 @@ export function BinDetailRail({
                 </button>
               </Tooltip>
               {canChangeCode && (
-                <Tooltip content="Change code">
+                <Tooltip content={tx("change_code_673c10", { defaultValue: "Change code" })}>
                   <button
                     type="button"
                     onClick={onChangeCode}
-                    aria-label="Change code"
+                    aria-label={tx("change_code_673c10", { defaultValue: "Change code" })}
                     className={RAIL_ICON_BTN}
                   >
                     <Pencil className="h-4 w-4" />
@@ -151,13 +153,13 @@ export function BinDetailRail({
             />
           ) : (
             <p className="text-[15px] text-[var(--text-primary)]">
-              {bin.area_name || <span className="text-[var(--text-tertiary)]">No area</span>}
+              {bin.area_name || <span className="text-[var(--text-tertiary)]">{tx("no_area_59c975", { defaultValue: "No area" })}</span>}
             </p>
           )}
         </div>
 
         <div className={cn(META_FIELD, autoSave.savedFields.has('tags') && 'animate-save-flash')}>
-          <span className={sectionHeader}>Tags</span>
+          <span className={sectionHeader}>{tx("tags_848eed", { defaultValue: "Tags" })}</span>
           {canEdit ? (
             <TagInput
               tags={bin.tags}
@@ -178,13 +180,13 @@ export function BinDetailRail({
               ))}
             </div>
           ) : (
-            <p className="text-[15px] text-[var(--text-tertiary)]">No tags</p>
+            <p className="text-[15px] text-[var(--text-tertiary)]">{tx("no_tags_ea3d32", { defaultValue: "No tags" })}</p>
           )}
         </div>
 
         {canChangeVisibility && (
           <div className={cn(META_FIELD, autoSave.savedFields.has('visibility') && 'animate-save-flash')}>
-            <span className={sectionHeader}>Visibility</span>
+            <span className={sectionHeader}>{tx("visibility_7d9ff4", { defaultValue: "Visibility" })}</span>
             <VisibilityPicker
               value={bin.visibility}
               onChange={(v) => autoSave.saveVisibility(v)}

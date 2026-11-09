@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import type { LucideIcon } from 'lucide-react';
 import {
   CreditCard,
@@ -102,4 +103,18 @@ export function filterCategories(options: FilterOptions): SettingsCategory[] {
     if (cat.gate === 'siteAdmin') return isSiteAdmin;
     return false;
   });
+}
+
+export function translateCategory(category: SettingsCategory, t: TFunction<'ui'>): SettingsCategory {
+  switch (category.id) {
+    case 'account': return { ...category, label: t('category_account', { defaultValue: "Account" }), description: t('category_account_description', { defaultValue: "Profile, security, API keys" }) };
+    case 'subscription': return { ...category, label: t('category_subscription', { defaultValue: "Subscription" }), description: t('category_subscription_description', { defaultValue: "Plan and billing" }) };
+    case 'preferences': return { ...category, label: t('category_preferences', { defaultValue: "Preferences" }), description: t('category_preferences_description', { defaultValue: "Theme, shortcuts, dashboard" }) };
+    case 'personalization': return { ...category, label: t('category_personalization', { defaultValue: "Personalization" }), description: t('category_personalization_description', { defaultValue: "App name and terminology" }) };
+    case 'ai': return { ...category, label: t('category_ai', { defaultValue: "AI" }), description: t('category_ai_description', { defaultValue: "Provider, models, prompts" }) };
+    case 'data': return { ...category, label: t('category_data', { defaultValue: "Data" }), description: t('category_data_description', { defaultValue: "Export, import, activity" }) };
+    case 'about': return { ...category, label: t('category_about', { defaultValue: "About" }), description: t('category_about_description', { defaultValue: "Version and info" }) };
+    case 'admin': return { ...category, label: t('category_admin', { defaultValue: "Admin Dashboard" }), description: t('category_admin_description', { defaultValue: "Manage users and system" }) };
+    default: return category;
+  }
 }

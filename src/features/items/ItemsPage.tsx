@@ -1,5 +1,6 @@
 import { ArrowRightLeft, ClipboardList, Hash, PackageOpen, Sparkles, Trash2 } from 'lucide-react';
 import { lazy, Suspense, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Crossfade } from '@/components/ui/crossfade';
@@ -35,6 +36,7 @@ const BulkQuantityDialog = lazy(() =>
 );
 
 export function ItemsPage() {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { search, sortColumn, sortDirection, setSearch, setSort } = useTableSearchParams<ItemSortColumn>('alpha');
   const debouncedSearch = useDebounce(search, 300);
@@ -61,22 +63,22 @@ export function ItemsPage() {
   const ids = [...selectedIds];
 
   const actions: BulkAction[] = [
-    { id: 'delete', icon: Trash2, label: 'Delete', onClick: () => setOpenDialog('delete'), group: 'primary', danger: true },
-    { id: 'checkout', icon: Sparkles, label: 'Checkout', onClick: () => setOpenDialog('checkout'), group: 'primary' },
-    { id: 'move', icon: ArrowRightLeft, label: 'Move', onClick: () => setOpenDialog('move'), group: 'more' },
-    { id: 'quantity', icon: Hash, label: 'Set quantity', onClick: () => setOpenDialog('quantity'), group: 'more' },
+    { id: 'delete', icon: Trash2, label: tx("delete_f6fdbe", { defaultValue: "Delete" }), onClick: () => setOpenDialog('delete'), group: 'primary', danger: true },
+    { id: 'checkout', icon: Sparkles, label: tx("checkout_3ac8e9", { defaultValue: "Checkout" }), onClick: () => setOpenDialog('checkout'), group: 'primary' },
+    { id: 'move', icon: ArrowRightLeft, label: tx("move_76cdb9", { defaultValue: "Move" }), onClick: () => setOpenDialog('move'), group: 'more' },
+    { id: 'quantity', icon: Hash, label: tx("set_quantity_00027f", { defaultValue: "Set quantity" }), onClick: () => setOpenDialog('quantity'), group: 'more' },
   ];
 
   return (
     <div className="page-content-wide">
-      <PageHeader title="Items" />
+      <PageHeader title={tx("items_44d25b", { defaultValue: "Items" })} />
 
       {(totalCount > 0 || search) && (
         <SearchInput
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onClear={search ? () => setSearch('') : undefined}
-          placeholder="Search items..."
+          placeholder={tx("search_items_e2c0a6", { defaultValue: "Search items..." })}
         />
       )}
 
@@ -110,13 +112,13 @@ export function ItemsPage() {
         {items.length === 0 ? (
           <EmptyState
             icon={search ? ClipboardList : PackageOpen}
-            title={search ? 'No items match your search' : 'No items yet'}
-            subtitle={search ? 'Try a different search term' : `Items added to ${t.bins} will appear here`}
+            title={search ? tx("no_items_match_your_search_3abfe2", { defaultValue: "No items match your search" }) : tx("no_items_yet_ff5ae0", { defaultValue: "No items yet" })}
+            subtitle={search ? tx("try_a_different_search_term_39d642", { defaultValue: "Try a different search term" }) : tx("items_added_to_bins_will_appear_here_8fb616", { defaultValue: "Items added to {{bins}} will appear here", bins: t.bins })}
             variant={search ? 'search' : undefined}
           >
             {!search && (
               <Link to="/bins">
-                <Button variant="secondary" size="sm">Browse {t.bins}</Button>
+                <Button variant="secondary" size="sm">{tx('bins_browseAction', { bins: t.bins })}</Button>
               </Link>
             )}
           </EmptyState>
@@ -145,7 +147,7 @@ export function ItemsPage() {
           onClear={clearSelection}
           isBusy={isBusy}
           actions={actions}
-          selectionLabel={`${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'} selected`}
+          selectionLabel={tx('selected_items', { count: selectedIds.size })}
         />
       )}
 

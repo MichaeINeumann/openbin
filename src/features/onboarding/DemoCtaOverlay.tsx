@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import '@/components/ui/animations.css';
 import { Cloud, Server, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ const CTA_ACTIONS = [
 ] as const;
 
 export function DemoCtaOverlay() {
+  const { t: tx } = useTranslation('ui');
   const [open, setOpen] = useState(false);
 
   const dismiss = useCallback(() => {
@@ -69,7 +71,7 @@ export function DemoCtaOverlay() {
         <button
           type="button"
           onClick={dismiss}
-          aria-label="Dismiss"
+          aria-label={tx("dismiss_70afe9", { defaultValue: "Dismiss" })}
           className={cn(closeButton, focusRing)}
         >
           <X className="h-4 w-4" />
@@ -79,12 +81,8 @@ export function DemoCtaOverlay() {
           <div className="onboarding-completion-icon">
             <BrandIcon className="h-16 w-16 text-[var(--accent)] mb-5" />
           </div>
-          <h2 id="demo-cta-title" className="text-[22px] font-bold text-[var(--text-primary)] mb-2">
-            Ready to get started?
-          </h2>
-          <p className="text-[14px] text-[var(--text-tertiary)] mb-5 leading-relaxed">
-            Take OpenBin home with you.
-          </p>
+          <h2 id="demo-cta-title" className="text-[22px] font-bold text-[var(--text-primary)] mb-2"> {tx("ready_to_get_started_ef37e1", { defaultValue: "Ready to get started?" })} </h2>
+          <p className="text-[14px] text-[var(--text-tertiary)] mb-5 leading-relaxed"> {tx("take_openbin_home_with_you_244f4e", { defaultValue: "Take OpenBin home with you." })} </p>
 
           <div className="w-full space-y-2 mb-6">
             {CTA_ACTIONS.map(({ icon: Icon, label, description, url }, i) => (
@@ -114,9 +112,7 @@ export function DemoCtaOverlay() {
             type="button"
             onClick={dismiss}
             className="w-full rounded-[var(--radius-md)] h-11 text-[15px]"
-          >
-            Continue Exploring
-          </Button>
+          > {tx("continue_exploring_ac66c0", { defaultValue: "Continue Exploring" })} </Button>
         </div>
       </div>
     </div>

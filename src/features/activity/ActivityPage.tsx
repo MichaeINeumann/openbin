@@ -1,5 +1,6 @@
 import { AlertTriangle, Clock } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Crossfade } from '@/components/ui/crossfade';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -14,6 +15,8 @@ import { getActionLabel } from './activityHelpers';
 import { usePaginatedActivityLog } from './useActivity';
 
 export function ActivityPage() {
+  const { t: tx } = useTranslation('ui');
+  const { t: translateActivity } = useTranslation('activity');
   const navigate = useNavigate();
   const { isAdmin, isLoading: permissionsLoading } = usePermissions();
   const t = useTerminology();
@@ -41,10 +44,10 @@ export function ActivityPage() {
     return entries.filter((e) => {
       if (e.display_name.toLowerCase().includes(q)) return true;
       if (e.entity_name?.toLowerCase().includes(q)) return true;
-      if (getActionLabel(e, t).toLowerCase().includes(q)) return true;
+      if (getActionLabel(e, t, translateActivity).toLowerCase().includes(q)) return true;
       return false;
     });
-  }, [entries, searchQuery, t]);
+  }, [entries, searchQuery, t, translateActivity]);
 
   useEffect(() => {
     if (!permissionsLoading && !isAdmin) {
@@ -60,7 +63,7 @@ export function ActivityPage() {
 
   return (
     <>
-      <SettingsPageHeader title="Activity Log" description="View changes and actions across your location." />
+      <SettingsPageHeader title={tx("activity_log_a3abad", { defaultValue: "Activity Log" })} description={tx("view_changes_and_actions_across_your_location_2cfa8d", { defaultValue: "View changes and actions across your location." })} />
 
       <ActivityFilterBar
         entityTypeFilter={entityTypeFilter}
@@ -82,17 +85,17 @@ export function ActivityPage() {
         {error ? (
           <EmptyState
             icon={AlertTriangle}
-            title="Failed to load activity"
+            title={tx("failed_to_load_activity_152439", { defaultValue: "Failed to load activity" })}
             subtitle={error}
           />
         ) : filteredEntries.length === 0 ? (
           <EmptyState
             icon={Clock}
-            title={hasFilters ? 'No matching activity' : 'No activity yet'}
+            title={hasFilters ? tx("no_matching_activity_26303c", { defaultValue: "No matching activity" }) : 'No activity yet'}
             subtitle={
               hasFilters
-                ? 'Try different filters or search terms'
-                : `Actions like creating, editing, and deleting ${t.bins} will appear here`
+                ? tx("try_different_filters_or_search_terms_b77124", { defaultValue: "Try different filters or search terms" })
+                : tx("actions_like_creating_editing_and_deleting_bins_will_appear__4ef92e", { defaultValue: "Actions like creating, editing, and deleting {{bins}} will appear here", bins: t.bins })
             }
             variant={hasFilters ? 'search' : undefined}
           />

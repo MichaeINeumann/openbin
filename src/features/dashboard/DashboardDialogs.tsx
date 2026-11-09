@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/toast';
 import { buildBinBulkActions } from '@/features/bins/buildBinBulkActions';
@@ -64,6 +65,7 @@ export function DashboardDialogs({
   bulkDelete, bulkPinToggle, bulkDuplicate, pinLabel, isBusy,
   bins, t,
 }: DashboardDialogsProps) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
@@ -86,16 +88,16 @@ export function DashboardDialogs({
     if (!bin) return;
     setCopiedStyle({ icon: bin.icon, color: bin.color, card_style: bin.card_style });
     clearSelection();
-    showToast({ message: 'Style copied', variant: 'success' });
-  }, [selectedIds, bins, clearSelection, showToast]);
+    showToast({ message: tx("style_copied_c74b3a", { defaultValue: "Style copied" }), variant: 'success' });
+  }, [selectedIds, bins, clearSelection, showToast, tx]);
 
   const handlePasteStyle = useCallback(async () => {
     if (!copiedStyle) return;
     const ids = [...selectedIds];
     await Promise.all(ids.map((id) => updateBin(id, { icon: copiedStyle.icon, color: copiedStyle.color, cardStyle: copiedStyle.card_style })));
     clearSelection();
-    showToast({ message: `Style applied to ${ids.length} ${ids.length === 1 ? t.bin : t.bins}`, variant: 'success' });
-  }, [copiedStyle, selectedIds, clearSelection, showToast, t]);
+    showToast({ message: tx("style_applied_to_value0_value1_033108", { defaultValue: "Style applied to {{value0}} {{value1}}", value0: ids.length, value1: ids.length === 1 ? t.bin : t.bins }), variant: 'success' });
+  }, [copiedStyle, selectedIds, clearSelection, showToast, t, tx]);
 
   return (
     <>

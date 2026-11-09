@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {ArrowUpDown, CircleHelp,
   Copy, FileText, FolderMinus, FolderPen, Hash, Image as ImageIcon, LogIn, LogOut, MapPin, Minus, Package, Palette, PenLine, Pin, PinOff,
   Plus, Tag, Trash2, Undo2,
@@ -5,8 +6,12 @@ import {ArrowUpDown, CircleHelp,
 import type { Terminology } from '@/lib/terminology';
 import type { CommandAction } from './useCommand';
 
-/** Visible placeholder shown when an action's bin_name is missing AND no map entry resolves it. */
-const UNKNOWN_BIN_LABEL = 'a bin';
+/**
+ * The i18next `t` bound to the 'ui' namespace. Taken as a parameter rather than
+ * read from a hook so describeAction() stays a plain function that the tests
+ * and the non-React call sites can use.
+ */
+type Translate = TFunction<'ui'>;
 
 export function isBinCreatingAction(action: CommandAction): boolean {
   return action.type === 'create_bin' || action.type === 'duplicate_bin';
@@ -41,9 +46,12 @@ export function enrichActionsWithNames(
 }
 
 /** Read bin_name from action, falling back to a readable placeholder. */
-function resolveBinName(action: CommandAction): string {
+/** Falls back to a generic placeholder when bin_name is missing AND no map entry resolves it. */
+function resolveBinName(action: CommandAction, t: Terminology, tx: Translate): string {
   const name = (action as { bin_name?: unknown }).bin_name;
-  return typeof name === 'string' && name.length > 0 ? name : UNKNOWN_BIN_LABEL;
+  return typeof name === 'string' && name.length > 0
+    ? name
+    : tx('aiAction_unknownBin', { term: t.bin });
 }
 
 export function isDestructiveAction(action: CommandAction): boolean {
@@ -81,70 +89,80 @@ export function getActionIcon(action: CommandAction) {
   }
 }
 
-export function describeAction(action: CommandAction, t: Terminology): string {
-  const binName = resolveBinName(action);
+export function describeAction(action: CommandAction, t: Terminology, tx: Translate): string {
+  const binName = resolveBinName(action, t, tx);
   switch (action.type) {
     case 'add_items':
-      return `Add ${action.items.map((i) => typeof i === 'string' ? i : (i.quantity ? `${i.name} (×${i.quantity})` : i.name)).join(', ')} to "${binName}"`;
+      return tx('aiAction_addItems', {
+        binName,
+        items: action.items
+          .map((i) => (typeof i === 'string' ? i : i.quantity ? `${i.name} (\u00d7${i.quantity})` : i.name))
+          .join(', '),
+      });
     case 'remove_items':
-      return `Remove ${action.items.join(', ')} from "${binName}"`;
+      return tx('aiAction_removeItems', { binName, items: action.items.join(', ') });
     case 'modify_item':
-      return `Rename "${action.old_item}" to "${action.new_item}" in "${binName}"`;
+      return tx('aiAction_modifyItem', { binName, oldItem: action.old_item, newItem: action.new_item });
     case 'set_item_quantity':
       return action.quantity <= 0
-        ? `Remove "${action.item_name}" from "${binName}"`
-        : `Set quantity of "${action.item_name}" to ${action.quantity} in "${binName}"`;
+        ? tx('aiAction_removeItem', { binName, itemName: action.item_name })
+        : tx('aiAction_setQuantity', { binName, itemName: action.item_name, quantity: action.quantity });
     case 'create_bin': {
-      let desc = `Create ${t.bin} "${action.name}"`;
-      if (action.area_name) desc += ` in ${action.area_name}`;
-      if (action.items?.length) desc += ` with ${action.items.length} item${action.items.length !== 1 ? 's' : ''}`;
+      let desc = tx('aiAction_createBin', { term: t.bin, name: action.name });
+      if (action.area_name) desc += tx('aiAction_createBinInArea', { areaName: action.area_name });
+      if (action.items?.length) desc += tx('ai_actionWithItems', { count: action.items.length });
       return desc;
     }
     case 'delete_bin':
-      return `Delete "${binName}"`;
+      return tx('aiAction_deleteBin', { binName });
     case 'add_tags':
-      return `Add tag${action.tags.length !== 1 ? 's' : ''} ${action.tags.join(', ')} to "${binName}"`;
+      return tx('ai_actionAddTags', { count: action.tags.length, tags: action.tags.join(', '), binName });
     case 'remove_tags':
-      return `Remove tag${action.tags.length !== 1 ? 's' : ''} ${action.tags.join(', ')} from "${binName}"`;
+      return tx('ai_actionRemoveTags', { count: action.tags.length, tags: action.tags.join(', '), binName });
     case 'modify_tag':
-      return `Rename tag "${action.old_tag}" to "${action.new_tag}" on "${binName}"`;
+      return tx('aiAction_modifyTag', { binName, oldTag: action.old_tag, newTag: action.new_tag });
     case 'set_area':
-      return `Move "${binName}" to ${t.area} "${action.area_name}"`;
+      return tx('aiAction_setArea', { binName, term: t.area, areaName: action.area_name });
     case 'set_notes':
-      if (action.mode === 'clear') return `Clear notes on "${binName}"`;
-      if (action.mode === 'append') return `Append to notes on "${binName}"`;
-      return `Set notes on "${binName}"`;
+      if (action.mode === 'clear') return tx('aiAction_clearNotes', { binName });
+      if (action.mode === 'append') return tx('aiAction_appendNotes', { binName });
+      return tx('aiAction_setNotes', { binName });
     case 'set_icon':
-      return `Set icon on "${binName}" to ${action.icon}`;
+      return tx('aiAction_setIcon', { binName, icon: action.icon });
     case 'set_color':
-      return `Set color on "${binName}" to ${action.color}`;
+      return tx('aiAction_setColor', { binName, color: action.color });
     case 'update_bin': {
-      const fields = ['name', 'notes', 'tags', 'area_name', 'icon', 'color', 'visibility'].filter((f) => (action as Record<string, unknown>)[f] !== undefined);
-      return `Update "${binName}": ${fields.join(', ')}`;
+      const fields = (['name', 'notes', 'tags', 'area_name', 'icon', 'color', 'visibility'] as const)
+        .filter((f) => (action as Record<string, unknown>)[f] !== undefined)
+        .map((f) => tx(`aiField_${f}`));
+      return tx('aiAction_updateBin', { binName, fields: fields.join(', ') });
     }
     case 'restore_bin':
-      return `Restore "${binName}" from trash`;
+      return tx('aiAction_restoreBin', { binName });
     case 'duplicate_bin':
-      return action.new_name ? `Duplicate "${binName}" as "${action.new_name}"` : `Duplicate "${binName}"`;
+      return action.new_name
+        ? tx('aiAction_duplicateBinAs', { binName, newName: action.new_name })
+        : tx('aiAction_duplicateBin', { binName });
     case 'pin_bin':
-      return `Pin "${binName}"`;
+      return tx('aiAction_pinBin', { binName });
     case 'unpin_bin':
-      return `Unpin "${binName}"`;
+      return tx('aiAction_unpinBin', { binName });
     case 'rename_area':
-      return `Rename ${t.area} "${action.area_name}" to "${action.new_name}"`;
+      return tx('aiAction_renameArea', { term: t.area, areaName: action.area_name, newName: action.new_name });
     case 'delete_area':
-      return `Delete ${t.area} "${action.area_name}"`;
+      return tx('aiAction_deleteArea', { term: t.area, areaName: action.area_name });
     case 'set_tag_color':
-      return `Set color of tag "${action.tag}" to ${action.color}`;
+      return tx('aiAction_setTagColor', { tag: action.tag, color: action.color });
     case 'reorder_items':
-      return `Reorder items in "${binName}"`;
+      return tx('aiAction_reorderItems', { binName });
     case 'checkout_item':
-      return `Check out "${action.item_name}" from "${binName}"`;
+      return tx('aiAction_checkoutItem', { binName, itemName: action.item_name });
     case 'return_item':
-      return action.target_bin_name
-        ? `Return "${action.item_name}" to "${action.target_bin_name}"`
-        : `Return "${action.item_name}" to "${binName}"`;
+      return tx('aiAction_returnItem', {
+        itemName: action.item_name,
+        binName: action.target_bin_name || binName,
+      });
     default:
-      return `Unknown action: ${(action as Record<string, unknown>).type}`;
+      return tx('aiAction_unknown', { type: (action as Record<string, unknown>).type });
   }
 }

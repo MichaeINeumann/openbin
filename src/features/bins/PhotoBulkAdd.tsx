@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import type { CreatedBinInfo } from '@/features/bins/BinCreateSuccess';
 import { BinCreateSuccess } from '@/features/bins/BinCreateSuccess';
 import { addBin, notifyBinsChanged } from '@/features/bins/useBins';
@@ -27,6 +28,7 @@ import type { AiSettings } from '@/types';
 const DEMO_MAX_PHOTOS = 3;
 
 function FlowProgress({ state }: { state: BulkAddState }) {
+  const { t: tx } = useTranslation('ui');
   const { dots, label, currentIndex, total, isAnalyzing } = computeFlowProgress(state);
   return (
     <div className="flex items-center justify-end gap-2">
@@ -41,7 +43,7 @@ function FlowProgress({ state }: { state: BulkAddState }) {
       {/* biome-ignore lint/a11y/useSemanticElements: role=group is the right ARIA match for an inline labeled grouping of related visuals */}
       <span
         role="group"
-        aria-label={`Step ${currentIndex + 1} of ${total}: ${label}`}
+        aria-label={tx("step_value0_of_total_label_bb9327", { defaultValue: "Step {{value0}} of {{total}}: {{label}}", value0: currentIndex + 1, total: total, label: label })}
         className="inline-flex items-center gap-1"
       >
         {dots.map((d) => (

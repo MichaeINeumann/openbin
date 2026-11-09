@@ -33,9 +33,10 @@ export function streamOpts(
   settings: UserAiSettings,
   req: Request,
   overrides?: { maxTokens?: number; temperature?: number },
-): { maxTokens: number; temperature: number; topP: number | undefined; abortSignal: AbortSignal } {
+): { userId?: string; maxTokens: number; temperature: number; topP: number | undefined; abortSignal: AbortSignal } {
   const timeoutSignal = AbortSignal.timeout((settings.request_timeout ?? 300) * 1000);
   return {
+    userId: req.user?.id,
     maxTokens: overrides?.maxTokens ?? settings.max_tokens ?? 4096,
     temperature: overrides?.temperature ?? settings.temperature ?? 0.3,
     topP: settings.top_p ?? undefined,

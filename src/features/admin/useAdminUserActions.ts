@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/toast';
 import { getErrorMessage } from '@/lib/utils';
@@ -36,6 +37,7 @@ function formatActiveUntilForInput(iso: string | null | undefined): string {
 }
 
 export function useAdminUserActions({ detail, refresh, refreshAdminCount }: UseAdminUserActionsOptions) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -95,12 +97,12 @@ export function useAdminUserActions({ detail, refresh, refreshAdminCount }: UseA
     if (!detail) return;
     try {
       await deleteUser(detail.id);
-      showToast({ message: `User ${detail.email} deleted`, variant: 'success' });
+      showToast({ message: tx("user_value0_deleted_cb7e5e", { defaultValue: "User {{value0}} deleted", value0: detail.email }), variant: 'success' });
       navigate('/admin/users');
     } catch (err) {
-      showToast({ message: getErrorMessage(err, 'Failed to delete user'), variant: 'error' });
+      showToast({ message: getErrorMessage(err, tx("failed_to_delete_user_121656", { defaultValue: "Failed to delete user" })), variant: 'error' });
     }
-  }, [detail, showToast, navigate]);
+  }, [detail, showToast, navigate, tx]);
 
   const handlePlanChange = useCallback((newPlan: PlanKey) => {
     if (!detail || newPlan === detail.plan) return;
@@ -147,15 +149,15 @@ export function useAdminUserActions({ detail, refresh, refreshAdminCount }: UseA
     setSaving(true);
     try {
       await updateUser(detail.id, body);
-      showToast({ message: 'User updated', variant: 'success' });
+      showToast({ message: tx("user_updated_6a0cc4", { defaultValue: "User updated" }), variant: 'success' });
       refresh();
       setEditOpen(false);
     } catch (err) {
-      showToast({ message: getErrorMessage(err, 'Failed to update user'), variant: 'error' });
+      showToast({ message: getErrorMessage(err, tx("failed_to_update_user_8743e9", { defaultValue: "Failed to update user" })), variant: 'error' });
     } finally {
       setSaving(false);
     }
-  }, [detail, editForm, showToast, refresh]);
+  }, [detail, editForm, showToast, refresh, tx]);
 
   const handleRegenerateApiKey = useCallback(async () => {
     if (!detail) return;

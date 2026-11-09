@@ -1,5 +1,6 @@
 import { ArrowDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { prefersReducedMotion } from '@/lib/reducedMotion';
 import { AiTurnCommandPreview } from './AiTurnCommandPreview';
@@ -29,6 +30,7 @@ export function ConversationThread({
   onRetry,
   executingProgress,
 }: ConversationThreadProps) {
+  const { t: tx } = useTranslation('ui');
   const scrollRef = useRef<HTMLDivElement>(null);
   const [atBottom, setAtBottom] = useState(true);
 
@@ -136,9 +138,7 @@ export function ConversationThread({
       {!atBottom && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
           <Button type="button" size="sm" variant="secondary" onClick={jumpToBottom}>
-            <ArrowDown className="h-4 w-4 mr-1" />
-            New message
-          </Button>
+            <ArrowDown className="h-4 w-4 mr-1" /> {tx("new_message_1ed2e7", { defaultValue: "New message" })} </Button>
         </div>
       )}
     </div>

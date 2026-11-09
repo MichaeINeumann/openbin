@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ICON_MAP, ICON_NAMES, resolveIcon } from '@/lib/iconMap';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +10,7 @@ interface IconPickerProps {
 }
 
 export function IconPicker({ value, onChange }: IconPickerProps) {
+  const { t: tx } = useTranslation('ui');
   const [open, setOpen] = useState(false);
   const CurrentIcon = resolveIcon(value);
   const displayName = value || 'Package';
@@ -19,7 +21,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         type="button"
         onClick={() => setOpen(!open)}
         aria-expanded={open}
-        aria-label={`Icon: ${displayName}`}
+        aria-label={tx("icon_displayname_63bd42", { defaultValue: "Icon: {{displayName}}", displayName: displayName })}
         className="row w-full px-3.5 py-2.5 rounded-[var(--radius-sm)] text-[15px] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors border border-[var(--border-flat)]"
       >
         <CurrentIcon className="h-5 w-5 text-[var(--text-tertiary)]" />

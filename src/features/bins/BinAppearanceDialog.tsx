@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -18,14 +19,13 @@ interface BinAppearanceDialogProps {
 }
 
 export function BinAppearanceDialog({ open, onOpenChange, bin, autoSave, photos }: BinAppearanceDialogProps) {
+  const { t: tx } = useTranslation('ui');
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Customize appearance</DialogTitle>
-          <DialogDescription>
-            Changes save automatically.
-          </DialogDescription>
+          <DialogTitle>{tx("customize_appearance_a70650", { defaultValue: "Customize appearance" })}</DialogTitle>
+          <DialogDescription> {tx("changes_save_automatically_b3fdb8", { defaultValue: "Changes save automatically." })} </DialogDescription>
         </DialogHeader>
         <BinDetailAppearanceTab bin={bin} autoSave={autoSave} photos={photos} />
       </DialogContent>

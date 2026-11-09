@@ -1,17 +1,20 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiFetch } from '@/lib/api';
 import { Events, notify } from '@/lib/eventBus';
-import { pluralize } from '@/lib/utils';
+import { useBinCountLabel } from '@/lib/terminology';
 
 type ToastFn = (toast: { message: string; variant?: 'error' | 'success' }) => void;
 
 export function useTagBulkActions(locationId: string | null, clearSelection: () => void, showToast: ToastFn) {
+  const { t: tx } = useTranslation('ui');
+  const binCount = useBinCountLabel();
   const [isBusy, setIsBusy] = useState(false);
 
-  function notifyTagsChanged() {
+  const notifyTagsChanged = useCallback(() => {
     notify(Events.BINS);
     notify(Events.TAG_COLORS);
-  }
+  }, []);
 
   const bulkDelete = useCallback(
     async (tags: string[]) => {
@@ -24,12 +27,12 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: `Deleted ${pluralize(tagsDeleted, 'tag')} from ${pluralize(binsUpdated, 'bin')}` });
+        showToast({ message: tx('tags_bulkDeleted', { count: tagsDeleted, bins: binCount(binsUpdated) }) });
       } finally {
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx, binCount],
   );
 
   const bulkSetParent = useCallback(
@@ -43,13 +46,16 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        const verb = parentTag ? 'Set parent' : 'Cleared parent';
-        showToast({ message: `${verb} for ${pluralize(tagsUpdated, 'tag')}` });
+        showToast({
+          message: parentTag
+            ? tx('tags_bulkParentSet', { count: tagsUpdated })
+            : tx('tags_bulkParentCleared', { count: tagsUpdated }),
+        });
       } finally {
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
   );
 
   const bulkSetColor = useCallback(
@@ -63,12 +69,12 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: `Set color for ${pluralize(tagsUpdated, 'tag')}` });
+        showToast({ message: tx('tags_bulkColorSet', { count: tagsUpdated }) });
       } finally {
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
   );
 
   const bulkMerge = useCallback(
@@ -82,12 +88,12 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: `Merged ${pluralize(fromTags.length, 'tag')} into "${toTag}" across ${pluralize(binsUpdated, 'bin')}` });
+        showToast({ message: tx('tags_bulkMerged', { count: fromTags.length, toTag, bins: binCount(binsUpdated) }) });
       } finally {
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx, binCount],
   );
 
   return { bulkDelete, bulkSetParent, bulkSetColor, bulkMerge, isBusy };

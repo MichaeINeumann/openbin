@@ -1,4 +1,5 @@
 import { HelpCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@/components/ui/tooltip';
 import { SettingsRow } from '@/features/settings/SettingsRow';
 import { useUserPreferences } from '@/lib/userPreferences';
@@ -13,6 +14,7 @@ interface TourLauncherProps {
 }
 
 export function TourLauncher({ tourId, variant = 'icon', className }: TourLauncherProps) {
+  const { t: tx } = useTranslation('ui');
   const tourCtx = useTourContext();
   const { preferences } = useUserPreferences();
   const tour = getTour(tourId);
@@ -28,11 +30,11 @@ export function TourLauncher({ tourId, variant = 'icon', className }: TourLaunch
     // from Settings → About (the `menu` variant below) for intentional revisits.
     if (seen) return null;
     return (
-      <Tooltip content={`Tour: ${tour.title}`} side="bottom">
+      <Tooltip content={tx("tour_value0_ff3aa5", { defaultValue: "Tour: {{value0}}", value0: tour.title })} side="bottom">
         <button
           type="button"
           onClick={start}
-          aria-label={`Tour: ${tour.title}`}
+          aria-label={tx("tour_value0_ff3aa5", { defaultValue: "Tour: {{value0}}", value0: tour.title })}
           className={cn(
             iconButton,
             focusRing,
@@ -46,7 +48,7 @@ export function TourLauncher({ tourId, variant = 'icon', className }: TourLaunch
     );
   }
 
-  const stepCount = `${tour.steps.length} step${tour.steps.length === 1 ? '' : 's'}`;
+  const stepCount = tx('count_steps', { count: tour.steps.length });
   return (
     <SettingsRow
       icon={tour.icon}

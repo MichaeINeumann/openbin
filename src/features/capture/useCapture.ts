@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { addPhoto } from '@/features/photos/usePhotos';
 import { getErrorMessage } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ export interface CapturedPhoto {
  * When absent, photos are captured locally (status marked 'uploaded' immediately).
  */
 export function useCapture(binId?: string) {
+  const { t: tx } = useTranslation('ui');
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const photosRef = useRef<CapturedPhoto[]>([]);
@@ -60,14 +62,14 @@ export function useCapture(binId?: string) {
               ? {
                   ...p,
                   status: 'failed' as const,
-                  error: getErrorMessage(err, 'Upload failed'),
+                  error: getErrorMessage(err, tx("upload_failed_ad0d06", { defaultValue: "Upload failed" })),
                 }
               : p,
           ),
         );
       }
     },
-    [updatePhotos],
+    [updatePhotos, tx],
   );
 
   const stopCamera = useCallback(() => {

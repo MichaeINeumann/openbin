@@ -1,4 +1,5 @@
 import { type ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,10 +33,13 @@ export function BulkUpdateDialog({
   onApply,
   onApplied,
   applyDisabled = false,
-  applyLabel = 'Apply',
-  loadingLabel = 'Applying...',
+  applyLabel,
+  loadingLabel,
   children,
 }: BulkUpdateDialogProps) {
+  // Defaults are resolved here rather than in the parameter list so they follow
+  // the selected language instead of being frozen at English.
+  const { t: tx } = useTranslation('ui');
   const [loading, setLoading] = useState(false);
 
   async function handleApply() {
@@ -59,10 +63,10 @@ export function BulkUpdateDialog({
         {children}
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tx('bulk_cancel')}
           </Button>
           <Button onClick={handleApply} disabled={loading || applyDisabled}>
-            {loading ? loadingLabel : applyLabel}
+            {loading ? (loadingLabel ?? tx('bulk_applying')) : (applyLabel ?? tx('bulk_apply'))}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '@/components/ui/toast';
 import { useTextStructuring } from '@/features/ai/useTextStructuring';
 import { clientItemId, parseItemQuantity, toItemPayload } from '@/lib/itemQuantities';
@@ -20,6 +21,7 @@ interface UseQuickAddOptions {
 export function useQuickAdd(options: UseQuickAddOptions) {
   const { binId, binName, existingItems, activeLocationId, aiConfigured = false, onNavigateAiSetup = () => {}, onAdd } = options;
   const { showToast } = useToast();
+  const { t: tx } = useTranslation('ui');
 
   const [value, setValue] = useState('');
   const [saving, setSaving] = useState(false);
@@ -77,7 +79,7 @@ export function useQuickAdd(options: UseQuickAddOptions) {
         const items = parsed.map((p) => toItemPayload(p));
         if (items.length > 0 && binId) {
           await addItemsToBin(binId, items);
-          showToast({ message: `Added ${items.length} item${items.length !== 1 ? 's' : ''}` });
+          showToast({ message: tx('items_addedCount', { count: items.length }) });
         }
       }
       setValue('');
@@ -113,7 +115,7 @@ export function useQuickAdd(options: UseQuickAddOptions) {
       }
       setValue('');
     } catch {
-      showToast({ message: 'Failed to add items' });
+      showToast({ message: tx('items_addFailed') });
     } finally {
       setSaving(false);
     }
@@ -176,7 +178,7 @@ export function useQuickAdd(options: UseQuickAddOptions) {
         const items = selected.map((item) => item.quantity ? { name: item.name, quantity: item.quantity } : item.name);
         if (binId) {
           await addItemsToBin(binId, items);
-          showToast({ message: `Added ${selected.length} item${selected.length !== 1 ? 's' : ''}` });
+          showToast({ message: tx('items_addedCount', { count: selected.length }) });
         }
       }
     } catch {

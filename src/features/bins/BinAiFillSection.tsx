@@ -1,5 +1,6 @@
 import { Check, RefreshCw, Sparkles } from 'lucide-react';
 import { lazy, Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { AiAnalyzeProgress } from '@/features/ai/AiAnalyzeProgress';
@@ -62,6 +63,7 @@ export function BinAiFillSection({
   onReanalyze,
   onConfigureAi,
 }: BinAiFillSectionProps) {
+  const { t: tx } = useTranslation('ui');
   if (analyzeError) {
     return (
       <AiAnalyzeError
@@ -76,9 +78,9 @@ export function BinAiFillSection({
     return (
       <output className="rounded-[var(--radius-md)] bg-emerald-500/8 border border-emerald-500/20 px-3.5 py-2.5 text-[13px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
         <Check className="h-3.5 w-3.5 shrink-0" />
-        <span className="flex-1 min-w-0">AI filled {filledCount} {plural(filledCount, 'field')}</span>
+        <span className="flex-1 min-w-0">{tx("ai_filled_3f929f", { defaultValue: "AI filled" })} {filledCount} {plural(filledCount, 'field')}</span>
         {photos.length > 0 && (
-          <Tooltip content="Re-run AI analysis on your photos with current field values as context">
+          <Tooltip content={tx("re_run_ai_analysis_on_your_photos_with_current_field_values__3527f7", { defaultValue: "Re-run AI analysis on your photos with current field values as context" })}>
             <button
               type="button"
               onClick={() => onReanalyze({
@@ -86,7 +88,7 @@ export function BinAiFillSection({
                 items: items.map((i) => ({ name: i.name, quantity: i.quantity })),
               })}
               className={cn('shrink-0 h-6 w-6 inline-flex items-center justify-center rounded-[var(--radius-sm)] bg-[var(--ai-accent)]/10 text-[var(--ai-accent)] hover:bg-[var(--ai-accent)]/20 transition-colors', focusRing)}
-              aria-label="Reanalyze photos with AI"
+              aria-label={tx("reanalyze_photos_with_ai_087b9a", { defaultValue: "Reanalyze photos with AI" })}
             >
               <RefreshCw className="h-3 w-3" />
             </button>
@@ -122,8 +124,8 @@ export function BinAiFillSection({
         >
           <Sparkles className="h-4 w-4" />
           {photos.length > 0
-            ? `AI Fill from ${photos.length} ${plural(photos.length, 'photo')}`
-            : 'AI Fill'}
+            ? tx("ai_fill_from_value0_value1_5448de", { defaultValue: "AI Fill from {{value0}} {{value1}}", value0: photos.length, value1: plural(photos.length, 'photo') })
+            : tx("ai_fill_b98961", { defaultValue: "AI Fill" })}
         </Button>
         {photos.length > 0 && (
           __EE__ ? (
@@ -145,9 +147,7 @@ export function BinAiFillSection({
         onClick={onConfigureAi}
         className="w-full min-h-[44px] rounded-[var(--radius-md)] bg-[var(--ai-accent)]/6 border border-[var(--ai-accent)]/15 text-[var(--ai-accent)] text-[14px] font-medium flex items-center justify-center gap-1.5 hover:bg-[var(--ai-accent)]/10 transition-colors"
       >
-        <Sparkles className="h-4 w-4" />
-        Set up AI to auto-fill details
-      </button>
+        <Sparkles className="h-4 w-4" /> {tx("set_up_ai_to_auto_fill_details_1f5a8b", { defaultValue: "Set up AI to auto-fill details" })} </button>
     );
   }
 

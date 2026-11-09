@@ -1,6 +1,11 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Counts are pluralized by i18next, which the global mock cannot do.
+vi.unmock('react-i18next');
+
+import { renderWithI18n } from '@/test/i18nTestUtils';
 import { CapturePageBulkGroup } from '../CapturePageBulkGroup';
 import { takeCapturedPhotos } from '../capturedPhotos';
 import { PHOTO_TIPS_SEEN_KEY } from '../guidance/tips';
@@ -56,7 +61,7 @@ beforeEach(() => {
 });
 
 function renderUI() {
-  return render(
+  return renderWithI18n(
     <MemoryRouter>
       <CapturePageBulkGroup />
     </MemoryRouter>,

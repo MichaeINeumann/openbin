@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react';
 import { lazy, Suspense, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export function ReorganizeTagsActionPanel({ selection, form, tagsHook }: Props) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const t = useTerminology();
   const { showToast } = useToast();
@@ -65,7 +67,7 @@ export function ReorganizeTagsActionPanel({ selection, form, tagsHook }: Props) 
       form.selections,
     );
     if (ok) {
-      showToast({ message: 'Tag suggestions applied', variant: 'success' });
+      showToast({ message: tx("tag_suggestions_applied_b6b74f", { defaultValue: "Tag suggestions applied" }), variant: 'success' });
       navigate('/tags');
     }
   };
@@ -87,15 +89,14 @@ export function ReorganizeTagsActionPanel({ selection, form, tagsHook }: Props) 
         className="h-12 text-[17px] rounded-[var(--radius-md)]"
         fullWidth
       >
-        <Sparkles className="h-5 w-5 mr-2.5" />
-        Suggest tags for {selection.selectedIds.size}{' '}
+        <Sparkles className="h-5 w-5 mr-2.5" /> {tx("suggest_tags_for_3fc742", { defaultValue: "Suggest tags for" })} {selection.selectedIds.size}{' '}
         {selection.selectedIds.size === 1 ? t.bin : t.bins}
       </Button>
 
       {selection.selectedIds.size >= 1 && !overCap && (
         <div className="text-[12px] text-[var(--text-tertiary)] text-center -mt-2 flex flex-col items-center gap-0.5">
           <span>
-            {itemCount} item{itemCount !== 1 ? 's' : ''} across {selection.selectedIds.size}{' '}
+            {tx('count_items', { count: itemCount })} {tx("across_9a82bf", { defaultValue: "across" })} {selection.selectedIds.size}{' '}
             {t.bins}
           </span>
           {__EE__ ? (
@@ -127,8 +128,8 @@ export function ReorganizeTagsActionPanel({ selection, form, tagsHook }: Props) 
           complete={false}
           label={
             tagsHook.retryCount > 0
-              ? `Retrying (attempt ${tagsHook.retryCount + 1} of 3)`
-              : 'Analyzing tags'
+              ? tx("retrying_attempt_value0_of_3_46f8e2", { defaultValue: "Retrying (attempt {{value0}} of 3)", value0: tagsHook.retryCount + 1 })
+              : tx("analyzing_tags_180cbf", { defaultValue: "Analyzing tags" })
           }
           onCancel={tagsHook.cancel}
         />
@@ -160,9 +161,9 @@ export function ReorganizeTagsActionPanel({ selection, form, tagsHook }: Props) 
       <ReorganizeConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Apply tag suggestions?"
-        description={`This will update the selected ${t.bins} and create/rename tags. This can't be undone automatically.`}
-        confirmLabel="Apply"
+        title={tx("apply_tag_suggestions_f00a78", { defaultValue: "Apply tag suggestions?" })}
+        description={tx("this_will_update_the_selected_bins_and_create_rename_tags_th_083fb9", { defaultValue: "This will update the selected {{bins}} and create/rename tags. This can't be undone automatically.", bins: t.bins })}
+        confirmLabel={tx("apply_cfea41", { defaultValue: "Apply" })}
         isApplying={tagsHook.isApplying}
         onConfirm={handleConfirmApply}
       />

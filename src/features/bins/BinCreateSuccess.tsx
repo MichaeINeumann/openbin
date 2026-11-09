@@ -1,4 +1,5 @@
 import { ChevronRight, CirclePlus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedCheckmark } from '@/components/ui/animated-checkmark';
 import { Button } from '@/components/ui/button';
@@ -23,24 +24,26 @@ interface BinCreateSuccessProps {
 }
 
 function StatsLine({ createdBins, binsLabel }: { createdBins: CreatedBinInfo[]; binsLabel: string }) {
+  const { t: tx } = useTranslation('ui');
   const count = createdBins.length;
   const totalItems = createdBins.reduce((sum, b) => sum + (b.itemCount ?? 0), 0);
 
   if (count === 1) {
     const bin = createdBins[0];
     if (totalItems > 0) {
-      return <>Created {bin.name} with {totalItems} {plural(totalItems, 'item')}</>;
+      return <>{tx("created_accf40", { defaultValue: "Created" })} {bin.name} {tx("with_8fcd25", { defaultValue: "with" })} {totalItems} {plural(totalItems, 'item')}</>;
     }
-    return <>Created {bin.name}</>;
+    return <>{tx("created_accf40", { defaultValue: "Created" })} {bin.name}</>;
   }
 
   if (totalItems > 0) {
-    return <>Created {count} {binsLabel} &middot; {totalItems} {plural(totalItems, 'item')}</>;
+    return <>{tx("created_accf40", { defaultValue: "Created" })} {count} {binsLabel} &middot; {totalItems} {plural(totalItems, 'item')}</>;
   }
-  return <>Created {count} {binsLabel}</>;
+  return <>{tx("created_accf40", { defaultValue: "Created" })} {count} {binsLabel}</>;
 }
 
 export function BinCreateSuccess({ createdBins, onCreateAnother, onClose }: BinCreateSuccessProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const navigate = useNavigate();
   const showColor = createdBins.length > 1;
@@ -59,7 +62,7 @@ export function BinCreateSuccess({ createdBins, onCreateAnother, onClose }: BinC
 
       {/* Heading + stats */}
       <div className="text-center scan-text-fade">
-        <h2 className="text-xl font-bold text-[var(--text-primary)]">All set</h2>
+        <h2 className="text-xl font-bold text-[var(--text-primary)]">{tx("all_set_0e487f", { defaultValue: "All set" })}</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
           <StatsLine createdBins={createdBins} binsLabel={t.bins} />
         </p>
@@ -76,13 +79,9 @@ export function BinCreateSuccess({ createdBins, onCreateAnother, onClose }: BinC
 
       {/* Action buttons */}
       <div className={cn('row-spread self-stretch', stickyDialogFooter, 'scan-text-fade-delay')}>
-        <Button variant="ghost" onClick={onClose}>
-          Done
-        </Button>
+        <Button variant="ghost" onClick={onClose}> {tx("done_e9b450", { defaultValue: "Done" })} </Button>
         <Button onClick={onCreateAnother}>
-          <CirclePlus className="mr-2 h-4 w-4" />
-          Create another
-        </Button>
+          <CirclePlus className="mr-2 h-4 w-4" /> {tx("create_another_8b69f5", { defaultValue: "Create another" })} </Button>
       </div>
     </div>
   );

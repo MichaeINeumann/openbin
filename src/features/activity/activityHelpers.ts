@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   ArrowRightLeft,
   Image,
@@ -15,6 +16,7 @@ import {
 import type { ReactNode } from 'react';
 import { createElement } from 'react';
 import type { Terminology } from '@/lib/terminology';
+import type activityMessages from '@/locales/en/activity.json';
 import type { ActivityLogEntry } from '@/types';
 
 export type EntityTypeFilter = '' | 'bin' | 'area' | 'member' | 'location';
@@ -73,14 +75,41 @@ const ACTION_BADGE_LABELS: Record<string, string> = {
   regenerate_invite: 'Invite',
 };
 
-export function getActionBadgeLabel(action: string): string {
-  if (ACTION_BADGE_LABELS[action]) return ACTION_BADGE_LABELS[action];
+export function getActionBadgeLabel(action: string, translate?: TFunction<'activity'>): string {
+  if (Object.keys(ACTION_BADGE_LABELS).includes(action)) {
+    const key = `badge_${action}` as keyof typeof activityMessages;
+    return translate ? translate(key, { defaultValue: ACTION_BADGE_LABELS[action] }) : ACTION_BADGE_LABELS[action];
+  }
   return action.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
 }
 
-export function getActionLabel(entry: ActivityLogEntry, t: Terminology): string {
+export function getActionLabel(entry: ActivityLogEntry, t: Terminology, translate?: TFunction<'activity'>): string {
   const name = entry.entity_name ? `"${entry.entity_name}"` : '';
   const { action, entity_type } = entry;
+  const actionKeys: Record<string, keyof typeof activityMessages> = {
+    "create": 'create',
+    "update": 'update',
+    "delete": 'delete',
+    "restore": 'restore',
+    "permanent_delete": 'permanent_delete',
+    "move": 'move',
+    "add_photo": 'add_photo',
+    "delete_photo": 'delete_photo',
+    "join": 'join',
+    "leave": 'leave',
+    "remove_member": 'remove_member',
+    "change_role": 'change_role',
+    "regenerate_invite": 'regenerate_invite',
+    move_in: 'move', move_out: 'move',
+  };
+  if (translate && actionKeys[action]) {
+    return translate(actionKeys[action], {
+      entity: getEntityTypeLabel(entity_type, t, translate),
+      name, from: entry.changes?.location?.old ?? '?', to: entry.changes?.location?.new ?? '?',
+      defaultValue: getActionLabel(entry, t),
+    });
+  }
+
 
   if (entity_type === 'bin') {
     if (action === 'create') return `created ${t.bin} ${name}`;
@@ -119,14 +148,17 @@ export function getActionLabel(entry: ActivityLogEntry, t: Terminology): string 
 const ITEM_FIELDS = new Set(['items_added', 'items_removed', 'items_renamed', 'items']);
 const SKIP_FIELDS = new Set(['location', 'area_id', 'items_quantity']);
 
-export function renderChangeDiff(entry: ActivityLogEntry): { field: string; old: string; new: string }[] | null {
+export function renderChangeDiff(entry: ActivityLogEntry, translate?: TFunction<'activity'>, terms?: Terminology): { field: string; old: string; new: string }[] | null {
   if (!entry.changes) return null;
 
   const fieldDiffs = Object.entries(entry.changes)
     .filter(([f]) => !ITEM_FIELDS.has(f) && !SKIP_FIELDS.has(f))
     .map(([field, diff]) => {
       const label =
-        field === 'area' ? 'area' : field === 'name' ? 'name' : field === 'card_style' ? 'style' : field;
+        field === 'area' ? terms?.area ?? 'area' :
+          Object.keys(SCALAR_LABEL_MAP).includes(field) || field === 'role'
+            ? translate?.(`field_${field}` as keyof typeof activityMessages, { defaultValue: field === 'card_style' ? 'style' : field }) ?? (field === 'card_style' ? 'style' : field)
+            : field;
       const formatVal = (val: unknown) => {
         if (field === 'card_style') {
           try {
@@ -136,7 +168,7 @@ export function renderChangeDiff(entry: ActivityLogEntry): { field: string; old:
             return String(val || 'default');
           }
         }
-        return String(val ?? 'none');
+        return val == null ? (translate?.('empty_value', { defaultValue: 'none' }) ?? 'none') : String(val);
       };
       return { field: label, old: formatVal(diff.old), new: formatVal(diff.new) };
     });
@@ -147,24 +179,24 @@ export function renderChangeDiff(entry: ActivityLogEntry): { field: string; old:
   if (c.items_added) {
     const added = c.items_added.new as string[] | null;
     if (added && added.length > 0) {
-      itemDiffs.push({ field: '+ items', old: '', new: added.join(', ') });
+      itemDiffs.push({ field: (translate?.('added_items', { defaultValue: '+ items' }) ?? '+ items'), old: '', new: added.join(', ') });
     }
   }
   if (c.items_removed) {
     const removed = c.items_removed.old as string[] | null;
     if (removed && removed.length > 0) {
-      itemDiffs.push({ field: '− items', old: removed.join(', '), new: '' });
+      itemDiffs.push({ field: (translate?.('removed_items', { defaultValue: '− items' }) ?? '− items'), old: removed.join(', '), new: '' });
     }
   }
   if (c.items_renamed) {
     const renamed = c.items_renamed;
     if (Array.isArray(renamed.new)) {
       for (const pair of renamed.new as Array<{ old: string; new: string }>) {
-        itemDiffs.push({ field: 'renamed', old: String(pair.old), new: String(pair.new) });
+        itemDiffs.push({ field: (translate?.('renamed', { defaultValue: 'renamed' }) ?? 'renamed'), old: String(pair.old), new: String(pair.new) });
       }
     } else {
       itemDiffs.push({
-        field: 'renamed',
+        field: (translate?.('renamed', { defaultValue: 'renamed' }) ?? 'renamed'),
         old: String(renamed.old ?? ''),
         new: String(renamed.new ?? ''),
       });
@@ -175,7 +207,7 @@ export function renderChangeDiff(entry: ActivityLogEntry): { field: string; old:
   return allDiffs.length > 0 ? allDiffs : null;
 }
 
-export function getEntityDescription(entry: ActivityLogEntry, t: Terminology): string {
+export function getEntityDescription(entry: ActivityLogEntry, t: Terminology, translate?: TFunction<'activity'>): string {
   const name = entry.entity_name ? `"${entry.entity_name}"` : '';
   const { action, entity_type } = entry;
 
@@ -183,26 +215,26 @@ export function getEntityDescription(entry: ActivityLogEntry, t: Terminology): s
     if (action === 'move_in' || action === 'move_out') {
       const from = entry.changes?.location?.old;
       const to = entry.changes?.location?.new;
-      return `${t.bin} ${name} from ${from ?? '?'} to ${to ?? '?'}`;
+      return translate ? translate('entity_move', { entity: t.bin, name, from: from ?? '?', to: to ?? '?', defaultValue: `${t.bin} ${name} from ${from ?? '?'} to ${to ?? '?'}` }) : `${t.bin} ${name} from ${from ?? '?'} to ${to ?? '?'}`;
     }
     if (action === 'add_photo' || action === 'delete_photo') {
-      return `photo on ${t.bin} ${name}`;
+      return translate ? translate('entity_photo', { entity: t.bin, name, defaultValue: `photo on ${t.bin} ${name}` }) : `photo on ${t.bin} ${name}`;
     }
     return `${t.bin} ${name}`;
   }
   if (entity_type === 'area') return `${t.area} ${name}`;
   if (entity_type === 'member') {
-    if (action === 'join') return `the ${t.location}`;
-    if (action === 'leave') return `the ${t.location}`;
+    if (action === 'join') return translate ? translate('entity_location', { entity: t.location, defaultValue: `the ${t.location}` }) : `the ${t.location}`;
+    if (action === 'leave') return translate ? translate('entity_location', { entity: t.location, defaultValue: `the ${t.location}` }) : `the ${t.location}`;
     if (action === 'remove_member') return name;
-    if (action === 'change_role') return `role for ${name}`;
+    if (action === 'change_role') return translate ? translate('entity_role', { name, defaultValue: `role for ${name}` }) : `role for ${name}`;
     return name;
   }
   if (entity_type === 'location') {
-    if (action === 'regenerate_invite') return 'invite code';
+    if (action === 'regenerate_invite') return translate?.('invite_code', { defaultValue: 'invite code' }) ?? 'invite code';
     return `${t.location} ${name}`;
   }
-  return `${entity_type} ${name}`;
+  return `${translate ? getEntityTypeLabel(entity_type, t, translate) : entity_type} ${name}`;
 }
 
 type ScalarField = 'name' | 'notes' | 'tags' | 'icon' | 'color' | 'visibility' | 'card_style';
@@ -217,7 +249,7 @@ const SCALAR_LABEL_MAP: Record<ScalarField, string> = {
   card_style: 'style',
 };
 
-export function getChangedFieldLabels(entry: ActivityLogEntry, t: Terminology): string[] {
+export function getChangedFieldLabels(entry: ActivityLogEntry, t: Terminology, translate?: TFunction<'activity'>): string[] {
   if (entry.action !== 'update' || entry.entity_type !== 'bin' || !entry.changes) {
     return [];
   }
@@ -234,36 +266,46 @@ export function getChangedFieldLabels(entry: ActivityLogEntry, t: Terminology): 
 
     if (field === 'items_added') {
       const n = Array.isArray(diff.new) ? diff.new.length : 0;
-      if (n > 0) labels.push(`+${n} item${n === 1 ? '' : 's'}`);
+      if (n > 0) labels.push(translate ? translate('items_added', { count: n, defaultValue: `+${n} item${n === 1 ? '' : 's'}` }) : `+${n} item${n === 1 ? '' : 's'}`);
       continue;
     }
 
     if (field === 'items_removed') {
       const n = Array.isArray(diff.old) ? (diff.old as unknown[]).length : 0;
-      if (n > 0) labels.push(`\u2212${n} item${n === 1 ? '' : 's'}`);
+      if (n > 0) labels.push(translate ? translate('items_removed', { count: n, defaultValue: `\u2212${n} item${n === 1 ? '' : 's'}` }) : `\u2212${n} item${n === 1 ? '' : 's'}`);
       continue;
     }
 
     if (field === 'items_renamed') {
       if (Array.isArray(diff.new)) {
         const n = diff.new.length;
-        if (n > 0) labels.push(n === 1 ? 'renamed item' : `renamed ${n} items`);
+        if (n > 0) labels.push(translate ? translate('items_renamed', { count: n, defaultValue: n === 1 ? 'renamed item' : `renamed ${n} items` }) : n === 1 ? 'renamed item' : `renamed ${n} items`);
       } else {
-        labels.push('renamed item');
+        labels.push(translate?.('items_renamed', { count: 1, defaultValue: 'renamed item' }) ?? 'renamed item');
       }
       continue;
     }
 
     if (field === 'items_quantity') {
-      labels.push('quantity');
+      labels.push(translate?.('quantity', { defaultValue: 'quantity' }) ?? 'quantity');
       continue;
     }
 
     if (field === 'items') continue; // legacy reorder — no chip
 
     const scalar = SCALAR_LABEL_MAP[field as ScalarField];
-    if (scalar) labels.push(scalar);
+    if (scalar) labels.push(translate?.(`field_${field}` as keyof typeof activityMessages, { defaultValue: scalar }) ?? scalar);
   }
 
   return labels;
+}
+
+/** Only application entity identifiers are localized; names remain untouched. */
+export function getEntityTypeLabel(type: string, terms: Terminology, translate: TFunction<'activity'>): string {
+  if (type === 'bin') return terms.bin;
+  if (type === 'area') return terms.area;
+  if (type === 'location') return terms.location;
+  if (type === 'shopping_list') return translate('shopping_list_item', { defaultValue: 'shopping list item' });
+  if (type === 'member') return translate('member', { defaultValue: 'member' });
+  return type;
 }

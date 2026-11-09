@@ -1,5 +1,6 @@
 import { Check, ChevronLeft, Loader2, Plus, Sparkles } from 'lucide-react';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { LabelThreshold } from '@/components/ui/ai-progress-bar';
 import { AiProgressBar } from '@/components/ui/ai-progress-bar';
 import { Button } from '@/components/ui/button';
@@ -35,17 +36,18 @@ const QUICK_ADD_LABELS: LabelThreshold[] = [
 ];
 
 export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictation, canTranscribe, variant = 'card', isEmptyList }: QuickAddWidgetProps) {
+  const { t: tx } = useTranslation('ui');
   const inputRef = useRef<HTMLInputElement>(null);
   const isRecording = dictation?.state === 'recording';
   const isInline = variant === 'inline';
   const hasValue = quickAdd.value.trim().length > 0;
-  const { label: aiAddLabel } = useCreditCostLabel('Add with AI', 1);
+  const { label: aiAddLabel } = useCreditCostLabel(tx('quickAdd_addWithAi'), 1);
   // Sub-panel padding for expanded/preview states. In `card` variant the outer
   // wrapper supplies padding; in `inline` we add it per-state to align with row inset.
   const panelClass = isInline ? 'space-y-2 px-3.5 py-2.5' : 'space-y-2';
-  const inputPlaceholder = isEmptyList && isInline
-    ? 'Add items — type, paste a list, or tap the mic'
-    : 'Add item...';
+  const inputPlaceholder = tx(
+    isEmptyList && isInline ? 'quickAdd_placeholderEmpty' : 'quickAdd_placeholder',
+  );
   return (
     <div
       data-tour="quick-add"
@@ -69,7 +71,7 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
                 'shrink-0 size-11 flex items-center justify-center rounded-[var(--radius-sm)] transition-colors disabled:opacity-50',
                 'text-[var(--accent)] hover:bg-[var(--bg-active)]',
               )}
-              aria-label="Add item"
+              aria-label={tx("add_item_5bcf4d", { defaultValue: "Add item" })}
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -93,7 +95,7 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
             )}
           />
           {!isInline && !isRecording && hasValue && (
-            <Tooltip content="Add item">
+            <Tooltip content={tx("add_item_5bcf4d", { defaultValue: "Add item" })}>
               <button
                 type="button"
                 tabIndex={-1}
@@ -101,7 +103,7 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
                 onClick={() => { quickAdd.handleAdd(); inputRef.current?.focus(); }}
                 disabled={quickAdd.saving}
                 className="shrink-0 flex items-center justify-center size-11 rounded-[var(--radius-lg)] text-[var(--accent)] hover:bg-[var(--bg-active)] transition-colors disabled:opacity-50"
-                aria-label="Add item"
+                aria-label={tx("add_item_5bcf4d", { defaultValue: "Add item" })}
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -142,15 +144,13 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
             value={quickAdd.expandedText}
             onChange={(e) => quickAdd.setExpandedText(e.target.value)}
             onKeyDown={quickAdd.handleExpandedKeyDown}
-            placeholder="List or describe items, e.g. 'three socks, AA batteries, winter jacket'"
+            placeholder={tx("list_or_describe_items_e_g_three_socks_aa_batteries_winter_j_2cde76", { defaultValue: "List or describe items, e.g. 'three socks, AA batteries, winter jacket'" })}
             rows={3}
             disabled={quickAdd.isStructuring}
             className="w-full min-h-[80px] bg-[var(--bg-elevated)] rounded-[var(--radius-sm)] px-3 py-2 text-base text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none resize-none disabled:opacity-50"
           />
           {!quickAdd.isStructuring && !quickAdd.structureError && (
-            <p className="text-[12px] text-[var(--text-quaternary)] -mt-0.5">
-              Paste or type freely — AI will clean it up
-            </p>
+            <p className="text-[12px] text-[var(--text-quaternary)] -mt-0.5"> {tx("paste_or_type_freely_ai_will_clean_it_up_7fb5cf", { defaultValue: "Paste or type freely — AI will clean it up" })} </p>
           )}
           {quickAdd.isStructuring && (
             <AiProgressBar active compact labels={QUICK_ADD_LABELS} />
@@ -163,9 +163,7 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
               type="button"
               onClick={quickAdd.cancelExpanded}
               className="text-[13px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              Cancel
-            </button>
+            > {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </button>
             <div className="flex-1" />
             <Button
               variant="ai"
@@ -180,7 +178,7 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
               ) : (
                 <Sparkles className="h-3.5 w-3.5" />
               )}
-              {quickAdd.isStructuring ? 'Extracting...' : 'Extract Items'}
+              {quickAdd.isStructuring ? tx("extracting_9a5349", { defaultValue: "Extracting..." }) : tx("extract_items_5dd358", { defaultValue: "Extract Items" })}
             </Button>
           </div>
         </div>
@@ -217,17 +215,14 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
               onClick={quickAdd.backToExpanded}
               className="gap-0.5"
             >
-              <ChevronLeft className="h-4 w-4" />
-              Back
-            </Button>
+              <ChevronLeft className="h-4 w-4" /> {tx("back_b52b36", { defaultValue: "Back" })} </Button>
             <div className="flex-1" />
             <Button
               type="button"
               size="sm"
               onClick={quickAdd.handleConfirmAdd}
               disabled={quickAdd.selectedCount === 0}
-              >
-              Add {quickAdd.selectedCount}
+              > {tx("add_61cc55", { defaultValue: "Add" })} {quickAdd.selectedCount}
             </Button>
           </div>
         </div>

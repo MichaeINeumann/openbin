@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useUserPreferences } from '@/lib/userPreferences';
 import { flatCard, plural } from '@/lib/utils';
@@ -8,9 +9,9 @@ import { availableYears, yearOf } from './usageBuckets';
 import { useBinUsage } from './useBinUsage';
 import { YearChipPager } from './YearChipPager';
 
-const RELATIVE_FMT = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
 
-function formatRelativeFromNow(iso: string): string {
+function formatRelativeFromNow(iso: string, language: string): string {
+  const RELATIVE_FMT = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
   const then = Date.parse(iso);
   if (!Number.isFinite(then)) return '';
   const days = Math.round((then - Date.now()) / 86_400_000);
@@ -36,6 +37,7 @@ interface BinUsageSectionProps {
 }
 
 export function BinUsageSection({ binId }: BinUsageSectionProps) {
+  const { t: tx, i18n: { language } } = useTranslation('ui');
   const { usage, isLoading, error, refresh } = useBinUsage(binId);
   const { preferences } = useUserPreferences();
   const years = useMemo(() => availableYears(usage), [usage]);
@@ -62,7 +64,7 @@ export function BinUsageSection({ binId }: BinUsageSectionProps) {
   if (error) {
     return (
       <InlineRetryError
-        title="Couldn't load usage data"
+        title={tx("couldn_t_load_usage_data_89a1af", { defaultValue: "Couldn't load usage data" })}
         detail={error}
         onRetry={refresh}
         className="py-1"
@@ -72,9 +74,8 @@ export function BinUsageSection({ binId }: BinUsageSectionProps) {
 
   if (usage.length === 0) {
     return (
-      <p className="text-[12px] text-[var(--text-tertiary)] leading-relaxed py-1">
-        No activity yet. Choose which actions count in{' '}
-        <Link to="/settings/preferences" className="underline text-[var(--accent)]">preferences</Link>.
+      <p className="text-[12px] text-[var(--text-tertiary)] leading-relaxed py-1"> {tx("no_activity_yet_choose_which_actions_count_in_293ffb", { defaultValue: "No activity yet. Choose which actions count in" })}{' '}
+        <Link to="/settings/preferences" className="underline text-[var(--accent)]">{tx("preferences_dcedb3", { defaultValue: "preferences" })}</Link>.
       </p>
     );
   }
@@ -82,8 +83,8 @@ export function BinUsageSection({ binId }: BinUsageSectionProps) {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-[12px] text-[var(--text-secondary)] tabular-nums">
-        {activeInYear} active {plural(activeInYear, 'day')} in {selectedYear}
-        {lastUse ? ` · last used ${formatRelativeFromNow(lastUse)}` : ''}
+        {tx('usage_activeInYear', { count: activeInYear, year: selectedYear, defaultValue: `${activeInYear} active ${plural(activeInYear, 'day')} in ${selectedYear}` })}
+        {lastUse ? tx("last_used_value0_05f827", { defaultValue: " · last used {{value0}}", value0: formatRelativeFromNow(lastUse, language) }) : ''}
       </p>
       <div className={`${flatCard} p-4 flex flex-col gap-3`}>
         <div className="flex flex-wrap items-center justify-between gap-2">

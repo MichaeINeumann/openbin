@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiFetch } from '@/lib/api';
 import { Events, notify } from '@/lib/eventBus';
-import { pluralize } from '@/lib/utils';
 
 type ToastFn = (toast: {
   message: string;
@@ -12,6 +12,7 @@ type ToastFn = (toast: {
 export type QuantityOp = 'set' | 'clear' | 'inc' | 'dec';
 
 export function useItemBulkActions(clearSelection: () => void, showToast: ToastFn) {
+  const { t: tx } = useTranslation('ui');
   const [isBusy, setIsBusy] = useState(false);
 
   const bulkDelete = useCallback(async (ids: string[]) => {
@@ -24,9 +25,9 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
       notify(Events.BINS);
       clearSelection();
       showToast({
-        message: `Deleted ${pluralize(deleted, 'item')}`,
+        message: tx('items_bulkDeleted', { count: deleted }),
         action: {
-          label: 'Undo',
+          label: tx("undo_39fc72", { defaultValue: "Undo" }),
           onClick: async () => {
             await apiFetch('/api/items/bulk-restore', { method: 'POST', body: { ids } });
             notify(Events.BINS);
@@ -36,7 +37,7 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
     } finally {
       setIsBusy(false);
     }
-  }, [clearSelection, showToast]);
+  }, [clearSelection, showToast, tx]);
 
   const bulkCheckout = useCallback(async (ids: string[]) => {
     setIsBusy(true);
@@ -48,13 +49,17 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
       notify(Events.BINS);
       notify(Events.CHECKOUTS);
       clearSelection();
-      const main = `Checked out ${pluralize(checkedOut, 'item')}`;
-      const tail = errors.length > 0 ? `. ${pluralize(errors.length, 'failed', 'failed')}.` : '';
-      showToast({ message: `${main}${tail}` });
+      // Two independent sentences rather than one interpolated phrase: i18next
+      // can only pluralize on a single `count`, and the tail carries its own.
+      const main = tx('items_bulkCheckedOut', { count: checkedOut });
+      const message = errors.length > 0
+        ? `${main}. ${tx('bulk_failedCount', { count: errors.length })}.`
+        : main;
+      showToast({ message });
     } finally {
       setIsBusy(false);
     }
-  }, [clearSelection, showToast]);
+  }, [clearSelection, showToast, tx]);
 
   const bulkMove = useCallback(async (ids: string[], targetBinId: string, targetBinName: string) => {
     setIsBusy(true);
@@ -65,11 +70,11 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
       });
       notify(Events.BINS);
       clearSelection();
-      showToast({ message: `Moved ${pluralize(moved, 'item')} to ${targetBinName}` });
+      showToast({ message: tx('items_bulkMoved', { count: moved, binName: targetBinName }) });
     } finally {
       setIsBusy(false);
     }
-  }, [clearSelection, showToast]);
+  }, [clearSelection, showToast, tx]);
 
   const bulkQuantity = useCallback(async (ids: string[], op: QuantityOp, value?: number) => {
     setIsBusy(true);
@@ -82,13 +87,15 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
       );
       notify(Events.BINS);
       clearSelection();
-      const main = `Updated ${pluralize(updated, 'item')}`;
-      const tail = removed > 0 ? `. ${removed} removed.` : '';
-      showToast({ message: `${main}${tail}` });
+      const main = tx('items_bulkUpdated', { count: updated });
+      const message = removed > 0
+        ? `${main}. ${tx('items_bulkQuantityCleared', { count: removed })}.`
+        : main;
+      showToast({ message });
     } finally {
       setIsBusy(false);
     }
-  }, [clearSelection, showToast]);
+  }, [clearSelection, showToast, tx]);
 
   return { bulkDelete, bulkCheckout, bulkMove, bulkQuantity, isBusy };
 }

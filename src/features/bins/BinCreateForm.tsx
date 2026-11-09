@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,6 +83,7 @@ export function BinCreateForm({
   onWizardComplete,
   triggerFilePickerOnMount,
 }: BinCreateFormProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { areas } = useAreaList(locationId);
   const { settings: aiSettings, isLoading: aiSettingsLoading } = useAiSettings();
@@ -324,7 +326,7 @@ export function BinCreateForm({
               value={name}
               onChange={(e) => { setName(e.target.value); setNameError(null); }}
               onBlur={() => { if (!name.trim()) setNameError('Name is required'); }}
-              placeholder="e.g., Holiday Decorations"
+              placeholder={tx("e_g_holiday_decorations_877312", { defaultValue: "e.g., Holiday Decorations" })}
               maxLength={255}
               required
               aria-invalid={!!nameError}
@@ -416,7 +418,7 @@ export function BinCreateForm({
           {aiConfiguredInline ? (
             <AiConfiguredIndicator>
               {photos.length > 0 && (
-                <span className="text-[var(--text-tertiary)]">— tap <Sparkles className="h-3 w-3 inline" /> to analyze</span>
+                <span className="text-[var(--text-tertiary)]">{tx("tap_4d6fb7", { defaultValue: "— tap" })} <Sparkles className="h-3 w-3 inline" /> {tx("to_analyze_0af85d", { defaultValue: "to analyze" })}</span>
               )}
             </AiConfiguredIndicator>
           ) : (
@@ -424,7 +426,7 @@ export function BinCreateForm({
               expanded={aiExpanded}
               onExpandedChange={setAiExpanded}
               setup={setup}
-              label="Set up AI Analysis"
+              label={tx("set_up_ai_analysis_7fa05b", { defaultValue: "Set up AI Analysis" })}
             />
           )}
         </div>
@@ -434,12 +436,10 @@ export function BinCreateForm({
       {isFull ? (
         <div className={cn('flex gap-2 justify-end', stickyDialogFooter)}>
           {showCancel && (
-            <Button type="button" variant="ghost" onClick={onCancel}>
-              Cancel
-            </Button>
+            <Button type="button" variant="ghost" onClick={onCancel}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           )}
           <Button type="submit" disabled={!name.trim() || submitting}>
-            {submitting ? 'Creating...' : (submitLabel ?? 'Create')}
+            {submitting ? tx("creating_28ea76", { defaultValue: "Creating..." }) : (submitLabel ?? tx("create_6e157c", { defaultValue: "Create" }))}
           </Button>
         </div>
       ) : (
@@ -448,7 +448,7 @@ export function BinCreateForm({
           disabled={!name.trim() || submitting}
           className="w-full rounded-[var(--radius-md)] h-11 text-[15px]"
         >
-          {submitting ? 'Creating...' : (submitLabel ?? `Create ${t.Bin}`)}
+          {submitting ? tx("creating_28ea76", { defaultValue: "Creating..." }) : (submitLabel ?? tx("create_bin_6760de", { defaultValue: "Create {{Bin}}", Bin: t.Bin }))}
         </Button>
       )}
     </form>

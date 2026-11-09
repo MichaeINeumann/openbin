@@ -1,5 +1,6 @@
 import { AlertTriangle, Loader2, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ interface ChangeCodeDialogProps {
 type Step = 'input' | 'confirm' | 'submitting';
 
 export function ChangeCodeDialog({ open, onOpenChange, currentBin }: ChangeCodeDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { showToast } = useToast();
 
   const [step, setStep] = useState<Step>('input');
@@ -84,8 +86,8 @@ export function ChangeCodeDialog({ open, onOpenChange, currentBin }: ChangeCodeD
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Change Code</DialogTitle>
-          <DialogDescription>Enter the new short code for this bin.</DialogDescription>
+          <DialogTitle>{tx("change_code_06e725", { defaultValue: "Change Code" })}</DialogTitle>
+          <DialogDescription>{tx("enter_the_new_short_code_for_this_bin_91eee4", { defaultValue: "Enter the new short code for this bin." })}</DialogDescription>
         </DialogHeader>
 
         {step === 'input' && (
@@ -95,11 +97,8 @@ export function ChangeCodeDialog({ open, onOpenChange, currentBin }: ChangeCodeD
               className="flex items-start gap-2.5 rounded-[var(--radius-sm)] bg-[var(--color-warning-soft)] ring-1 ring-[var(--color-warning-ring)] px-3 py-2.5"
             >
               <AlertTriangle className="h-4 w-4 text-[var(--color-warning)] shrink-0 mt-0.5" />
-              <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed">
-                Changing the code will invalidate any printed QR labels pointing to{' '}
-                <span className="font-mono font-semibold text-[var(--text-primary)]">{currentBin.short_code}</span>
-                . You&apos;ll need to reprint labels before they scan to this bin again.
-              </p>
+              <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed"> {tx("changing_the_code_will_invalidate_any_printed_qr_labels_poin_83dc88", { defaultValue: "Changing the code will invalidate any printed QR labels pointing to" })}{' '}
+                <span className="font-mono font-semibold text-[var(--text-primary)]">{currentBin.short_code}</span> {tx("you_apos_ll_need_to_reprint_labels_before_they_scan_to_this__b4347f", { defaultValue: ". You'll need to reprint labels before they scan to this bin again." })} </p>
             </div>
             <div>
               <div className="flex gap-2">
@@ -115,7 +114,7 @@ export function ChangeCodeDialog({ open, onOpenChange, currentBin }: ChangeCodeD
                       handleLookup();
                     }
                   }}
-                  placeholder="Enter code..."
+                  placeholder={tx("enter_code_6f7c66", { defaultValue: "Enter code..." })}
                   maxLength={6}
                   disabled={lookingUp}
                   className="flex-1 font-mono uppercase tracking-widest"
@@ -129,14 +128,12 @@ export function ChangeCodeDialog({ open, onOpenChange, currentBin }: ChangeCodeD
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <>
-                      <Search className="h-4 w-4 mr-1.5" />
-                      Look Up
-                    </>
+                      <Search className="h-4 w-4 mr-1.5" /> {tx("look_up_281121", { defaultValue: "Look Up" })} </>
                   )}
                 </Button>
               </div>
               {code && code === currentBin.short_code && (
-                <p className="mt-2 text-[13px] text-[var(--destructive)]">This is already this bin&apos;s code.</p>
+                <p className="mt-2 text-[13px] text-[var(--destructive)]">{tx("this_is_already_this_bin_apos_s_code_fb2d3c", { defaultValue: "This is already this bin's code." })}</p>
               )}
               {error && (
                 <p className="mt-2 text-[13px] text-[var(--destructive)]">{error}</p>
@@ -147,8 +144,7 @@ export function ChangeCodeDialog({ open, onOpenChange, currentBin }: ChangeCodeD
 
         {step === 'confirm' && confirmedCode && (
           <div className="py-4 space-y-3">
-            <p className="text-sm text-[var(--text-primary)]">
-              Change this bin&apos;s code from <span className="font-mono">{currentBin.short_code}</span> to <span className="font-mono font-semibold">{confirmedCode}</span>?
+            <p className="text-sm text-[var(--text-primary)]"> {tx("change_this_bin_apos_s_code_from_612fa9", { defaultValue: "Change this bin's code from" })} <span className="font-mono">{currentBin.short_code}</span> {tx("to_4374aa", { defaultValue: "to" })} <span className="font-mono font-semibold">{confirmedCode}</span>?
             </p>
             {error && (
               <p className="text-[13px] text-[var(--destructive)]">{error}</p>
@@ -165,12 +161,12 @@ export function ChangeCodeDialog({ open, onOpenChange, currentBin }: ChangeCodeD
         {step !== 'submitting' && (
           <DialogFooter>
             {step === 'input' && (
-              <Button variant="ghost" onClick={() => handleOpenChange(false)}>Cancel</Button>
+              <Button variant="ghost" onClick={() => handleOpenChange(false)}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
             )}
             {step === 'confirm' && (
               <>
-                <Button variant="ghost" onClick={() => { setStep('input'); setError(''); }}>Back</Button>
-                <Button onClick={handleConfirm}>Change Code</Button>
+                <Button variant="ghost" onClick={() => { setStep('input'); setError(''); }}>{tx("back_b52b36", { defaultValue: "Back" })}</Button>
+                <Button onClick={handleConfirm}>{tx("change_code_06e725", { defaultValue: "Change Code" })}</Button>
               </>
             )}
           </DialogFooter>

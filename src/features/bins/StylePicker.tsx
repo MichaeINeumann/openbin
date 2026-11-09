@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp, ImageIcon } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { OptionGroup } from '@/components/ui/option-group';
 import { getPhotoThumbUrl } from '@/features/photos/usePhotos';
 import type { BorderStyle, BorderWidth, CardStyle, CardStyleVariant, StripePosition, StripeWidth } from '@/lib/cardStyle';
@@ -16,20 +17,21 @@ interface StylePickerProps {
   photos?: Photo[];
 }
 
-const VARIANTS: { key: CardStyleVariant; label: string }[] = [
-  { key: 'default', label: 'Flat' },
-  { key: 'border', label: 'Border' },
-  { key: 'gradient', label: 'Gradient' },
-  { key: 'stripe', label: 'Stripe' },
-  { key: 'photo', label: 'Photo' },
-];
+// Label keys, resolved per render so the picker follows the language.
+const VARIANTS = [
+  { key: 'default', labelKey: 'style_flat' },
+  { key: 'border', labelKey: 'style_border' },
+  { key: 'gradient', labelKey: 'style_gradient' },
+  { key: 'stripe', labelKey: 'style_stripe' },
+  { key: 'photo', labelKey: 'style_photo' },
+] as const satisfies readonly { key: CardStyleVariant; labelKey: string }[];
 
-const STRIPE_POSITIONS: { key: StripePosition; label: string }[] = [
-  { key: 'left', label: 'Left' },
-  { key: 'right', label: 'Right' },
-  { key: 'top', label: 'Top' },
-  { key: 'bottom', label: 'Bottom' },
-];
+const STRIPE_POSITIONS = [
+  { key: 'left', labelKey: 'stripe_left' },
+  { key: 'right', labelKey: 'stripe_right' },
+  { key: 'top', labelKey: 'stripe_top' },
+  { key: 'bottom', labelKey: 'stripe_bottom' },
+] as const;
 
 const STRIPE_WIDTHS: StripeWidth[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
@@ -72,10 +74,12 @@ function VariantPreview({ variant, color, rectangular }: { variant: CardStyleVar
 }
 
 export function StylePicker({ value, color, onChange, photos }: StylePickerProps) {
+  const { t: tx } = useTranslation('ui');
   const [open, setOpen] = useState(false);
   const parsed = parseCardStyle(value);
   const currentVariant = parsed?.variant ?? 'default';
-  const displayLabel = VARIANTS.find((v) => v.key === currentVariant)?.label ?? 'Flat';
+  const variantLabelKey = VARIANTS.find((v) => v.key === currentVariant)?.labelKey ?? 'style_flat';
+  const displayLabel = tx(variantLabelKey);
   const hasPhotos = photos && photos.length > 0;
 
   function updateStyle(patch: Partial<CardStyle>) {
@@ -117,9 +121,7 @@ export function StylePicker({ value, color, onChange, photos }: StylePickerProps
         <div className="space-y-3 p-3 rounded-[var(--radius-sm)] border border-[var(--border-flat)] bg-[var(--bg-elevated)]">
           {/* Variant buttons */}
           <OptionGroup
-            options={VARIANTS.map((v) => ({
-              ...v,
-            }))}
+            options={VARIANTS.map((v) => ({ key: v.key, label: tx(v.labelKey) }))}
             value={currentVariant}
             onChange={selectVariant}
             size="sm"
@@ -135,7 +137,7 @@ export function StylePicker({ value, color, onChange, photos }: StylePickerProps
           {currentVariant === 'border' && (
             <div className="space-y-2.5">
               <div className="space-y-1.5">
-                <p className="text-[12px] text-[var(--text-tertiary)]">Border Style</p>
+                <p className="text-[12px] text-[var(--text-tertiary)]">{tx("border_style_1e41bb", { defaultValue: "Border Style" })}</p>
                 <OptionGroup
                   options={BORDER_STYLES}
                   value={(parsed?.borderStyle ?? 'solid') as BorderStyle}
@@ -143,7 +145,7 @@ export function StylePicker({ value, color, onChange, photos }: StylePickerProps
                 />
               </div>
               <div className="space-y-1.5">
-                <p className="text-[12px] text-[var(--text-tertiary)]">Thickness</p>
+                <p className="text-[12px] text-[var(--text-tertiary)]">{tx("thickness_ad48f3", { defaultValue: "Thickness" })}</p>
                 <OptionGroup
                   options={BORDER_WIDTHS.map((w) => ({ key: w, label: `${w}px` }))}
                   value={(parsed?.borderWidth ?? '2') as BorderWidth}
@@ -158,15 +160,15 @@ export function StylePicker({ value, color, onChange, photos }: StylePickerProps
           {currentVariant === 'stripe' && (
             <div className="space-y-2.5">
               <div className="space-y-1.5">
-                <p className="text-[12px] text-[var(--text-tertiary)]">Position</p>
+                <p className="text-[12px] text-[var(--text-tertiary)]">{tx('stripe_position')}</p>
                 <OptionGroup
-                  options={STRIPE_POSITIONS}
+                  options={STRIPE_POSITIONS.map((p) => ({ key: p.key as StripePosition, label: tx(p.labelKey) }))}
                   value={(parsed?.stripePosition ?? 'left') as StripePosition}
                   onChange={(stripePosition) => updateStyle({ stripePosition })}
                 />
               </div>
               <div className="space-y-1.5">
-                <p className="text-[12px] text-[var(--text-tertiary)]">Thickness</p>
+                <p className="text-[12px] text-[var(--text-tertiary)]">{tx("thickness_ad48f3", { defaultValue: "Thickness" })}</p>
                 <OptionGroup
                   options={STRIPE_WIDTHS.map((w) => ({ key: w, label: `${w}px` }))}
                   value={(parsed?.stripeWidth ?? '4') as StripeWidth}
@@ -183,7 +185,7 @@ export function StylePicker({ value, color, onChange, photos }: StylePickerProps
               {/* Premade backgrounds — always visible when assets have src */}
               {PREMADE_BACKGROUNDS.some((bg) => bg.src) && (
                 <div className="space-y-1.5">
-                  <p className="text-[12px] text-[var(--text-tertiary)]">Backgrounds</p>
+                  <p className="text-[12px] text-[var(--text-tertiary)]">{tx("backgrounds_078af5", { defaultValue: "Backgrounds" })}</p>
                   <div className="grid grid-cols-4 gap-1.5">
                     {PREMADE_BACKGROUNDS.filter((bg) => bg.src).map((bg) => {
                       const isSelected = parsed?.coverAssetId === bg.id;
@@ -216,7 +218,7 @@ export function StylePicker({ value, color, onChange, photos }: StylePickerProps
               {/* User-uploaded photos */}
               {hasPhotos && (
                 <div className="space-y-1.5">
-                  <p className="text-[12px] text-[var(--text-tertiary)]">Your photos</p>
+                  <p className="text-[12px] text-[var(--text-tertiary)]">{tx("your_photos_1e1ef1", { defaultValue: "Your photos" })}</p>
                   <div className="grid grid-cols-4 gap-1.5">
                     {photos?.map((photo) => {
                       const isSelected = !parsed?.coverAssetId && parsed?.coverPhotoId === photo.id;

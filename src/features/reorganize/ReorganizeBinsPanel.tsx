@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -34,6 +35,7 @@ interface Props {
 }
 
 export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }: Props) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const t = useTerminology();
   const { showToast } = useToast();
@@ -132,19 +134,19 @@ export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }
       if (planCounts.created > 0) parts.push(`${planCounts.created} created`);
       const summary = parts.length > 0 ? ` — ${parts.join(', ')}` : '';
       showToast({
-        message: `Reorganization applied${summary}`,
+        message: tx("reorganization_applied_summary_a203fb", { defaultValue: "Reorganization applied{{summary}}", summary: summary }),
         variant: 'success',
         action:
           outcome.newBinIds.length > 0
             ? {
-                label: 'Print labels',
+                label: tx("print_labels_e9f4c1", { defaultValue: "Print labels" }),
                 onClick: () => navigate(`/print?ids=${outcome.newBinIds.join(',')}`),
               }
             : undefined,
       });
       navigate('/bins');
     });
-  }, [apply, selection.selectedBins, selectedAreaId, navigate, showToast, planCounts]);
+  }, [apply, selection.selectedBins, selectedAreaId, navigate, showToast, planCounts, tx]);
 
   const handleCancel = useCallback(() => {
     if (isStreaming) cancel();
@@ -167,15 +169,14 @@ export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }
         className="h-12 text-[17px] rounded-[var(--radius-md)]"
         fullWidth
       >
-        <Sparkles className="h-5 w-5 mr-2.5" />
-        Reorganize {selection.selectedIds.size}{' '}
+        <Sparkles className="h-5 w-5 mr-2.5" /> {tx("reorganize_0ab81d", { defaultValue: "Reorganize" })} {selection.selectedIds.size}{' '}
         {selection.selectedIds.size === 1 ? t.bin : t.bins}
       </Button>
 
       {selection.selectedIds.size >= 2 && !overCap && (
         <div className="text-[12px] text-[var(--text-tertiary)] text-center -mt-2 flex flex-col items-center gap-0.5">
           <span>
-            {itemCount} item{itemCount !== 1 ? 's' : ''} across {selection.selectedIds.size}{' '}
+            {tx('count_items', { count: itemCount })} {tx("across_9a82bf", { defaultValue: "across" })} {selection.selectedIds.size}{' '}
             {t.bins}
           </span>
           {__EE__ ? (
@@ -213,9 +214,9 @@ export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }
           label={
             isStreaming
               ? retryCount > 0
-                ? `Retrying (attempt ${retryCount + 1} of 3)`
-                : `Reorganizing ${t.bins}`
-              : 'Complete'
+                ? tx("retrying_attempt_value0_of_3_46f8e2", { defaultValue: "Retrying (attempt {{value0}} of 3)", value0: retryCount + 1 })
+                : tx("reorganizing_bins_dc600e", { defaultValue: "Reorganizing {{bins}}", bins: t.bins })
+              : tx("complete_1f5a1a", { defaultValue: "Complete" })
           }
           onCancel={isStreaming ? handleCancel : undefined}
         />
@@ -240,16 +241,16 @@ export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }
         </Card>
       ) : !showProgress && !error && !applyError ? (
         <ReorganizeEmptyState
-          message={`Select at least 2 ${t.bins} and click Reorganize to let AI suggest a better organization.`}
+          message={tx('reorganize_startHint', { bins: t.bins })}
         />
       ) : null}
 
       <ReorganizeConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Apply reorganization?"
-        description={`${formatApplyDescription(planCounts, t.bin, t.bins)} This cannot be undone.`}
-        confirmLabel="Apply reorganization"
+        title={tx("apply_reorganization_0f8005", { defaultValue: "Apply reorganization?" })}
+        description={tx("value0_this_cannot_be_undone_298c0c", { defaultValue: "{{value0}} This cannot be undone.", value0: formatApplyDescription(planCounts, t.bin, t.bins) })}
+        confirmLabel={tx("apply_reorganization_c60049", { defaultValue: "Apply reorganization" })}
         confirmVariant="destructive"
         isApplying={isApplying}
         onConfirm={() => {

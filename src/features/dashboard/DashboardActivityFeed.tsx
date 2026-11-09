@@ -1,4 +1,5 @@
 import { Activity, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getActionColor, getActionIcon, getActionLabel } from '@/features/activity/activityHelpers';
@@ -15,6 +16,9 @@ interface DashboardActivityFeedProps {
 
 /** Parent gates rendering on isAdmin — the "View all" action is always shown. */
 export function DashboardActivityFeed({ showTimestamps = true }: DashboardActivityFeedProps = {}) {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
+  const { t: translateActivity } = useTranslation('activity');
   const navigate = useNavigate();
   const t = useTerminology();
   const { entries, isLoading } = usePaginatedActivityLog(undefined, undefined, undefined, undefined, FEED_LIMIT);
@@ -24,16 +28,14 @@ export function DashboardActivityFeed({ showTimestamps = true }: DashboardActivi
       <SectionHeader
         id="dash-recent-activity"
         icon={Activity}
-        title="Recent activity"
-        action={{ label: 'View all', onClick: () => navigate('/activity') }}
+        title={tx("recent_activity_72d561", { defaultValue: "Recent activity" })}
+        action={{ label: tx("view_all_931e1a", { defaultValue: "View all" }), onClick: () => navigate('/activity') }}
       />
       <div className={cn(flatCard, 'p-2')}>
         {isLoading && entries.length === 0 ? (
           <ActivityFeedSkeleton />
         ) : entries.length === 0 ? (
-          <p className="px-3 py-6 text-[13px] text-[var(--text-tertiary)] text-center">
-            No activity yet
-          </p>
+          <p className="px-3 py-6 text-[13px] text-[var(--text-tertiary)] text-center"> {tx("no_activity_yet_ac2a03", { defaultValue: "No activity yet" })} </p>
         ) : (
           <ul className="flex flex-col">
             {entries.map((entry) => {
@@ -63,11 +65,11 @@ export function DashboardActivityFeed({ showTimestamps = true }: DashboardActivi
                     </div>
                     <p className="flex-1 min-w-0 text-[13px] text-[var(--text-primary)] truncate leading-snug">
                       <span className="font-medium">{firstName(entry.display_name)}</span>{' '}
-                      <span className="text-[var(--text-secondary)]">{getActionLabel(entry, t)}</span>
+                      <span className="text-[var(--text-secondary)]">{getActionLabel(entry, t, translateActivity)}</span>
                     </p>
                     {showTimestamps && (
                       <span className="text-[11px] text-[var(--text-tertiary)] tabular-nums shrink-0">
-                        {relativeTime(entry.created_at)}
+                        {relativeTime(entry.created_at, uiLanguage)}
                       </span>
                     )}
                     {clickable && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--text-quaternary)]" />}

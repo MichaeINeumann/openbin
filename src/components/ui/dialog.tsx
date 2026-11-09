@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatedHeight } from '@/components/ui/animated-height';
 import { useFocusTrap } from '@/lib/useFocusTrap';
 import { useOverlayAnimation } from '@/lib/useOverlayAnimation';
@@ -63,6 +64,7 @@ function DialogContent({
   /** Skip the default padded scroll wrapper so the caller can own the flex layout (e.g. chat shell). */
   flush?: boolean;
 }) {
+  const { t: tx } = useTranslation('ui');
   const { open, onOpenChange } = React.useContext(DialogContext);
   const contentRef = React.useRef<HTMLDivElement>(null);
   const titleId = React.useId();
@@ -116,7 +118,7 @@ function DialogContent({
           >
             <button
               type="button"
-              aria-label="Close"
+              aria-label={tx("close_bbfa77", { defaultValue: "Close" })}
               className={closeButton}
               onClick={() => onOpenChange(false)}
             >

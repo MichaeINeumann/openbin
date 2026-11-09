@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTerminology } from '@/lib/terminology';
 import { categoryHeader, cn, flatCard } from '@/lib/utils';
 
@@ -8,6 +9,7 @@ interface EmptyConversationStateProps {
 }
 
 export function EmptyConversationState({ isScoped, onPickExample }: EmptyConversationStateProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   const examples = useMemo(
@@ -34,7 +36,7 @@ export function EmptyConversationState({ isScoped, onPickExample }: EmptyConvers
 
   return (
     <div className="pt-6 pb-4 space-y-4 animate-fade-in">
-      <p className={categoryHeader}>Try asking</p>
+      <p className={categoryHeader}>{tx("try_asking_3e0277", { defaultValue: "Try asking" })}</p>
       <div className="space-y-1.5">
         {examples.map((example) => (
           <button

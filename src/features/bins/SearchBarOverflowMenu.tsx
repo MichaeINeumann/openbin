@@ -1,5 +1,6 @@
 import { Settings2 } from 'lucide-react';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useClickOutside } from '@/lib/useClickOutside';
@@ -19,6 +20,7 @@ interface SearchBarOverflowMenuProps {
 }
 
 export function SearchBarOverflowMenu({ viewMode, onViewModeChange, applicableFields, visibility, onColumnToggle, customFieldLabels }: SearchBarOverflowMenuProps) {
+  const { t: tx } = useTranslation('ui');
   const { visible, animating, isOpen, close, toggle } = usePopover();
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -26,13 +28,13 @@ export function SearchBarOverflowMenu({ viewMode, onViewModeChange, applicableFi
 
   return (
     <div ref={menuRef} className="relative">
-      <Tooltip content="View settings" side="bottom">
+      <Tooltip content={tx("view_settings_9e2610", { defaultValue: "View settings" })} side="bottom">
         <Button
           variant="ghost"
           size="icon"
           onClick={toggle}
           className="h-10 w-10 rounded-[var(--radius-sm)]"
-          aria-label="View settings"
+          aria-label={tx("view_settings_9e2610", { defaultValue: "View settings" })}
           aria-haspopup="menu"
           aria-expanded={isOpen}
         >
@@ -44,17 +46,13 @@ export function SearchBarOverflowMenu({ viewMode, onViewModeChange, applicableFi
           animating === 'exit' ? 'animate-popover-exit' : 'animate-popover-enter',
           'absolute right-0 mt-1 w-56 rounded-[var(--radius-md)] flat-popover overflow-hidden z-20',
         )}>
-          <div className="ui-eyebrow px-3.5 py-2">
-            View
-          </div>
+          <div className="ui-eyebrow px-3.5 py-2"> {tx("view_69bd4e", { defaultValue: "View" })} </div>
           <div className="px-3.5 pb-2">
             <ViewModeToggle value={viewMode} onChange={onViewModeChange} />
           </div>
           {applicableFields.length > 0 && (
             <>
-              <div className="ui-eyebrow px-3.5 py-2 border-t border-[var(--border-subtle)]">
-                Fields
-              </div>
+              <div className="ui-eyebrow px-3.5 py-2 border-t border-[var(--border-subtle)]"> {tx("fields_e8b685", { defaultValue: "Fields" })} </div>
               <FieldToggleList fields={applicableFields} visibility={visibility} onToggle={onColumnToggle} customFieldLabels={customFieldLabels} />
             </>
           )}

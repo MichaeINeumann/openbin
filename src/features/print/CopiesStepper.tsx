@@ -1,4 +1,5 @@
 import { Copy, type LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 interface CopiesStepperProps {
@@ -11,6 +12,7 @@ interface CopiesStepperProps {
 }
 
 export function CopiesStepper({ label, value, onChange, min = 1, max = 10, icon: Icon = Copy }: CopiesStepperProps) {
+  const { t: tx } = useTranslation('ui');
   return (
     <div className="px-1 pt-3 border-t border-[var(--border-subtle)]">
       <div className="flex items-center justify-between">
@@ -27,7 +29,7 @@ export function CopiesStepper({ label, value, onChange, min = 1, max = 10, icon:
               'h-7 w-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[15px] font-medium transition-colors',
               value <= min ? 'text-[var(--text-tertiary)] opacity-40' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] active:bg-[var(--bg-active)]',
             )}
-            aria-label={`Decrease ${label.toLowerCase()}`}
+            aria-label={tx("decrease_value0_b474e9", { defaultValue: "Decrease {{value0}}", value0: label.toLowerCase() })}
           >
             -
           </button>
@@ -40,7 +42,7 @@ export function CopiesStepper({ label, value, onChange, min = 1, max = 10, icon:
               'h-7 w-7 flex items-center justify-center rounded-[var(--radius-sm)] text-[15px] font-medium transition-colors',
               value >= max ? 'text-[var(--text-tertiary)] opacity-40' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] active:bg-[var(--bg-active)]',
             )}
-            aria-label={`Increase ${label.toLowerCase()}`}
+            aria-label={tx("increase_value0_dd3e60", { defaultValue: "Increase {{value0}}", value0: label.toLowerCase() })}
           >
             +
           </button>

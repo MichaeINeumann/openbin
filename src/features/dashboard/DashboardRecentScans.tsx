@@ -1,4 +1,6 @@
+import type { TFunction } from 'i18next';
 import { ScanLine } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BinIconBadge } from '@/components/ui/bin-icon-badge';
 import { resolveColor } from '@/lib/colorPalette';
@@ -14,21 +16,26 @@ interface DashboardRecentScansProps {
   showTimestamps?: boolean;
 }
 
-function describeBin(bin: Bin): string {
+function describeBin(bin: Bin, t: TFunction<'common'>): string {
   const itemCount = bin.items?.length ?? 0;
-  const itemPart = itemCount > 0 ? `${itemCount} ${plural(itemCount, 'item')}` : 'Empty';
+  const itemPart = itemCount > 0
+    ? t('itemCount', { count: itemCount, defaultValue: `${itemCount} ${plural(itemCount, 'item')}` })
+    : 'Empty';
   return bin.area_name ? `${bin.area_name} · ${itemPart}` : itemPart;
 }
 
 export function DashboardRecentScans({ bins, scanTimeMap, limit = 3, showTimestamps = true }: DashboardRecentScansProps) {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
   const rows = bins.slice(0, limit);
 
   if (rows.length === 0) return null;
 
   return (
     <section aria-labelledby="dash-recent-scans" className="flex flex-col gap-2">
-      <SectionHeader id="dash-recent-scans" icon={ScanLine} title="Recent scans" />
+      <SectionHeader id="dash-recent-scans" icon={ScanLine} title={tx("recent_scans_9c29e1", { defaultValue: "Recent scans" })} />
       <div className={cn(flatCard, 'p-2')}>
         <ul className="flex flex-col">
           {rows.map((bin) => {
@@ -56,12 +63,12 @@ export function DashboardRecentScans({ bins, scanTimeMap, limit = 3, showTimesta
                       )}
                     </div>
                     <p className="text-[11.5px] text-[var(--text-tertiary)] truncate leading-snug">
-                      {describeBin(bin)}
+                      {describeBin(bin, t)}
                     </p>
                   </div>
                   {showTimestamps && time && (
                     <span className="text-[11px] text-[var(--text-tertiary)] tabular-nums shrink-0">
-                      {relativeTime(time)}
+                      {relativeTime(time, uiLanguage)}
                     </span>
                   )}
                 </button>

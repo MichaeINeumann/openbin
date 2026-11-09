@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import '@/components/ui/animations.css';
 import { PackagePlus, Printer, QrCode, Settings, X } from 'lucide-react';
 import { useEffect } from 'react';
@@ -21,6 +22,7 @@ const DEMO_COMPLETION_ACTIONS: CompletionAction[] = [
 ];
 
 export function OnboardingOverlay(props: OnboardingActions) {
+  const { t: tx } = useTranslation('ui');
   const { step, totalSteps, advanceWithLocation, advanceStep, complete, demoMode, activeLocationId } = props;
   const state = useOnboardingActions(props);
   const { displayedStep, transitioning, navigate } = state;
@@ -65,7 +67,7 @@ export function OnboardingOverlay(props: OnboardingActions) {
         <button
           type="button"
           onClick={state.handleSkipSetup}
-          aria-label="Close setup"
+          aria-label={tx("close_setup_0a8c2a", { defaultValue: "Close setup" })}
           className={cn(closeButton, focusRing)}
         >
           <X className="h-4 w-4" />
@@ -109,8 +111,8 @@ export function OnboardingOverlay(props: OnboardingActions) {
           {displayedStep === 3 && demoMode && (
             <CompletionStep
               icon={<BrandIcon className="h-16 w-16 text-[var(--accent)] mb-5" />}
-              title="Tour complete"
-              subtitle="That's the essentials. Dive in and explore."
+              title={tx("tour_complete_20b3fa", { defaultValue: "Tour complete" })}
+              subtitle={tx("that_s_the_essentials_dive_in_and_explore_dd0e63", { defaultValue: "That's the essentials. Dive in and explore." })}
               actions={DEMO_COMPLETION_ACTIONS}
               onAction={handleAction}
               onDashboard={handleDashboard}

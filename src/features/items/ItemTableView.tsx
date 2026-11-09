@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BinIconBadge } from '@/components/ui/bin-icon-badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -41,6 +42,7 @@ export function ItemTableView({
   selectedIds,
   onSelect,
 }: ItemTableViewProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
 
   return (
@@ -49,8 +51,8 @@ export function ItemTableView({
         {/* Header */}
         <TableHeader>
           <span className="w-6 shrink-0" aria-hidden />
-          <SortHeader label="Item" column="alpha" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="flex-[2]" />
-          <SortHeader label="Qty" column="qty" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-14 justify-end" />
+          <SortHeader label={tx("item_ecdda5", { defaultValue: "Item" })} column="alpha" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="flex-[2]" />
+          <SortHeader label={tx("qty_1e5ff9", { defaultValue: "Qty" })} column="qty" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} defaultDirection="desc" className="w-14 justify-end" />
           <SortHeader label={t.Bin} column="bin" currentColumn={sortColumn} currentDirection={sortDirection} onSort={onSortChange} className="flex-1" />
         </TableHeader>
 

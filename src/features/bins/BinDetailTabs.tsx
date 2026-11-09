@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { OptionGroup, type OptionGroupOption } from '@/components/ui/option-group';
 import type { useDictation } from '@/lib/useDictation';
 import type { Bin, CustomField, ItemCheckout, Photo } from '@/types';
@@ -12,11 +13,14 @@ export type BinDetailTab = 'contents' | 'files' | 'information';
 
 const STORAGE_KEY = 'openbin-detail-tab';
 
-const TAB_OPTIONS: OptionGroupOption<BinDetailTab>[] = [
-  { key: 'contents', label: 'Contents' },
-  { key: 'files', label: 'Files' },
-  { key: 'information', label: 'Info' },
-];
+// Only the keys live in the module constant; the labels are looked up per
+// render so the tab strip follows the selected language.
+const TAB_KEYS = ['contents', 'files', 'information'] as const;
+const TAB_LABEL_KEYS = {
+  contents: 'bin_tab_contents',
+  files: 'bin_tab_files',
+  information: 'bin_tab_info',
+} as const;
 
 function isTab(v: string | null): v is BinDetailTab {
   return v === 'contents' || v === 'files' || v === 'information';
@@ -61,6 +65,7 @@ export function BinDetailTabs({
   photos,
   checkouts,
 }: BinDetailTabsProps) {
+  const { t: tx } = useTranslation('ui');
   const [tab, setTab] = useState<BinDetailTab>(() => readInitialTab());
   const tabsId = useId();
 
@@ -86,24 +91,29 @@ export function BinDetailTabs({
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (!/^[1-9]$/.test(e.key)) return;
       const idx = Number(e.key);
-      if (idx < 1 || idx > TAB_OPTIONS.length) return;
+      if (idx < 1 || idx > TAB_KEYS.length) return;
       e.preventDefault();
-      handleChange(TAB_OPTIONS[idx - 1].key);
+      handleChange(TAB_KEYS[idx - 1]);
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [handleChange]);
 
+  const tabOptions: OptionGroupOption<BinDetailTab>[] = TAB_KEYS.map((key) => ({
+    key,
+    label: tx(TAB_LABEL_KEYS[key]),
+  }));
+
   return (
     <div>
       <div data-tour="bin-tabs">
         <OptionGroup
-          options={TAB_OPTIONS}
+          options={tabOptions}
           value={tab}
           onChange={handleChange}
           size="lg"
           variant="tabs"
-          aria-label="Bin sections"
+          aria-label={tx("bin_sections_e66783", { defaultValue: "Bin sections" })}
           idPrefix={tabsId}
         />
       </div>

@@ -1,4 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -14,6 +15,7 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, actions, back, backTo, className }: PageHeaderProps) {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
 
   return (
@@ -26,7 +28,7 @@ export function PageHeader({ title, actions, back, backTo, className }: PageHead
               size="icon-sm"
               onClick={() => navigate(backTo)}
               className="shrink-0"
-              aria-label="Go back"
+              aria-label={tx("go_back_e84712", { defaultValue: "Go back" })}
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
@@ -38,7 +40,7 @@ export function PageHeader({ title, actions, back, backTo, className }: PageHead
               size="icon-sm"
               onClick={() => navigate(-1)}
               className="hidden lg:inline-flex shrink-0"
-              aria-label="Go back"
+              aria-label={tx("go_back_e84712", { defaultValue: "Go back" })}
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>

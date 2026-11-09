@@ -1,5 +1,6 @@
 import { ChevronRight, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BinIconBadge } from '@/components/ui/bin-icon-badge';
 import { resolveColor } from '@/lib/colorPalette';
 import { resolveIcon } from '@/lib/iconMap';
@@ -33,6 +34,7 @@ export function BinGroupHeader({
   trailing,
   interactive = false,
 }: BinGroupHeaderProps) {
+  const { t: tx } = useTranslation('ui');
   const BinIcon = resolveIcon(icon);
   const colorPreset = resolveColor(color);
 
@@ -66,7 +68,7 @@ export function BinGroupHeader({
         <button
           type="button"
           onClick={onOpen}
-          aria-label={`Open ${name}`}
+          aria-label={tx("open_name_49e494", { defaultValue: "Open {{name}}", name: name })}
           data-trashed={isTrashed ? 'true' : undefined}
           className="flex-1 min-w-0 flex items-center gap-3 px-3 py-2.5 text-left hover:bg-[var(--bg-active)] transition-colors rounded-tl-[var(--radius-sm)]"
         >
@@ -83,7 +85,7 @@ export function BinGroupHeader({
       type="button"
       onClick={onOpen}
       data-trashed={isTrashed ? 'true' : undefined}
-      aria-label={`Open ${name}`}
+      aria-label={tx("open_name_49e494", { defaultValue: "Open {{name}}", name: name })}
       className={cn(
         'w-full text-left px-3 py-2.5 flex items-center gap-3 hover:bg-[var(--bg-active)] transition-colors rounded-t-[var(--radius-sm)]',
         isTrashed && 'opacity-70',

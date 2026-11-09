@@ -1,4 +1,5 @@
 import { RotateCcw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import type { AiProvider, AiSettings, AiTaskGroup } from '@/types';
@@ -12,6 +13,7 @@ interface TaskRoutingSectionProps {
 }
 
 export function TaskRoutingSection({ settings, overrides, onChange, disabled }: TaskRoutingSectionProps) {
+  const { t: tx } = useTranslation('ui');
   const envLocked = settings.taskOverridesEnvLocked ?? [];
 
   const configuredProviders = settings.providerConfigs
@@ -39,9 +41,7 @@ export function TaskRoutingSection({ settings, overrides, onChange, disabled }: 
               </div>
 
               {isLocked && (
-                <div className="settings-section-banner settings-section-banner-info">
-                  Configured by server
-                  {envOverride?.provider && ` \u2014 ${envOverride.provider}`}
+                <div className="settings-section-banner settings-section-banner-info"> {tx("configured_by_server_24c85d", { defaultValue: "Configured by server" })} {envOverride?.provider && ` \u2014 ${envOverride.provider}`}
                   {envOverride?.model && ` / ${envOverride.model}`}
                 </div>
               )}
@@ -49,7 +49,7 @@ export function TaskRoutingSection({ settings, overrides, onChange, disabled }: 
               {!isLocked && (
                 <div className="flex flex-col gap-2">
                   <div className="min-w-0 space-y-1">
-                    <label htmlFor={`task-provider-${group.key}`} className="text-[12px] text-[var(--text-tertiary)]">Provider</label>
+                    <label htmlFor={`task-provider-${group.key}`} className="text-[12px] text-[var(--text-tertiary)]">{tx("provider_7ceee3", { defaultValue: "Provider" })}</label>
                     <Select<string>
                       id={`task-provider-${group.key}`}
                       value={selectedProvider}
@@ -62,11 +62,11 @@ export function TaskRoutingSection({ settings, overrides, onChange, disabled }: 
                         });
                       }}
                       disabled={disabled}
-                      ariaLabel="Provider"
+                      ariaLabel={tx("provider_7ceee3", { defaultValue: "Provider" })}
                       options={[
                         {
                           value: '',
-                          label: `Default (${AI_PROVIDERS.find((p) => p.key === settings.provider)?.label ?? settings.provider})`,
+                          label: tx("default_value0_918c3e", { defaultValue: "Default ({{value0}})", value0: AI_PROVIDERS.find((p) => p.key === settings.provider)?.label ?? settings.provider }),
                         },
                         ...configuredProviders.map((p) => ({
                           value: p,
@@ -77,7 +77,7 @@ export function TaskRoutingSection({ settings, overrides, onChange, disabled }: 
                   </div>
 
                   <div className="min-w-0 space-y-1">
-                    <label htmlFor={`task-model-${group.key}`} className="text-[12px] text-[var(--text-tertiary)]">Model</label>
+                    <label htmlFor={`task-model-${group.key}`} className="text-[12px] text-[var(--text-tertiary)]">{tx("model_68c2cc", { defaultValue: "Model" })}</label>
                     <Input
                       id={`task-model-${group.key}`}
                       value={selectedModel}
@@ -103,7 +103,7 @@ export function TaskRoutingSection({ settings, overrides, onChange, disabled }: 
                       type="button"
                       onClick={() => onChange(group.key, null)}
                       className="self-end p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors"
-                      title="Reset to default"
+                      title={tx("reset_to_default_39c90e", { defaultValue: "Reset to default" })}
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
                     </button>
@@ -113,7 +113,7 @@ export function TaskRoutingSection({ settings, overrides, onChange, disabled }: 
 
               {!isLocked && selectedProvider === 'openai-compatible' && (
                 <div className="space-y-1">
-                  <label htmlFor={`task-endpoint-${group.key}`} className="text-[12px] text-[var(--text-tertiary)]">Endpoint URL</label>
+                  <label htmlFor={`task-endpoint-${group.key}`} className="text-[12px] text-[var(--text-tertiary)]">{tx("endpoint_url_65aaaa", { defaultValue: "Endpoint URL" })}</label>
                   <Input
                     id={`task-endpoint-${group.key}`}
                     value={selectedEndpoint}

@@ -1,5 +1,6 @@
 import { Folder, GitMerge, PackageOpen, Palette, Plus, Sparkles, Tags as TagsIcon, Trash2 } from 'lucide-react';
 import { lazy, Suspense, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Crossfade } from '@/components/ui/crossfade';
@@ -47,6 +48,7 @@ const BulkMergeDialog = lazy(() =>
 );
 
 export function TagsPage() {
+  const { t: tx } = useTranslation('ui');
   const navigate = useNavigate();
   const { search, sortColumn, sortDirection, setSearch, setSort } = useTableSearchParams<TagSortColumn>('alpha');
   const debouncedSearch = useDebounce(search, 300);
@@ -81,10 +83,10 @@ export function TagsPage() {
   const binsAffected = sumBinCounts(tags, selectedTagNames);
 
   const bulkActions: BulkAction[] = [
-    { id: 'delete', icon: Trash2, label: 'Delete', onClick: () => setOpenBulk('delete'), group: 'primary', danger: true },
-    { id: 'merge', icon: GitMerge, label: 'Merge', onClick: () => setOpenBulk('merge'), group: 'primary' },
-    { id: 'parent', icon: Folder, label: 'Set Parent', onClick: () => setOpenBulk('parent'), group: 'more' },
-    { id: 'color', icon: Palette, label: 'Set Color', onClick: () => setOpenBulk('color'), group: 'more' },
+    { id: 'delete', icon: Trash2, label: tx("delete_f6fdbe", { defaultValue: "Delete" }), onClick: () => setOpenBulk('delete'), group: 'primary', danger: true },
+    { id: 'merge', icon: GitMerge, label: tx("merge_ea8f0d", { defaultValue: "Merge" }), onClick: () => setOpenBulk('merge'), group: 'primary' },
+    { id: 'parent', icon: Folder, label: tx("set_parent_6f2b21", { defaultValue: "Set Parent" }), onClick: () => setOpenBulk('parent'), group: 'more' },
+    { id: 'color', icon: Palette, label: tx("set_color_91fdd5", { defaultValue: "Set Color" }), onClick: () => setOpenBulk('color'), group: 'more' },
   ];
 
   const tagSuggestionGated = !isSelfHosted && isGated('reorganize');
@@ -92,9 +94,7 @@ export function TagsPage() {
 
   const suggestButton = (
     <Button variant="outline" size="sm" onClick={() => navigate('/reorganize?mode=tags')}>
-      <Sparkles className="h-4 w-4 mr-1.5" />
-      Suggest with AI
-    </Button>
+      <Sparkles className="h-4 w-4 mr-1.5" /> {tx("suggest_with_ai_0ae468", { defaultValue: "Suggest with AI" })} </Button>
   );
 
   // Rename dialog state
@@ -157,12 +157,17 @@ export function TagsPage() {
     try {
       const result = await deleteTag(activeLocationId, deleteTarget);
       const orphanMsg = result.orphanedChildren
-        ? ` \u2014 ${result.orphanedChildren} child tag${result.orphanedChildren === 1 ? '' : 's'} moved to top level`
+        ? tx('tags_orphanedChildren', { count: result.orphanedChildren })
         : '';
-      showToast({ message: `Removed "${deleteTarget}" from ${result.binsUpdated} ${result.binsUpdated === 1 ? t.bin : t.bins}${orphanMsg}` });
+      const removed = tx('tags_removedFrom', {
+        count: result.binsUpdated,
+        tag: deleteTarget,
+        term: result.binsUpdated === 1 ? t.bin : t.bins,
+      });
+      showToast({ message: `${removed}${orphanMsg}` });
       setDeleteTarget(null);
     } catch {
-      showToast({ message: 'Failed to delete tag', variant: 'error' });
+      showToast({ message: tx('tags_deleteFailed'), variant: 'error' });
     } finally {
       setDeleteLoading(false);
     }
@@ -191,15 +196,13 @@ export function TagsPage() {
   return (
     <div className="page-content-wide">
       <PageHeader
-        title="Tags"
+        title={tx("tags_848eed", { defaultValue: "Tags" })}
         actions={(
           <div className="flex items-center gap-2">
             {canWrite && showSuggestButton && suggestButton}
             {canWrite && (
               <Button size="sm" onClick={() => setCreateOpen(true)}>
-                <Plus className="h-4 w-4 mr-1.5" />
-                Create Tag
-              </Button>
+                <Plus className="h-4 w-4 mr-1.5" /> {tx("create_tag_a62ac3", { defaultValue: "Create Tag" })} </Button>
             )}
           </div>
         )}
@@ -210,7 +213,7 @@ export function TagsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onClear={search ? () => setSearch('') : undefined}
-          placeholder="Search tags..."
+          placeholder={tx("search_tags_aa0f0b", { defaultValue: "Search tags..." })}
         />
       )}
 
@@ -243,21 +246,19 @@ export function TagsPage() {
         {tags.length === 0 ? (
           <EmptyState
             icon={search ? TagsIcon : PackageOpen}
-            title={search ? 'No tags match your search' : 'No tags yet'}
-            subtitle={search ? 'Try a different search term' : `Tags added to ${t.bins} will appear here`}
+            title={search ? tx("no_tags_match_your_search_327f49", { defaultValue: "No tags match your search" }) : tx("no_tags_yet_26d652", { defaultValue: "No tags yet" })}
+            subtitle={search ? tx("try_a_different_search_term_39d642", { defaultValue: "Try a different search term" }) : tx("tags_added_to_bins_will_appear_here_ac8697", { defaultValue: "Tags added to {{bins}} will appear here", bins: t.bins })}
             variant={search ? 'search' : undefined}
           >
             {!search && (
               <div className="flex items-center gap-2">
                 {canWrite && (
                   <Button size="sm" onClick={() => setCreateOpen(true)}>
-                    <Plus className="h-4 w-4 mr-1.5" />
-                    Create Tag
-                  </Button>
+                    <Plus className="h-4 w-4 mr-1.5" /> {tx("create_tag_a62ac3", { defaultValue: "Create Tag" })} </Button>
                 )}
                 {showSuggestButton && suggestButton}
                 <Link to="/bins">
-                  <Button variant="secondary" size="sm">Browse {t.bins}</Button>
+                  <Button variant="secondary" size="sm">{tx('bins_browseAction', { bins: t.bins })}</Button>
                 </Link>
               </div>
             )}
@@ -294,7 +295,7 @@ export function TagsPage() {
           onClear={clearSelection}
           isBusy={isBusy}
           actions={bulkActions}
-          selectionLabel={`${selectedIds.size} tag${selectedIds.size === 1 ? '' : 's'} selected`}
+          selectionLabel={tx('selected_tags', { count: selectedIds.size })}
         />
       )}
 
@@ -348,13 +349,12 @@ export function TagsPage() {
       <Dialog open={renameTarget !== null} onOpenChange={(open) => { if (!open) setRenameTarget(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Rename tag</DialogTitle>
-            <DialogDescription>
-              This will rename &ldquo;{renameTarget}&rdquo; across all {t.bins} in this {t.location}.
+            <DialogTitle>{tx("rename_tag_d80d06", { defaultValue: "Rename tag" })}</DialogTitle>
+            <DialogDescription> {tx("this_will_rename_ldquo_1aa930", { defaultValue: "This will rename “" })}{renameTarget}{tx("rdquo_across_all_938996", { defaultValue: "” across all" })} {t.bins} {tx("in_this_db44ce", { defaultValue: "in this" })} {t.location}.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="rename-tag-input">New name</Label>
+            <Label htmlFor="rename-tag-input">{tx("new_name_9e627c", { defaultValue: "New name" })}</Label>
             <Input
               ref={renameInputRef}
               id="rename-tag-input"
@@ -366,9 +366,9 @@ export function TagsPage() {
             />
           </div>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setRenameTarget(null)} disabled={renameLoading}>Cancel</Button>
+            <Button variant="secondary" onClick={() => setRenameTarget(null)} disabled={renameLoading}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
             <Button onClick={handleRenameSubmit} disabled={renameLoading || !renameValue.trim()}>
-              {renameLoading ? 'Renaming…' : 'Rename'}
+              {renameLoading ? tx("renaming_39e7d8", { defaultValue: "Renaming…" }) : 'Rename'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -378,15 +378,13 @@ export function TagsPage() {
       <Dialog open={deleteTarget !== null} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete tag</DialogTitle>
-            <DialogDescription>
-              This will remove &ldquo;{deleteTarget}&rdquo; from all {t.bins} in this {t.location}. This cannot be undone.
-            </DialogDescription>
+            <DialogTitle>{tx("delete_tag_2cde39", { defaultValue: "Delete tag" })}</DialogTitle>
+            <DialogDescription> {tx("this_will_remove_ldquo_0e693e", { defaultValue: "This will remove “" })}{deleteTarget}{tx("rdquo_from_all_88d4be", { defaultValue: "” from all" })} {t.bins} {tx("in_this_db44ce", { defaultValue: "in this" })} {t.location}{tx("this_cannot_be_undone_174ffd", { defaultValue: ". This cannot be undone." })} </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setDeleteTarget(null)} disabled={deleteLoading}>Cancel</Button>
+            <Button variant="secondary" onClick={() => setDeleteTarget(null)} disabled={deleteLoading}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
             <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deleteLoading}>
-              {deleteLoading ? 'Deleting…' : 'Delete'}
+              {deleteLoading ? tx("deleting_c7ac55", { defaultValue: "Deleting…" }) : tx("delete_f6fdbe", { defaultValue: "Delete" })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -396,29 +394,28 @@ export function TagsPage() {
       <Dialog open={parentTarget !== null} onOpenChange={(open) => { if (!open) setParentTarget(null); }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Set parent</DialogTitle>
-            <DialogDescription>
-              Choose a parent tag for &ldquo;{parentTarget}&rdquo;.
+            <DialogTitle>{tx("set_parent_202f81", { defaultValue: "Set parent" })}</DialogTitle>
+            <DialogDescription> {tx("choose_a_parent_tag_for_ldquo_762006", { defaultValue: "Choose a parent tag for “" })}{parentTarget}&rdquo;.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="set-parent-select">Parent</Label>
+            <Label htmlFor="set-parent-select">{tx("parent_23d692", { defaultValue: "Parent" })}</Label>
             <select
               id="set-parent-select"
               value={parentValue}
               onChange={(e) => setParentValue(e.target.value)}
               className={cn(inputBase, 'h-10 focus-visible:ring-2 focus-visible:ring-[var(--accent)]')}
             >
-              <option value="">None</option>
+              <option value="">{tx("none_6eef66", { defaultValue: "None" })}</option>
               {parentEligible.map((tag) => (
                 <option key={tag} value={tag}>{tag}</option>
               ))}
             </select>
           </div>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setParentTarget(null)} disabled={parentLoading}>Cancel</Button>
+            <Button variant="secondary" onClick={() => setParentTarget(null)} disabled={parentLoading}>{tx("cancel_77dfd2", { defaultValue: "Cancel" })}</Button>
             <Button onClick={handleSetParentSubmit} disabled={parentLoading}>
-              {parentLoading ? 'Saving\u2026' : 'Save'}
+              {parentLoading ? tx("saving_56a228", { defaultValue: "Saving…" }) : tx("save_efc007", { defaultValue: "Save" })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -431,7 +428,7 @@ export function TagsPage() {
         onConfirm={(createdTag) => {
           setCreateOpen(false);
           if (createdTag) {
-            showToast({ message: `Created tag "${createdTag}"` });
+            showToast({ message: tx("created_tag_createdtag_9677ba", { defaultValue: "Created tag \"{{createdTag}}\"", createdTag: createdTag }) });
           }
         }}
         suggestions={tags.map((t) => t.tag)}

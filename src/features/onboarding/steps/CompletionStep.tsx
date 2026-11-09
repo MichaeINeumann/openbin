@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn, focusRing } from '@/lib/utils';
 
@@ -18,14 +19,15 @@ export interface CompletionStepProps {
 }
 
 export function CompletionStep({ icon, title, subtitle, actions, onAction, onDashboard }: CompletionStepProps) {
+  const { t: tx } = useTranslation('ui');
   return (
     <div className="flex flex-col items-center text-center">
       <div className="onboarding-completion-icon">{icon}</div>
       <h2 className="text-[22px] font-bold text-[var(--text-primary)] mb-2">
-        {title ?? "You're all set"}
+        {title ?? tx("you_re_all_set_0efcdd", { defaultValue: "You're all set" })}
       </h2>
       <p className="text-[14px] text-[var(--text-tertiary)] mb-5 leading-relaxed">
-        {subtitle ?? 'Jump into any of these to get started.'}
+        {subtitle ?? tx("jump_into_any_of_these_to_get_started_dbac65", { defaultValue: "Jump into any of these to get started." })}
       </p>
       <div className="w-full space-y-2 mb-6">
         {actions.map((action, i) => {
@@ -59,9 +61,7 @@ export function CompletionStep({ icon, title, subtitle, actions, onAction, onDas
         type="button"
         onClick={onDashboard}
         className="w-full rounded-[var(--radius-md)] h-11 text-[15px]"
-      >
-        Go to Dashboard
-      </Button>
+      > {tx("go_to_dashboard_f7b5bf", { defaultValue: "Go to Dashboard" })} </Button>
     </div>
   );
 }

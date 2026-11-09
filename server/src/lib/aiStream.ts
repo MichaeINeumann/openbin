@@ -2,6 +2,7 @@ import type { LanguageModel, ModelMessage, UserContent } from 'ai';
 import { Output, streamText } from 'ai';
 import type { Request, Response } from 'express';
 import { mapSdkError, toSafeAiMessage } from './aiErrors.js';
+import { getAiLanguage, withAiLanguage } from './aiLanguage.js';
 import { config } from './config.js';
 import { createLogger } from './logger.js';
 
@@ -47,6 +48,7 @@ export function withClientDisconnect(req: Request, baseSignal?: AbortSignal): Ab
 const log = createLogger('ai');
 
 export interface StreamOptions {
+  userId?: string;
   system: string;
   userContent: UserContent;
   /** Zod schema — when provided, constrains the model to output valid JSON matching this shape. */
@@ -93,7 +95,7 @@ export async function streamAiToWriter(
       model,
       ...(opts.schema ? { output: Output.object({ schema: opts.schema }) } : {}),
       ...(providerOptions ? { providerOptions } : {}),
-      system: opts.system,
+      system: withAiLanguage(opts.system, await getAiLanguage(opts.userId)),
       messages: [
         ...(opts.priorMessages ?? []),
         { role: 'user' as const, content: opts.userContent },

@@ -1,5 +1,6 @@
 import { CheckSquare, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn, flatCard, plural } from '@/lib/utils';
 import { BinDisclosurePill } from './BinDisclosurePill';
 import { BinGroupHeader } from './BinGroupHeader';
@@ -26,7 +27,8 @@ export function BinItemGroup({
   removedItemIds,
   onBinClick,
 }: BinItemGroupProps) {
-  const display = getMatchDisplay(match);
+  const { t: tx } = useTranslation('ui');
+  const display = getMatchDisplay(match, (count) => tx('count_items', { count }));
   const isExpandable = display.mode === 'inline-disclosure';
   const [expanded, setExpanded] = useState(display.defaultExpanded);
   const itemsId = `items-${match.bin_id}`;
@@ -65,7 +67,7 @@ export function BinItemGroup({
       {isExpandable && (
         <section
           id={itemsId}
-          aria-label={`Items in ${match.name}`}
+          aria-label={tx("items_in_value0_a6b3e0", { defaultValue: "Items in {{value0}}", value0: match.name })}
           aria-hidden={!expanded}
           className={cn(
             'grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none',
@@ -105,7 +107,7 @@ export function BinItemGroup({
                   className="w-full flex items-center gap-2 px-3 py-2.5 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--bg-hover)] border-t border-[var(--border-subtle)] transition-colors"
                 >
                   <CheckSquare className="h-4 w-4 shrink-0" />
-                  <span>Select all {match.items.length} items</span>
+                  <span>{tx("select_all_913aff", { defaultValue: "Select all" })} {match.items.length} {tx("items_7316c8", { defaultValue: "items" })}</span>
                 </button>
               )}
             {hiddenCount > 0 && (
@@ -115,8 +117,7 @@ export function BinItemGroup({
                 className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] border-t border-[var(--border-subtle)] transition-colors"
               >
                 <span className="flex-1 text-left">
-                  + {hiddenCount} more {plural(hiddenCount, 'item')} — open bin to see all
-                </span>
+                  + {hiddenCount} {tx("more_e7c95b", { defaultValue: "more" })} {plural(hiddenCount, 'item')} {tx("open_bin_to_see_all_cd201c", { defaultValue: "— open bin to see all" })} </span>
                 <ChevronRight className="h-3.5 w-3.5 shrink-0" />
               </button>
             )}

@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -34,6 +35,7 @@ interface DeleteAccountDialogProps {
 }
 
 export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogProps) {
+  const { t: tx } = useTranslation('ui');
   const { user, deleteAccount, activeLocationId } = useAuth();
   const { planInfo, isSelfHosted } = usePlan();
   const { showToast } = useToast();
@@ -145,28 +147,22 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
         <DialogHeader>
           <div className="flex items-center justify-between gap-2 mb-1">
             <DialogTitle>
-              {step === 'summary' && 'Delete Account'}
-              {step === 'subscription' && 'Cancel Subscription'}
-              {step === 'confirm' && 'Confirm Account Deletion'}
+              {step === 'summary' && tx("delete_account_ee1b9a", { defaultValue: "Delete Account" })}
+              {step === 'subscription' && tx("cancel_subscription_58b2bd", { defaultValue: "Cancel Subscription" })}
+              {step === 'confirm' && tx("confirm_account_deletion_678c6a", { defaultValue: "Confirm Account Deletion" })}
             </DialogTitle>
-            <span className="text-[12px] text-[var(--text-tertiary)] shrink-0">
-              Step {stepNumber} of {totalSteps}
+            <span className="text-[12px] text-[var(--text-tertiary)] shrink-0"> {tx("step_dc416e", { defaultValue: "Step" })} {stepNumber} {tx("of_de04fa", { defaultValue: "of" })} {totalSteps}
             </span>
           </div>
           {step === 'summary' && (
-            <DialogDescription>
-              You're about to delete <span className="font-medium text-[var(--text-secondary)]">{user.email}</span>.
+            <DialogDescription> {tx("you_re_about_to_delete_3b6037", { defaultValue: "You're about to delete" })} <span className="font-medium text-[var(--text-secondary)]">{user.email}</span>.
             </DialogDescription>
           )}
           {step === 'subscription' && (
-            <DialogDescription>
-              Choose how to handle your active subscription.
-            </DialogDescription>
+            <DialogDescription> {tx("choose_how_to_handle_your_active_subscription_c25bf8", { defaultValue: "Choose how to handle your active subscription." })} </DialogDescription>
           )}
           {step === 'confirm' && (
-            <DialogDescription>
-              This action will be irreversible after the {DELETION_GRACE_PERIOD_DAYS}-day recovery window.
-            </DialogDescription>
+            <DialogDescription> {tx("this_action_will_be_irreversible_after_the_d1c61d", { defaultValue: "This action will be irreversible after the" })} {DELETION_GRACE_PERIOD_DAYS}{tx("day_recovery_window_b872b0", { defaultValue: "-day recovery window." })} </DialogDescription>
           )}
         </DialogHeader>
 
@@ -182,19 +178,18 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
         {step === 'summary' && (
           <div className="space-y-4">
             <div className="space-y-2 text-[14px] text-[var(--text-secondary)]">
-              <p>
-                This will permanently delete your account in{' '}
-                <span className="font-medium text-[var(--text-primary)]">{DELETION_GRACE_PERIOD_DAYS} days</span>.
+              <p> {tx("this_will_permanently_delete_your_account_in_e36d50", { defaultValue: "This will permanently delete your account in" })}{' '}
+                <span className="font-medium text-[var(--text-primary)]">{DELETION_GRACE_PERIOD_DAYS} {tx("days_5548ae", { defaultValue: "days" })}</span>.
               </p>
-              <p>You can recover your account by signing in until then.</p>
+              <p>{tx("you_can_recover_your_account_by_signing_in_until_then_920331", { defaultValue: "You can recover your account by signing in until then." })}</p>
             </div>
             <div>
-              <p className="text-[13px] font-medium text-[var(--text-primary)] mb-2">What will be deleted:</p>
+              <p className="text-[13px] font-medium text-[var(--text-primary)] mb-2">{tx("what_will_be_deleted_a80ca3", { defaultValue: "What will be deleted:" })}</p>
               <ul className="text-[13px] text-[var(--text-secondary)] list-disc pl-5 space-y-1">
-                <li>All bins and items in locations where you are the only member</li>
-                <li>All photos and attachments you uploaded</li>
-                <li>Your API keys and personal settings</li>
-                <li>Locations shared with others will be preserved</li>
+                <li>{tx("all_bins_and_items_in_locations_where_you_are_the_only_membe_98ab21", { defaultValue: "All bins and items in locations where you are the only member" })}</li>
+                <li>{tx("all_photos_and_attachments_you_uploaded_dee923", { defaultValue: "All photos and attachments you uploaded" })}</li>
+                <li>{tx("your_api_keys_and_personal_settings_5cb177", { defaultValue: "Your API keys and personal settings" })}</li>
+                <li>{tx("locations_shared_with_others_will_be_preserved_1e5f25", { defaultValue: "Locations shared with others will be preserved" })}</li>
               </ul>
               <div className="pt-2">
                 <Button
@@ -204,67 +199,51 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
                   disabled={exporting || !activeLocationId}
                   className="text-sm"
                 >
-                  {exporting ? 'Downloading…' : '↓ Download my data first'}
+                  {exporting ? tx("downloading_c177e4", { defaultValue: "Downloading…" }) : tx("download_my_data_first_f5acd7", { defaultValue: "↓ Download my data first" })}
                 </Button>
-                <p className="text-xs text-[var(--text-tertiary)] mt-1">
-                  Get a copy of your bins, items, photos, and tags before deleting.
-                </p>
+                <p className="text-xs text-[var(--text-tertiary)] mt-1"> {tx("get_a_copy_of_your_bins_items_photos_and_tags_before_deletin_8fdb58", { defaultValue: "Get a copy of your bins, items, photos, and tags before deleting." })} </p>
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button type="button" variant="destructive" onClick={goNext}>
-                Continue
-              </Button>
+              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
+              <Button type="button" variant="destructive" onClick={goNext}> {tx("continue_2e0262", { defaultValue: "Continue" })} </Button>
             </DialogFooter>
           </div>
         )}
 
         {step === 'subscription' && (
           <div className="space-y-4">
-            <p className="text-[14px] text-[var(--text-secondary)]">
-              You have an active{' '}
-              <span className="font-medium text-[var(--text-primary)]">{planLabel}</span> subscription billing{' '}
+            <p className="text-[14px] text-[var(--text-secondary)]"> {tx("you_have_an_active_45c877", { defaultValue: "You have an active" })}{' '}
+              <span className="font-medium text-[var(--text-primary)]">{planLabel}</span> {tx("subscription_billing_bd5364", { defaultValue: "subscription billing" })}{' '}
               <span className="font-medium text-[var(--text-primary)]">{periodLabel}</span>.
             </p>
             <div className="space-y-2">
               <RadioOption
                 selected={refundPolicy === 'none'}
                 onClick={() => setRefundPolicy('none')}
-                label="Cancel and stop billing now"
-                description="No refund for the unused time."
+                label={tx("cancel_and_stop_billing_now_f9fb95", { defaultValue: "Cancel and stop billing now" })}
+                description={tx("no_refund_for_the_unused_time_a17dc2", { defaultValue: "No refund for the unused time." })}
               />
               <RadioOption
                 selected={refundPolicy === 'prorated'}
                 onClick={() => setRefundPolicy('prorated')}
-                label="Cancel and refund the unused time"
-                description="A prorated refund will be issued for the remainder of the billing period."
+                label={tx("cancel_and_refund_the_unused_time_21498b", { defaultValue: "Cancel and refund the unused time" })}
+                description={tx("a_prorated_refund_will_be_issued_for_the_remainder_of_the_bi_555429", { defaultValue: "A prorated refund will be issued for the remainder of the billing period." })}
               />
             </div>
             {planInfo?.portalAction && __EE__ && (
-              <p className="text-[12px] text-[var(--text-tertiary)]">
-                Or just{' '}
-                <Suspense fallback={<span>cancel your subscription</span>}>
+              <p className="text-[12px] text-[var(--text-tertiary)]"> {tx("or_just_358ed0", { defaultValue: "Or just" })}{' '}
+                <Suspense fallback={<span>{tx("cancel_your_subscription_a82126", { defaultValue: "cancel your subscription" })}</span>}>
                   <CheckoutLink
                     action={planInfo.portalAction}
                     target="_blank"
                     className="text-[var(--accent)] hover:underline"
-                  >
-                    cancel your subscription
-                  </CheckoutLink>
-                </Suspense>{' '}
-                without deleting your account.
-              </p>
+                  > {tx("cancel_your_subscription_a82126", { defaultValue: "cancel your subscription" })} </CheckoutLink>
+                </Suspense>{' '} {tx("without_deleting_your_account_8f2d8e", { defaultValue: "without deleting your account." })} </p>
             )}
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={goBack}>
-                Back
-              </Button>
-              <Button type="button" variant="destructive" onClick={goNext}>
-                Continue
-              </Button>
+              <Button type="button" variant="ghost" onClick={goBack}> {tx("back_b52b36", { defaultValue: "Back" })} </Button>
+              <Button type="button" variant="destructive" onClick={goNext}> {tx("continue_2e0262", { defaultValue: "Continue" })} </Button>
             </DialogFooter>
           </div>
         )}
@@ -272,9 +251,7 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
         {step === 'confirm' && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="confirm-phrase">
-                Type <span className="font-mono text-[var(--text-primary)]">{CONFIRM_PHRASE}</span> to confirm
-              </Label>
+              <Label htmlFor="confirm-phrase"> {tx("type_3deb74", { defaultValue: "Type" })} <span className="font-mono text-[var(--text-primary)]">{CONFIRM_PHRASE}</span> {tx("to_confirm_836e41", { defaultValue: "to confirm" })} </Label>
               <Input
                 id="confirm-phrase"
                 value={confirmText}
@@ -286,23 +263,21 @@ export function DeleteAccountDialog({ open, onOpenChange }: DeleteAccountDialogP
             </div>
             {hasPassword && (
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Enter your password</Label>
+                <Label htmlFor="confirm-password">{tx("enter_your_password_137816", { defaultValue: "Enter your password" })}</Label>
                 <Input
                   id="confirm-password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
-                  placeholder="Password"
+                  placeholder={tx("password_8be3c9", { defaultValue: "Password" })}
                 />
               </div>
             )}
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={goBack} disabled={submitting}>
-                Back
-              </Button>
+              <Button type="button" variant="ghost" onClick={goBack} disabled={submitting}> {tx("back_b52b36", { defaultValue: "Back" })} </Button>
               <Button type="submit" variant="destructive" disabled={!canSubmit}>
-                {submitting ? 'Deleting...' : 'Delete Account'}
+                {submitting ? tx("deleting_e16cac", { defaultValue: "Deleting..." }) : tx("delete_account_ee1b9a", { defaultValue: "Delete Account" })}
               </Button>
             </DialogFooter>
           </form>
@@ -317,7 +292,9 @@ interface DeletionPendingBannerProps {
 }
 
 export function DeletionPendingBanner({ scheduledAt }: DeletionPendingBannerProps) {
-  const date = new Date(scheduledAt).toLocaleDateString(undefined, {
+  const { i18n: { language: uiLanguage } } = useTranslation();
+  const { t: tx } = useTranslation('ui');
+  const date = new Date(scheduledAt).toLocaleDateString(uiLanguage, {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
@@ -330,11 +307,9 @@ export function DeletionPendingBanner({ scheduledAt }: DeletionPendingBannerProp
         'text-[13px] text-[var(--text-secondary)]',
       )}
     >
-      <p className="font-medium text-[var(--destructive)] mb-1">Account scheduled for deletion</p>
-      <p>
-        Your account is scheduled for deletion on{' '}
-        <span className="font-medium text-[var(--text-primary)]">{date}</span>. Sign back in before then to recover it.
-      </p>
+      <p className="font-medium text-[var(--destructive)] mb-1">{tx("account_scheduled_for_deletion_29e2a2", { defaultValue: "Account scheduled for deletion" })}</p>
+      <p> {tx("your_account_is_scheduled_for_deletion_on_4cc2fc", { defaultValue: "Your account is scheduled for deletion on" })}{' '}
+        <span className="font-medium text-[var(--text-primary)]">{date}</span>{tx("sign_back_in_before_then_to_recover_it_a0c0c2", { defaultValue: ". Sign back in before then to recover it." })} </p>
     </output>
   );
 }

@@ -1,5 +1,6 @@
 import { Check, ChevronRight, Folder, Inbox, MoreHorizontal, Plus, X } from 'lucide-react';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -32,6 +33,7 @@ interface CreateCardProps {
 }
 
 export function AreaCard({ id, name, binCount, descendantBinCount, depth, hasChildren, isAdmin, onNavigate, onRename, onDelete }: AreaCardProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   const { visible, animating, close, toggle } = usePopover();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -58,25 +60,25 @@ export function AreaCard({ id, name, binCount, descendantBinCount, depth, hasChi
           className="h-8 text-[14px]"
         />
         <div className="flex gap-1.5 justify-end">
-          <Tooltip content="Save">
+          <Tooltip content={tx("save_efc007", { defaultValue: "Save" })}>
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={handleSave}
               disabled={!editValue.trim() || saving}
               className="shrink-0 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
-              aria-label="Save"
+              aria-label={tx("save_efc007", { defaultValue: "Save" })}
             >
               <Check className="h-4 w-4 text-[var(--accent)]" />
             </Button>
           </Tooltip>
-          <Tooltip content="Cancel">
+          <Tooltip content={tx("cancel_77dfd2", { defaultValue: "Cancel" })}>
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={cancelEdit}
               className="shrink-0 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0"
-              aria-label="Cancel"
+              aria-label={tx("cancel_77dfd2", { defaultValue: "Cancel" })}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -110,7 +112,7 @@ export function AreaCard({ id, name, binCount, descendantBinCount, depth, hasChi
           <span className="text-[13px] text-[var(--text-tertiary)] mt-0.5 block">
             {binCount} {binCount !== 1 ? t.bins : t.bin}
             {hasChildren && descendantBinCount > binCount && (
-              <span className="text-[var(--text-tertiary)]"> ({descendantBinCount} total)</span>
+              <span className="text-[var(--text-tertiary)]"> ({descendantBinCount} {tx("total_8a3567", { defaultValue: "total)" })}</span>
             )}
           </span>
         </div>
@@ -122,13 +124,13 @@ export function AreaCard({ id, name, binCount, descendantBinCount, depth, hasChi
           className="absolute top-2.5 right-2.5"
           ref={menuRef}
         >
-          <Tooltip content="More actions" side="bottom">
+          <Tooltip content={tx("more_actions_a1e34f", { defaultValue: "More actions" })} side="bottom">
             <Button
               variant="ghost"
               size="icon"
               onClick={(e) => { e.stopPropagation(); toggle(); }}
               className="[@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 focus:opacity-100 transition-opacity"
-              aria-label="More actions"
+              aria-label={tx("more_actions_a1e34f", { defaultValue: "More actions" })}
             >
               <MoreHorizontal className="h-3.5 w-3.5" />
             </Button>
@@ -148,6 +150,7 @@ export function AreaCard({ id, name, binCount, descendantBinCount, depth, hasChi
 }
 
 export function UnassignedAreaCard({ count, onNavigate }: UnassignedCardProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   return (
     <button
@@ -160,9 +163,7 @@ export function UnassignedAreaCard({ count, onNavigate }: UnassignedCardProps) {
           <Inbox className="h-4.5 w-4.5 text-[var(--text-tertiary)]" />
         </div>
         <div className="flex-1 min-w-0">
-          <span className="text-[15px] font-semibold text-[var(--text-secondary)] truncate block">
-            Unassigned
-          </span>
+          <span className="text-[15px] font-semibold text-[var(--text-secondary)] truncate block"> {tx("unassigned_e57016", { defaultValue: "Unassigned" })} </span>
           <span className="text-[13px] text-[var(--text-tertiary)] mt-0.5 block">
             {count} {count !== 1 ? t.bins : t.bin}
           </span>
@@ -174,6 +175,7 @@ export function UnassignedAreaCard({ count, onNavigate }: UnassignedCardProps) {
 }
 
 export function CreateAreaCard({ onCreate }: CreateCardProps) {
+  const { t: tx } = useTranslation('ui');
   const t = useTerminology();
   return (
     <button
@@ -184,7 +186,7 @@ export function CreateAreaCard({ onCreate }: CreateCardProps) {
       <div className="h-9 w-9 rounded-[var(--radius-sm)] border border-dashed border-[var(--border-flat)] flex items-center justify-center shrink-0">
         <Plus className="h-4 w-4" />
       </div>
-      <span className="text-[13px] font-medium">{`Create ${t.Area}`}</span>
+      <span className="text-[13px] font-medium">{tx("create_area_c810d3", { defaultValue: "Create {{Area}}", Area: t.Area })}</span>
     </button>
   );
 }

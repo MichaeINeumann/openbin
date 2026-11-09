@@ -1,4 +1,5 @@
 import { type MutableRefObject, useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { useToast } from '@/components/ui/toast';
 import { mapAiError } from './aiErrors';
 import type { Turn } from './conversationTurns';
@@ -24,6 +25,7 @@ export function useCommandExecution({
   locationId,
   showToast,
 }: UseCommandExecutionOptions) {
+  const { t: tx } = useTranslation('ui');
   const [executing, setExecuting] = useState<ExecutingState>(null);
   const executingRef = useRef<ExecutingState>(null);
 
@@ -70,12 +72,12 @@ export function useCommandExecution({
           selectedIndices,
           locationId,
           onUndoToast: (message, undo) =>
-            showToast({ message, action: { label: 'Undo', onClick: undo } }),
+            showToast({ message, action: { label: tx("undo_39fc72", { defaultValue: "Undo" }), onClick: undo } }),
         });
         setExecuting({ turnId, current: selectedIndices.length, total: selectedIndices.length });
         if (result.failedCount > 0) {
           showToast({
-            message: `${result.completedActions.length} of ${selectedIndices.length} actions completed`,
+            message: tx("value0_of_value1_actions_completed_b24c10", { defaultValue: "{{value0}} of {{value1}} actions completed", value0: result.completedActions.length, value1: selectedIndices.length }),
           });
         }
         setTurns((curr) =>
@@ -98,7 +100,7 @@ export function useCommandExecution({
         setExecuting(null);
       }
     },
-    [turnsRef, setTurns, locationId, showToast],
+    [turnsRef, setTurns, locationId, showToast, tx],
   );
 
   return { executing, executeActions, toggleAction };

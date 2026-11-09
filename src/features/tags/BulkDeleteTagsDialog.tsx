@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -8,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useBinTerm } from '@/lib/terminology';
 import type { TagEntry } from './useTags';
 
 interface BulkDeleteTagsDialogProps {
@@ -19,6 +21,8 @@ interface BulkDeleteTagsDialogProps {
 }
 
 export function BulkDeleteTagsDialog({ open, onOpenChange, tags, binsAffected, onConfirm }: BulkDeleteTagsDialogProps) {
+  const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const [loading, setLoading] = useState(false);
   async function handle() {
     setLoading(true);
@@ -30,24 +34,21 @@ export function BulkDeleteTagsDialog({ open, onOpenChange, tags, binsAffected, o
     }
   }
   const preview =
-    tags.slice(0, 5).map((t) => `"${t}"`).join(', ') + (tags.length > 5 ? `, +${tags.length - 5} more` : '');
+    tags.slice(0, 5).map((t) => `“${t}”`).join(', ') +
+    (tags.length > 5 ? tx('tags_previewMore', { count: tags.length - 5 }) : '');
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            Delete {tags.length} tag{tags.length === 1 ? '' : 's'}?
-          </DialogTitle>
+          <DialogTitle>{tx('tags_bulkDeleteTitle', { count: tags.length })}</DialogTitle>
           <DialogDescription>
-            Removes {preview} from this location. ~{binsAffected} bin{binsAffected === 1 ? '' : 's'} will be updated. Children become top-level.
+            {tx('tags_bulkDeleteDescription', { count: binsAffected, term: binTerm(binsAffected), preview })}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={loading}>
-            Cancel
-          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={loading}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>
           <Button variant="destructive" onClick={handle} disabled={loading}>
-            {loading ? 'Deleting…' : 'Delete'}
+            {loading ? tx("deleting_c7ac55", { defaultValue: "Deleting…" }) : tx("delete_f6fdbe", { defaultValue: "Delete" })}
           </Button>
         </DialogFooter>
       </DialogContent>

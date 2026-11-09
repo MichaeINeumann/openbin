@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { SearchInput } from '@/components/ui/search-input';
 import { type SortDirection, SortHeader } from '@/components/ui/sort-header';
@@ -37,6 +38,7 @@ interface ItemListProps {
 }
 
 export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, checkouts = [], onItemsChange, headerExtra, footerSlot }: ItemListProps) {
+  const { t: tx } = useTranslation('ui');
   const [sortColumn, setSortColumn] = useState<SortColumn>('');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const { showToast, updateToast } = useToast();
@@ -138,10 +140,10 @@ export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, ch
     if (reorderTimerRef.current) clearTimeout(reorderTimerRef.current);
     reorderTimerRef.current = setTimeout(() => {
       reorderItems(binId, sorted.map((i) => i.id), { quiet: true }).catch(() => {
-        showToast({ message: 'Failed to sort items', variant: 'error' });
+        showToast({ message: tx("failed_to_sort_items_b6d178", { defaultValue: "Failed to sort items" }), variant: 'error' });
       });
     }, 500);
-  }, [items, localItems, viewMode, binId, onItemsChange, showToast]);
+  }, [items, localItems, viewMode, binId, onItemsChange, showToast, tx]);
 
   async function handleSaveEdit(itemId: string, value: string, quantity: number | null) {
     const next = effectiveItems.map((i) => (i.id === itemId ? { ...i, name: value, quantity } : i));
@@ -305,10 +307,9 @@ export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, ch
 
   if (hideWhenEmpty && items.length === 0) return null;
 
-  const itemWord = displayItems.length === 1 ? 'Item' : 'Items';
   const headerCount = filterQuery
-    ? `${filteredItems.length} of ${displayItems.length} ${itemWord}`
-    : `${displayItems.length} ${itemWord}`;
+    ? tx('items_headerFiltered', { filtered: filteredItems.length, total: tx('count_items', { count: displayItems.length }) })
+    : tx('count_items', { count: displayItems.length });
   const showSortHeaders = !readOnly && effectiveItems.length >= 2;
 
   return (
@@ -317,7 +318,7 @@ export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, ch
         <div className="row-spread mb-2 min-h-8">
           <Label>
             {headerCount}
-            {checkouts.length > 0 && ` · ${checkouts.length} out`}
+            {checkouts.length > 0 && tx("value0_out_a13abc", { defaultValue: " · {{value0}} out", value0: checkouts.length })}
           </Label>
           {headerExtra && <span className="inline-flex items-center gap-1.5">{headerExtra}</span>}
         </div>
@@ -329,14 +330,14 @@ export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, ch
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
             onClear={filterQuery ? () => setFilterQuery('') : undefined}
-            placeholder="Filter items..."
+            placeholder={tx("filter_items_8730d1", { defaultValue: "Filter items..." })}
           />
         </div>
       )}
 
       {displayItems.length === 0 && !footerSlot ? (
         <p className="text-[14px] text-[var(--text-tertiary)] py-2">
-          {readOnly ? 'No items' : 'No items yet — add one below'}
+          {readOnly ? tx("no_items_f4e124", { defaultValue: "No items" }) : tx("no_items_yet_add_one_below_ac196a", { defaultValue: "No items yet — add one below" })}
         </p>
       ) : (
         <div className="rounded-[var(--radius-sm)] bg-[var(--bg-input)] border border-[var(--border-flat)] overflow-hidden">
@@ -345,23 +346,22 @@ export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, ch
               {showSortHeaders ? (
                 <>
                   <SortHeader label="Name" column="name" currentColumn={sortColumn} currentDirection={sortDirection} onSort={handleHeaderSort} className="flex-1" />
-                  <SortHeader label="Qty" column="qty" currentColumn={sortColumn} currentDirection={sortDirection} onSort={handleHeaderSort} defaultDirection="desc" className={cn(QTY_COL_WIDTH, 'justify-end')} />
+                  <SortHeader label={tx("qty_1e5ff9", { defaultValue: "Qty" })} column="qty" currentColumn={sortColumn} currentDirection={sortDirection} onSort={handleHeaderSort} defaultDirection="desc" className={cn(QTY_COL_WIDTH, 'justify-end')} />
                 </>
               ) : (
                 <>
                   <span className="ui-col-header flex-1">Name</span>
-                  <span className={cn('ui-col-header', QTY_COL_WIDTH, 'text-right')}>Qty</span>
+                  <span className={cn('ui-col-header', QTY_COL_WIDTH, 'text-right')}>{tx("qty_1e5ff9", { defaultValue: "Qty" })}</span>
                 </>
               )}
               {!readOnly && (
-                <span className={cn('ui-col-header', ACTIONS_COL_WIDTH, 'text-right')}>Actions</span>
+                <span className={cn('ui-col-header', ACTIONS_COL_WIDTH, 'text-right')}>{tx("actions_c3cd63", { defaultValue: "Actions" })}</span>
               )}
             </div>
           )}
           {displayItems.length > 0 && (
             visibleItems.length === 0 && filterQuery ? (
-              <p className="px-3.5 py-3 text-[14px] text-[var(--text-tertiary)] italic">
-                No items match &ldquo;{filterQuery}&rdquo;
+              <p className="px-3.5 py-3 text-[14px] text-[var(--text-tertiary)] italic"> {tx("no_items_match_ldquo_e9588b", { defaultValue: "No items match “" })}{filterQuery}&rdquo;
               </p>
             ) : (
               <div key={page} className="animate-page-enter">

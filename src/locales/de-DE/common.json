@@ -1,0 +1,57 @@
+{
+  "actions": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "confirm": "Bestätigen",
+    "loading": "Wird geladen…",
+    "install": "Installieren",
+    "upgrade": "Tarif wechseln"
+  },
+  "nav": {
+    "mainNavigation": "Hauptnavigation",
+    "navigation": "Navigation",
+    "skipToMain": "Zum Hauptinhalt",
+    "home": "Startseite",
+    "dashboard": "Übersicht",
+    "bins": "Kisten",
+    "locations": "Standorte",
+    "items": "Gegenstände",
+    "checkedOut": "Ausgeliehen",
+    "shoppingList": "Einkaufsliste",
+    "tags": "Schlagwörter",
+    "print": "Drucken",
+    "scan": "Scannen",
+    "reorganize": "Neu organisieren",
+    "askAi": "KI fragen",
+    "more": "Mehr",
+    "manage": "Verwalten",
+    "tools": "Werkzeuge",
+    "settings": "Einstellungen",
+    "signOut": "Abmelden",
+    "expandSidebar": "Seitenleiste ausklappen",
+    "collapseSidebar": "Seitenleiste einklappen",
+    "switchLocation": "Standort wechseln",
+    "selectLocation": "Standort auswählen"
+  },
+  "createFab": {
+    "addFromPhotos": "Aus Fotos hinzufügen",
+    "createOptions": "Optionen zum Hinzufügen",
+    "newBinPrefix": "Neue",
+    "createBinPrefix": "Erstellen:"
+  },
+  "install": {
+    "prompt": "{{appName}} installieren",
+    "dismiss": "Installationshinweis schließen"
+  },
+  "plan": {
+    "overLimitBanner": "Deine Tarifgrenzen sind überschritten. Reduziere die Nutzung oder wechsle den Tarif, um weiter zu bearbeiten.",
+    "proBadge": "Pro"
+  },
+  "tour": {
+    "thisTour": "Diese Einführung",
+    "needsContent": "Für {{title}} werden zunächst Inhalte auf dieser Seite benötigt."
+  },
+  "itemCount_one": "{{count}} Gegenstand",
+  "itemCount_other": "{{count}} Gegenstände"
+}

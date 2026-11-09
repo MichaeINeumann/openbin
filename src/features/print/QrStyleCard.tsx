@@ -1,5 +1,6 @@
 import { ChevronDown, QrCode, RotateCcw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Disclosure } from '@/components/ui/disclosure';
@@ -53,6 +54,7 @@ const QR_PREVIEW_PAD = 6;
 const QR_PREVIEW_RADIUS = 4;
 
 function MiniPreview({ style }: { style: QrStyleOptions }) {
+  const { t: tx } = useTranslation('ui');
   const [dataUrl, setDataUrl] = useState<string>('');
   const [prevUrl, setPrevUrl] = useState<string>('');
   const [transitioning, setTransitioning] = useState(false);
@@ -113,7 +115,7 @@ function MiniPreview({ style }: { style: QrStyleOptions }) {
         {dataUrl ? (
           <img
             src={dataUrl}
-            alt="QR preview"
+            alt={tx("qr_preview_bcda86", { defaultValue: "QR preview" })}
             className="transition-opacity duration-250"
             style={{
               width: QR_PREVIEW_SIZE,
@@ -195,6 +197,17 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange }: QrStyleCardProps) {
+  const { t: tx } = useTranslation('ui');
+  const qrLabels: Record<string, string> = {
+    "square": tx('qr_square', { defaultValue: "Square" }),
+    "rounded": tx('qr_rounded', { defaultValue: "Rounded" }),
+    "dots": tx('qr_dots', { defaultValue: "Dots" }),
+    "classy": tx('qr_classy', { defaultValue: "Classy" }),
+    "classy-rounded": tx('qr_classy-rounded', { defaultValue: "Classy R." }),
+    "extra-rounded": tx('qr_extra-rounded', { defaultValue: "Extra R." }),
+    "dot": tx('qr_dot', { defaultValue: "Rounded" }),
+    "": tx('qr_', { defaultValue: "Auto" }),
+  };
   function update<K extends keyof QrStyleOptions>(key: K, value: QrStyleOptions[K]) {
     onUpdateStyle({ ...qrStyle, [key]: value });
   }
@@ -212,7 +225,7 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
         >
           <div className="row">
             <QrCode className="h-4 w-4 text-[var(--text-tertiary)]" />
-            <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none">QR Style</Label>
+            <Label className="text-[15px] font-semibold text-[var(--text-primary)] pointer-events-none">{tx("qr_style_cb0437", { defaultValue: "QR Style" })}</Label>
           </div>
           <ChevronDown className={cn(
             'h-5 w-5 text-[var(--text-tertiary)] transition-transform duration-200',
@@ -226,9 +239,9 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
 
             {/* Dot Style */}
             <div className="px-1">
-              <SectionLabel>Dot Style</SectionLabel>
+              <SectionLabel>{tx("dot_style_37df89", { defaultValue: "Dot Style" })}</SectionLabel>
               <OptionGroup
-                options={DOT_TYPES}
+                options={DOT_TYPES.map(option => ({ ...option, label: qrLabels[option.key] }))}
                 value={qrStyle.dotType}
                 onChange={(v) => update('dotType', v)}
                 size="sm"
@@ -237,25 +250,25 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
 
             {/* Dot Color */}
             <div className="px-1">
-              <QrColorPicker value={qrStyle.dotColor} onChange={(v) => update('dotColor', v)} label="Dot Color" />
+              <QrColorPicker value={qrStyle.dotColor} onChange={(v) => update('dotColor', v)} label={tx("dot_color_ce1968", { defaultValue: "Dot Color" })} />
             </div>
 
             {/* Advanced */}
             <div className="px-1">
-              <Disclosure label="Advanced" indicator={advancedModified}>
+              <Disclosure label={tx("advanced_4d0647", { defaultValue: "Advanced" })} indicator={advancedModified}>
                 <div className="space-y-3">
                   {/* Corner Square Style */}
                   <div>
-                    <SectionLabel>Corner Square Style</SectionLabel>
+                    <SectionLabel>{tx("corner_square_style_90fc2c", { defaultValue: "Corner Square Style" })}</SectionLabel>
                     <OptionGroup
-                      options={CORNER_SQUARE_TYPES}
+                      options={CORNER_SQUARE_TYPES.map(option => ({ ...option, label: qrLabels[option.key] }))}
                       value={qrStyle.cornerSquareType}
                       onChange={(v) => update('cornerSquareType', v as QrStyleOptions['cornerSquareType'])}
                       size="sm"
                     />
                     {qrStyle.cornerSquareType && (
                       <div className="mt-3">
-                        <QrColorPicker value={qrStyle.cornerSquareColor} onChange={(v) => update('cornerSquareColor', v)} label="Corner Square Color" />
+                        <QrColorPicker value={qrStyle.cornerSquareColor} onChange={(v) => update('cornerSquareColor', v)} label={tx("corner_square_color_184b07", { defaultValue: "Corner Square Color" })} />
                       </div>
                     )}
                   </div>
@@ -264,16 +277,16 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
 
                   {/* Corner Dot Style */}
                   <div>
-                    <SectionLabel>Corner Dot Style</SectionLabel>
+                    <SectionLabel>{tx("corner_dot_style_02dbf8", { defaultValue: "Corner Dot Style" })}</SectionLabel>
                     <OptionGroup
-                      options={CORNER_DOT_TYPES}
+                      options={CORNER_DOT_TYPES.map(option => ({ ...option, label: qrLabels[option.key] }))}
                       value={qrStyle.cornerDotType}
                       onChange={(v) => update('cornerDotType', v as QrStyleOptions['cornerDotType'])}
                       size="sm"
                     />
                     {qrStyle.cornerDotType && (
                       <div className="mt-3">
-                        <QrColorPicker value={qrStyle.cornerDotColor} onChange={(v) => update('cornerDotColor', v)} label="Corner Dot Color" />
+                        <QrColorPicker value={qrStyle.cornerDotColor} onChange={(v) => update('cornerDotColor', v)} label={tx("corner_dot_color_5795d2", { defaultValue: "Corner Dot Color" })} />
                       </div>
                     )}
                   </div>
@@ -283,7 +296,7 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
                   {/* Gradient */}
                   <div>
                     <div className="row-spread mb-2">
-                      <SectionLabel>Gradient</SectionLabel>
+                      <SectionLabel>{tx("gradient_36463c", { defaultValue: "Gradient" })}</SectionLabel>
                       <Switch checked={qrStyle.useGradient} onCheckedChange={(v) => update('useGradient', v)} />
                     </div>
                     {qrStyle.useGradient && (
@@ -297,11 +310,11 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
                           onChange={(v) => update('gradientType', v)}
                           size="sm"
                         />
-                        <QrColorPicker value={qrStyle.gradientColor1} onChange={(v) => update('gradientColor1', v)} label="Start Color" />
-                        <QrColorPicker value={qrStyle.gradientColor2} onChange={(v) => update('gradientColor2', v)} label="End Color" />
+                        <QrColorPicker value={qrStyle.gradientColor1} onChange={(v) => update('gradientColor1', v)} label={tx("start_color_43d27c", { defaultValue: "Start Color" })} />
+                        <QrColorPicker value={qrStyle.gradientColor2} onChange={(v) => update('gradientColor2', v)} label={tx("end_color_d5e5d6", { defaultValue: "End Color" })} />
                         <div>
                           <div className="row-spread mb-1.5">
-                            <span className="text-[12px] text-[var(--text-secondary)] font-medium">Rotation</span>
+                            <span className="text-[12px] text-[var(--text-secondary)] font-medium">{tx("rotation_906fe5", { defaultValue: "Rotation" })}</span>
                             <span className="text-[12px] text-[var(--text-tertiary)] tabular-nums font-medium">{qrStyle.gradientRotation}°</span>
                           </div>
                           <input
@@ -311,7 +324,7 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
                             step={15}
                             value={qrStyle.gradientRotation}
                             onChange={(e) => update('gradientRotation', parseInt(e.target.value, 10))}
-                            aria-label="Gradient rotation angle"
+                            aria-label={tx("gradient_rotation_angle_680285", { defaultValue: "Gradient rotation angle" })}
                             className="qr-range-slider w-full"
                             list="rotation-ticks"
                           />
@@ -334,7 +347,7 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
 
                   {/* Error Correction */}
                   <div>
-                    <SectionLabel>Error Correction</SectionLabel>
+                    <SectionLabel>{tx("error_correction_e2d855", { defaultValue: "Error Correction" })}</SectionLabel>
                     <OptionGroup
                       options={ERROR_LEVELS}
                       value={qrStyle.errorCorrection}
@@ -355,9 +368,7 @@ export function QrStyleCard({ qrStyle, onUpdateStyle, expanded, onExpandedChange
                   onClick={() => onUpdateStyle({ ...DEFAULT_QR_STYLE })}
                   className="w-full"
                 >
-                  <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-                  Reset QR Style
-                </Button>
+                  <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> {tx("reset_qr_style_7880d2", { defaultValue: "Reset QR Style" })} </Button>
               </div>
             )}
           </div>

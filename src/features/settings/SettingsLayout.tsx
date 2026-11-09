@@ -1,10 +1,10 @@
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { cn, focusRing } from '@/lib/utils';
 import { SettingsCategoryList } from './SettingsCategoryList';
 import { SettingsSidebar } from './SettingsSidebar';
-import { SETTINGS_CATEGORIES } from './settingsCategories';
 import { useSettingsCategories } from './useSettingsCategories';
 
 function useIsDesktop() {
@@ -22,8 +22,9 @@ function useIsDesktop() {
 }
 
 export function SettingsLayout() {
+  const { t: tx } = useTranslation('ui');
   const isDesktop = useIsDesktop();
-  const { mainCategories, adminCategories } = useSettingsCategories();
+  const { categories, mainCategories, adminCategories } = useSettingsCategories();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -53,12 +54,12 @@ export function SettingsLayout() {
   }
 
   const lastSegment = pathname.split('/').filter(Boolean).pop();
-  const currentCategory = SETTINGS_CATEGORIES.find((c) => c.path === lastSegment);
+  const currentCategory = categories.find((c) => c.path === lastSegment);
 
   // Sub-pages that live under a parent category (e.g. /settings/activity → Data)
   const SUB_PAGE_META: Record<string, { label: string; backTo: string }> = {
-    activity: { label: 'Activity Log', backTo: '/settings/data' },
-    trash: { label: 'Trash', backTo: '/settings/data' },
+    activity: { label: tx("activity_log_a3abad", { defaultValue: "Activity Log" }), backTo: '/settings/data' },
+    trash: { label: tx("trash_e3bf62", { defaultValue: "Trash" }), backTo: '/settings/data' },
   };
   const subPage = lastSegment ? SUB_PAGE_META[lastSegment] : undefined;
   const pageLabel = currentCategory?.label ?? subPage?.label;
@@ -71,7 +72,7 @@ export function SettingsLayout() {
           type="button"
           onClick={() => navigate(backTo)}
           className={cn('flex size-11 items-center justify-center rounded-[var(--radius-xs)] -ml-2 text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]', focusRing)}
-          aria-label="Back to settings"
+          aria-label={tx("back_to_settings_4d913a", { defaultValue: "Back to settings" })}
         >
           <ArrowLeft className="h-5 w-5" />
         </button>

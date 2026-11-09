@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { formatKeys, groupedShortcuts } from '@/lib/shortcuts';
 import { categoryHeader, cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './dialog';
@@ -11,13 +12,14 @@ function KeyBadge({ children }: { children: string }) {
 }
 
 export function ShortcutsHelp({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+  const { t: tx } = useTranslation('ui');
   const groups = groupedShortcuts();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Keyboard Shortcuts</DialogTitle>
+          <DialogTitle>{tx("keyboard_shortcuts_b46575", { defaultValue: "Keyboard Shortcuts" })}</DialogTitle>
         </DialogHeader>
         <div className="space-y-5">
           {groups.map((group) => (
@@ -35,7 +37,7 @@ export function ShortcutsHelp({ open, onOpenChange }: { open: boolean; onOpenCha
                         {keys.map((k, i) => (
                           // biome-ignore lint/suspicious/noArrayIndexKey: static list of keyboard shortcut keys
                           <span key={i} className="flex items-center gap-1">
-                            {i > 0 && <span className="text-[11px] text-[var(--text-tertiary)]">then</span>}
+                            {i > 0 && <span className="text-[11px] text-[var(--text-tertiary)]">{tx("then_6f8f8e", { defaultValue: "then" })}</span>}
                             <KeyBadge>{k}</KeyBadge>
                           </span>
                         ))}

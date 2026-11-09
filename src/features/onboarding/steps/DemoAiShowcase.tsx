@@ -1,11 +1,13 @@
 import { Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import demoBinPhoto from '@/assets/premade-backgrounds/demo_bin.jpg';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { DEMO_BIN } from '../onboardingConstants';
 
 export function DemoAiShowcase({ onNext }: { onNext: () => void }) {
+  const { t: tx } = useTranslation('ui');
   const [visibleCount, setVisibleCount] = useState(0);
   const [photoState, setPhotoState] = useState<'hidden' | 'scanning' | 'collapsed'>('hidden');
   const [showButton, setShowButton] = useState(false);
@@ -44,12 +46,8 @@ export function DemoAiShowcase({ onNext }: { onNext: () => void }) {
       <div className="h-16 w-16 rounded-[var(--radius-xl)] flex items-center justify-center mb-5 bg-[var(--accent)]/10">
         <Sparkles className="h-8 w-8 text-[var(--accent)]" />
       </div>
-      <h2 className="text-[22px] font-bold text-[var(--text-primary)] mb-2">
-        Photo to inventory
-      </h2>
-      <p className="text-[14px] text-[var(--text-tertiary)] mb-5 leading-relaxed">
-        Take a photo of any bin and AI identifies the items inside.
-      </p>
+      <h2 className="text-[22px] font-bold text-[var(--text-primary)] mb-2"> {tx("photo_to_inventory_0929e1", { defaultValue: "Photo to inventory" })} </h2>
+      <p className="text-[14px] text-[var(--text-tertiary)] mb-5 leading-relaxed"> {tx("take_a_photo_of_any_bin_and_ai_identifies_the_items_inside_7b2954", { defaultValue: "Take a photo of any bin and AI identifies the items inside." })} </p>
       {/* Demo photo — starts hidden, reveals with transition, then collapses */}
       <div className={cn(
         'w-full rounded-[var(--radius-md)] overflow-hidden transition-all ease-in-out',
@@ -57,7 +55,7 @@ export function DemoAiShowcase({ onNext }: { onNext: () => void }) {
           ? 'ai-photo-shimmer ai-photo-shimmer-fast max-h-40 opacity-100 mb-4 duration-1000'
           : 'max-h-0 opacity-0 mb-0 duration-500'
       )}>
-        <img src={demoBinPhoto} alt="Bin contents" className="w-full h-40 object-cover" />
+        <img src={demoBinPhoto} alt={tx("bin_contents_f60472", { defaultValue: "Bin contents" })} className="w-full h-40 object-cover" />
       </div>
       {/* Revealed items */}
       {visibleCount > 0 && (
@@ -79,9 +77,7 @@ export function DemoAiShowcase({ onNext }: { onNext: () => void }) {
           type="button"
           onClick={onNext}
           className="w-full rounded-[var(--radius-md)] h-11 text-[15px] onboarding-step-enter"
-        >
-          See the Result
-        </Button>
+        > {tx("see_the_result_941291", { defaultValue: "See the Result" })} </Button>
       )}
     </div>
   );
