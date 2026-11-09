@@ -30,7 +30,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
   const optionFields: OptionField[] = useMemo(
     () => [
       {
-        legend: 'Change level',
+        legend: tx('reorganize_changeLevel'),
         options: [
           { key: 'conservative', label: tx("light_a36ef8", { defaultValue: "Light" }) },
           { key: 'moderate', label: tx("moderate_ea8b09", { defaultValue: "Moderate" }) },
@@ -38,10 +38,10 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
         ],
         value: form.strictness,
         onChange: (v) => form.setStrictness(v as ReorganizeBinsForm['strictness']),
-        hint: `How much the AI can restructure your ${t.bins}`,
+        hint: tx('reorganize_changeHint', { bins: t.bins }),
       },
       {
-        legend: 'Grouping',
+        legend: tx('reorganize_grouping'),
         options: [
           { key: 'broad', label: tx("broad_d7d5e0", { defaultValue: "Broad" }) },
           { key: 'medium', label: tx("medium_d40496", { defaultValue: "Medium" }) },
@@ -49,10 +49,10 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
         ],
         value: form.granularity,
         onChange: (v) => form.setGranularity(v as ReorganizeBinsForm['granularity']),
-        hint: 'How narrowly items are categorized',
+        hint: tx('reorganize_groupingHint'),
       },
       {
-        legend: 'Unmatched items',
+        legend: tx('reorganize_unmatched'),
         options: [
           { key: 'best-fit', label: tx("best_match_86f686", { defaultValue: "Best match" }) },
           { key: 'multi-bin', label: tx("place_in_multiple_7e44d2", { defaultValue: "Place in multiple" }) },
@@ -60,10 +60,10 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
         ],
         value: form.ambiguousPolicy,
         onChange: (v) => form.setAmbiguousPolicy(v as ReorganizeBinsForm['ambiguousPolicy']),
-        hint: "What happens to items that don't fit neatly",
+        hint: tx('reorganize_unmatchedHint'),
       },
       {
-        legend: 'Duplicate items',
+        legend: tx('reorganize_duplicates'),
         options: [
           { key: 'force-single', label: tx("one_bin_only_8c161d", { defaultValue: "One {{bin}} only", bin: t.bin }) },
           { key: 'allow', label: tx("allow_copies_94f728", { defaultValue: "Allow copies" }) },
@@ -72,7 +72,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
         onChange: (v) => form.setDuplicates(v as ReorganizeBinsForm['duplicates']),
       },
       {
-        legend: 'Outlier items',
+        legend: tx('reorganize_outliers'),
         options: [
           { key: 'force-closest', label: tx("nearest_match_1a5130", { defaultValue: "Nearest match" }) },
           { key: 'dedicated', label: tx("separate_bin_a9fe94", { defaultValue: "Separate {{bin}}", bin: t.bin }) },

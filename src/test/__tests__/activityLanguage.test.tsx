@@ -13,6 +13,8 @@ const { useTranslation } = await import('react-i18next');
 const { renderWithI18n } = await import('../i18nTestUtils');
 const { ActivityTableView } = await import('@/features/activity/ActivityTableView');
 const { ActivityFilterBar } = await import('@/features/activity/ActivityFilterBar');
+const { getActionLabel } = await import('@/features/activity/activityHelpers');
+const { DEFAULT_TERMINOLOGY } = await import('@/lib/terminology');
 
 const base: ActivityLogEntry = {
   id: 'activity-1', location_id: 'custom', user_id: 'user-1', user_name: 'alex', display_name: 'Alex',
@@ -31,6 +33,17 @@ function View({ entry }: { entry: ActivityLogEntry }) {
 }
 
 describe('localized activity views', () => {
+  it('describes shopping list entries without mislabeling them as locations', () => {
+    const entry = { ...base, action: 'create', entity_type: 'shopping_list' };
+    function Summary() {
+      const { t } = useTranslation('activity');
+      return <p>{getActionLabel(entry, DEFAULT_TERMINOLOGY, t)}</p>;
+    }
+    renderWithI18n(<><Summary /><View entry={entry} /></>, { language: 'de-DE' });
+    expect(screen.getByText('Einkaufslisten-Eintrag "M2 Screws"')).toBeTruthy();
+    expect(screen.getByText('hat Einkaufslisten-Eintrag "M2 Screws" erstellt')).toBeTruthy();
+  });
+
   it('translates badges, changes, filters and navigation while preserving custom terms and stored names', async () => {
     const entry = { ...base, changes: {
       name: { old: 'Original Screws', new: 'M2 Screws' },

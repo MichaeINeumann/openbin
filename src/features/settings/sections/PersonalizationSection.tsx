@@ -8,14 +8,13 @@ import { SettingsPageHeader } from '../SettingsPageHeader';
 import { SettingsSection } from '../SettingsSection';
 import { SavedBadge, useSavedFlash } from '../useSavedFlash';
 
-const TERM_ROWS = [
-  { key: 'termBin', singular: 'Bin', plural: 'Bins', hint: 'A container of items' },
-  { key: 'termLocation', singular: 'Location', plural: 'Locations', hint: 'The top-level workspace' },
-  { key: 'termArea', singular: 'Area', plural: 'Areas', hint: 'A section within a location' },
-] as const;
-
 export function PersonalizationSection() {
   const { t: tx } = useTranslation('ui');
+  const TERM_ROWS = [
+    { key: 'termBin', singular: tx('personalization_termBin'), plural: tx('personalization_termBinPlural'), hint: tx('personalization_termBinHint') },
+    { key: 'termLocation', singular: tx('personalization_termLocation'), plural: tx('personalization_termLocationPlural'), hint: tx('personalization_termLocationHint') },
+    { key: 'termArea', singular: tx('personalization_termArea'), plural: tx('personalization_termAreaPlural'), hint: tx('personalization_termAreaHint') },
+  ] as const;
   const { settings, updateSettings, resetSettings } = useAppSettings();
   const { saved, flash } = useSavedFlash();
 
@@ -28,7 +27,7 @@ export function PersonalizationSection() {
       />
 
       <SettingsSection label={tx("app_name_4fb431", { defaultValue: "App Name" })}>
-        <FormField label={tx("workspace_name_6e0f2b", { defaultValue: "Workspace name" })} htmlFor="app-name" hint="Shown in the header and browser tab.">
+        <FormField label={tx("workspace_name_6e0f2b", { defaultValue: "Workspace name" })} htmlFor="app-name" hint={tx('personalization_nameHint')}>
           <Input
             id="app-name"
             value={settings.appName}

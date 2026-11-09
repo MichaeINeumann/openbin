@@ -71,9 +71,9 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
         setScanErrorType('forbidden');
         return;
       }
-      setManualError(`No ${t.bin} found with that code`);
+      setManualError(tx('scan_codeNotFound', { defaultValue: 'No {{bin}} found with that code', bin: t.bin }));
     } catch {
-      setManualError(`No ${t.bin} found with that code`);
+      setManualError(tx('scan_codeNotFound', { defaultValue: 'No {{bin}} found with that code', bin: t.bin }));
     } finally {
       setManualLoading(false);
     }
@@ -203,7 +203,7 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
               <CardContent className="py-5">
                 {open && <Html5QrcodePlugin paused={!scanning} onScanSuccess={handleScan} />}
                 {scanning && (
-                  <p className="mt-5 text-center text-[13px] text-[var(--text-tertiary)]"> {tx("point_your_camera_at_a_3d969b", { defaultValue: "Point your camera at a" })} {t.bin} {tx("qr_code_abba02", { defaultValue: "QR code" })} </p>
+                  <p className="mt-5 text-center text-[13px] text-[var(--text-tertiary)]"> {tx('scan_cameraHint', { bin: t.bin })} </p>
                 )}
                 {!scanning && (
                   <div className="flex items-center justify-center py-8 text-[var(--text-tertiary)]"> {tx("redirecting_a7e1d4", { defaultValue: "Redirecting..." })} </div>

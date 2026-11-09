@@ -104,7 +104,7 @@ export function getActionLabel(entry: ActivityLogEntry, t: Terminology, translat
   };
   if (translate && actionKeys[action]) {
     return translate(actionKeys[action], {
-      entity: entity_type === 'bin' ? t.bin : entity_type === 'area' ? t.area : t.location,
+      entity: getEntityTypeLabel(entity_type, t, translate),
       name, from: entry.changes?.location?.old ?? '?', to: entry.changes?.location?.new ?? '?',
       defaultValue: getActionLabel(entry, t),
     });
@@ -234,7 +234,7 @@ export function getEntityDescription(entry: ActivityLogEntry, t: Terminology, tr
     if (action === 'regenerate_invite') return translate?.('invite_code', { defaultValue: 'invite code' }) ?? 'invite code';
     return `${t.location} ${name}`;
   }
-  return `${entity_type} ${name}`;
+  return `${translate ? getEntityTypeLabel(entity_type, t, translate) : entity_type} ${name}`;
 }
 
 type ScalarField = 'name' | 'notes' | 'tags' | 'icon' | 'color' | 'visibility' | 'card_style';
@@ -305,6 +305,7 @@ export function getEntityTypeLabel(type: string, terms: Terminology, translate: 
   if (type === 'bin') return terms.bin;
   if (type === 'area') return terms.area;
   if (type === 'location') return terms.location;
+  if (type === 'shopping_list') return translate('shopping_list_item', { defaultValue: 'shopping list item' });
   if (type === 'member') return translate('member', { defaultValue: 'member' });
   return type;
 }

@@ -56,5 +56,6 @@
   "more": "+{{count}} more",
   "view_entity": "View {{entity}}",
   "unknown": "unknown",
-  "page_title": "Activity"
+  "page_title": "Activity",
+  "shopping_list_item": "shopping list item"
 }

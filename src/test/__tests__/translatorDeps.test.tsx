@@ -75,8 +75,7 @@ describe('translator dependencies in memoized hooks', () => {
       Html5Qrcode: class {
         isScanning = false;
         start() {
-          // Rejecting with a non-Error makes getErrorMessage use the translated
-          // fallback instead of a provider string.
+          // Camera permission errors should explain how to proceed.
           return Promise.reject({ name: 'NotAllowedError' });
         }
         getState() {
@@ -94,13 +93,13 @@ describe('translator dependencies in memoized hooks', () => {
     );
 
     await waitFor(() => expect(screen.getByText('Scanner konnte nicht gestartet werden')).toBeTruthy());
-    expect(screen.getByText('Kamera konnte nicht gestartet werden')).toBeTruthy();
+    expect(screen.getByText('Erlaube den Kamerazugriff im Browser oder gib den Code manuell ein.')).toBeTruthy();
 
     // The scanner only starts once, so the message must be translated on render
     // rather than captured as a string inside the mount effect.
     fireEvent.click(screen.getByRole('button', { name: 'English' }));
     await waitFor(() => expect(screen.getByText('Failed to start scanner')).toBeTruthy());
-    expect(screen.getByText('Failed to start camera')).toBeTruthy();
+    expect(screen.getByText('Allow camera access in your browser or enter the code manually.')).toBeTruthy();
 
     vi.doUnmock('html5-qrcode');
   });

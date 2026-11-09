@@ -86,7 +86,7 @@ export function BinSelectorCard({
 
         {expanded && (
           allBins.length === 0 ? (
-            <p className="text-[13px] text-[var(--text-tertiary)] py-8 text-center"> {tx("no_816c52", { defaultValue: "No" })} {t.bins} {tx("to_print_create_some_0075f1", { defaultValue: "to print. Create some" })} {t.bins} {tx("first_49ec08", { defaultValue: "first." })} </p>
+            <p className="text-[13px] text-[var(--text-tertiary)] py-8 text-center"> {tx('bins_noneAvailable', { bins: t.bins })} </p>
           ) : (
             <>
               {grouped.length > 1 && (

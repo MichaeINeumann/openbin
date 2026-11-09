@@ -81,7 +81,7 @@ export function ShoppingListPage() {
       await addToShoppingList(locationId, name);
       setNewName('');
     } catch {
-      showToast({ message: 'Failed to add', variant: 'error' });
+      showToast({ message: tx('shopping_addFailed'), variant: 'error' });
     }
   }
 
@@ -90,14 +90,14 @@ export function ShoppingListPage() {
       const result = await markAsBought(entry.id);
       if (result.restored) {
         showToast({
-          message: `Added back to ${entry.origin_bin_name ?? 'bin'}`,
+          message: tx('shopping_restored', { name: entry.origin_bin_name ?? tx('bin_4c5ec7') }),
           variant: 'success',
         });
       } else {
-        showToast({ message: 'Marked bought' });
+        showToast({ message: tx('shopping_markedBought') });
       }
     } catch {
-      showToast({ message: 'Failed to mark bought', variant: 'error' });
+      showToast({ message: tx('shopping_boughtFailed'), variant: 'error' });
     }
   }
 
@@ -105,7 +105,7 @@ export function ShoppingListPage() {
     try {
       await removeFromShoppingList(entry.id);
     } catch {
-      showToast({ message: 'Failed to remove', variant: 'error' });
+      showToast({ message: tx('shopping_removeFailed'), variant: 'error' });
     }
   }
 

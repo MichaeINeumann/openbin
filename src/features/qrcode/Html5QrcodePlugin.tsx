@@ -77,7 +77,14 @@ export function Html5QrcodePlugin({ paused, onScanSuccess }: Html5QrcodePluginPr
   }, [paused]);
 
   if (startError !== null) {
-    const detail = getErrorMessage(startError, tx("failed_to_start_camera_399727", { defaultValue: "Failed to start camera" }));
+    const raw = getErrorMessage(startError, '');
+    const name = typeof startError === 'object' && startError !== null && 'name' in startError ? String(startError.name) : '';
+    const reason = `${name} ${raw}`;
+    const detail = /NotFoundError|DevicesNotFoundError/.test(reason)
+      ? tx('scan_noCamera')
+      : /NotAllowedError|PermissionDeniedError/.test(reason)
+        ? tx('scan_cameraDenied')
+        : tx('failed_to_start_camera_399727');
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-12 text-center px-4">
         <p className="text-[15px] font-medium text-[var(--text-primary)]">{tx("failed_to_start_scanner_f85cad", { defaultValue: "Failed to start scanner" })}</p>

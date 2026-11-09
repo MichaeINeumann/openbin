@@ -178,7 +178,7 @@ export function AdminUsersTable({
                   <Badge variant="destructive" className="text-[11px]">{tx("deleted_441bda", { defaultValue: "Deleted" })}</Badge>
                 ) : null}
                 {u.suspendedAt && <Badge variant="destructive" className="text-[11px]">{tx("suspended_794696", { defaultValue: "Suspended" })}</Badge>}
-                <Badge variant={statusVariant(u.status)} className="text-[11px]">{capitalize(u.status)}</Badge>
+                <Badge variant={statusVariant(u.status)} className="text-[11px]">{u.status === 'active' ? tx('admin_statusActive') : u.status === 'inactive' ? tx('admin_statusInactive') : tx('admin_statusTrial')}</Badge>
               </span>
             </div>
             {isVisible('bins') && (

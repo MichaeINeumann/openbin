@@ -56,5 +56,6 @@
   "more": "+{{count}} weitere",
   "view_entity": "{{entity}} anzeigen",
   "unknown": "unbekannt",
-  "page_title": "Aktivitäten"
+  "page_title": "Aktivitäten",
+  "shopping_list_item": "Einkaufslisten-Eintrag"
 }

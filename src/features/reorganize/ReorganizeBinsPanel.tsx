@@ -241,7 +241,7 @@ export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }
         </Card>
       ) : !showProgress && !error && !applyError ? (
         <ReorganizeEmptyState
-          message={`Select at least 2 ${t.bins} and click Reorganize to let AI suggest a better organization.`}
+          message={tx('reorganize_startHint', { bins: t.bins })}
         />
       ) : null}
 

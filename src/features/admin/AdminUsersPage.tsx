@@ -245,7 +245,7 @@ export function AdminUsersPage() {
             onPageChange={setPage}
             totalCount={count}
             pageSize={PAGE_SIZE}
-            itemLabel="users"
+            itemLabel={tx('users_57f2b1')}
           />
         </>
       )}
