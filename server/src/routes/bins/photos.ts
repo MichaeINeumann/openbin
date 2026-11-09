@@ -141,8 +141,17 @@ router.post('/:id/photos', asyncHandler(async (req, res, next) => {
   // Insert photo record + update bin timestamp inside a transaction with a
   // serialized storage quota re-check to prevent concurrent uploads from
   // bypassing the plan limit (the pre-multer check is best-effort only).
+  //
+  // The per-bin photo cap is re-checked the same way: the bin row is locked
+  // (PG: FOR UPDATE; SQLite: single connection serializes transactions) and
+  // the count is taken inside the transaction. Without this, parallel uploads
+  // all pass the pre-multer count check and the cap is silently exceeded.
   const result = await withTransaction(async (tx) => {
     await assertPhotoStorageAllowedTx(req.user!.id, tx);
+    await tx(`SELECT id FROM bins WHERE id = $1 ${d.forUpdate()}`, [binId]);
+
+    const countInTx = await tx<{ cnt: number }>('SELECT COUNT(*) as cnt FROM photos WHERE bin_id = $1', [binId]);
+    if (Number(countInTx.rows[0].cnt) >= config.maxPhotosPerBin) return null;
 
     const [insertResult] = await Promise.all([
       tx(
@@ -155,6 +164,13 @@ router.post('/:id/photos', asyncHandler(async (req, res, next) => {
     ]);
     return insertResult;
   });
+
+  if (!result) {
+    // Rolled back: drop the already-written original + thumbnail so a rejected
+    // upload doesn't leave an orphan file behind.
+    await Promise.all([storagePath, thumbPath].filter((k): k is string => !!k).map((k) => storage.delete(k)));
+    throw new QuotaExceededError('BIN_PHOTO_LIMIT', `Maximum ${config.maxPhotosPerBin} photos per bin`);
+  }
 
   invalidateOverLimitCache(req.user!.id);
 

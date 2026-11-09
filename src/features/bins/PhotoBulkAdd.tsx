@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/components/ui/toast';
 import type { CreatedBinInfo } from '@/features/bins/BinCreateSuccess';
 import { BinCreateSuccess } from '@/features/bins/BinCreateSuccess';
 import { addBin, notifyBinsChanged } from '@/features/bins/useBins';
@@ -17,8 +18,8 @@ import {
   initialState,
   type Photo,
 } from '@/features/bulk-add/useBulkGroupAdd';
-import { compressImage } from '@/features/photos/compressImage';
-import { addPhoto } from '@/features/photos/usePhotos';
+import { summarizePhotoUploadFailures, uploadPhotosToBin } from '@/features/photos/photoUpload';
+import { notifyPhotosChanged } from '@/features/photos/usePhotos';
 import { useAuth } from '@/lib/auth';
 import { binItemsToPayload } from '@/lib/itemQuantities';
 import { useTerminology } from '@/lib/terminology';
@@ -119,6 +120,8 @@ export function PhotoBulkAdd({
   headerToolbarTarget,
 }: PhotoBulkAddProps) {
   const t = useTerminology();
+  const { t: tx } = useTranslation('ui');
+  const { showToast } = useToast();
   const { activeLocationId, demoMode: isDemo } = useAuth();
   const [state, dispatch] = useReducer(
     bulkAddReducer,
@@ -199,19 +202,13 @@ export function PhotoBulkAdd({
             color: group.color,
             itemCount: group.items.length,
           });
-          for (const photo of group.photos) {
-            compressImage(photo.file)
-              .then((compressed) => {
-                const file =
-                  compressed instanceof File
-                    ? compressed
-                    : new File([compressed], photo.file.name, {
-                        type: compressed.type || 'image/jpeg',
-                      });
-                return addPhoto(createdBin.id, file);
-              })
-              .catch(() => {});
-          }
+          // Fire-and-forget so the next bin is created right away, but report
+          // the server's reason instead of silently dropping failed photos.
+          void uploadPhotosToBin(createdBin.id, group.photos.map((p) => p.file)).then(({ failures }) => {
+            notifyPhotosChanged();
+            const message = summarizePhotoUploadFailures(failures, tx);
+            if (message) showToast({ message: `${group.name.trim()}: ${message}`, variant: 'error', duration: 8000 });
+          });
         } catch (err) {
           dispatch({
             type: 'SET_CREATE_ERROR',
@@ -228,7 +225,7 @@ export function PhotoBulkAdd({
         setSuccessBins(createdBinInfos);
       }
     },
-    [activeLocationId, t],
+    [activeLocationId, t, tx, showToast],
   );
 
   const handleCreateAll = useCallback(() => {

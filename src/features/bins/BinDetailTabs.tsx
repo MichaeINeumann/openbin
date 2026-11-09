@@ -99,6 +99,14 @@ export function BinDetailTabs({
     return () => window.removeEventListener('keydown', onKey);
   }, [handleChange]);
 
+  // Per-photo AI action in the Files tab: jump to Contents, where the
+  // quick-add preview lets the user pick which detected items to add.
+  const handleAnalyzePhotos = useCallback((photoIds: string[]) => {
+    handleChange('contents');
+    quickAdd.analyzePhotos(photoIds);
+  }, [handleChange, quickAdd]);
+  const canAnalyzePhotos = canEdit && aiEnabled && quickAdd.photoSupported;
+
   const tabOptions: OptionGroupOption<BinDetailTab>[] = TAB_KEYS.map((key) => ({
     key,
     label: tx(TAB_LABEL_KEYS[key]),
@@ -140,7 +148,12 @@ export function BinDetailTabs({
           />
         )}
         {tab === 'files' && (
-          <BinDetailFilesTab binId={bin.id} photos={photos} canEdit={canEdit} />
+          <BinDetailFilesTab
+            binId={bin.id}
+            photos={photos}
+            canEdit={canEdit}
+            onAnalyzePhotos={canAnalyzePhotos ? handleAnalyzePhotos : undefined}
+          />
         )}
         {tab === 'information' && <BinDetailInformationTab bin={bin} />}
       </div>

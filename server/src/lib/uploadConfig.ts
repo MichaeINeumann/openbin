@@ -85,7 +85,7 @@ export const binPhotoUpload = multer({
     if (PHOTO_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only JPEG, PNG, WebP, and GIF images are allowed'));
+      cb(new ValidationError('Only JPEG, PNG, WebP, and GIF images are allowed'));
     }
   },
 });
@@ -115,7 +115,7 @@ export const avatarUpload = multer({
     if (AVATAR_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only JPEG, PNG, and WebP images are allowed'));
+      cb(new ValidationError('Only JPEG, PNG, and WebP images are allowed'));
     }
   },
 });
@@ -147,7 +147,7 @@ export const memoryPhotoUpload = multer({
     if (PHOTO_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only JPEG, PNG, WebP, and GIF images are allowed'));
+      cb(new ValidationError('Only JPEG, PNG, WebP, and GIF images are allowed'));
     }
   },
 });
@@ -162,7 +162,7 @@ export const memoryAudioUpload = multer({
     if (AUDIO_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only WebM, MP4, OGG, MPEG, and WAV audio files are allowed'));
+      cb(new ValidationError('Only WebM, MP4, OGG, MPEG, and WAV audio files are allowed'));
     }
   },
 });
@@ -175,7 +175,7 @@ export const demoMemoryPhotoUpload = multer({
     if (PHOTO_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only JPEG, PNG, WebP, and GIF images are allowed'));
+      cb(new ValidationError('Only JPEG, PNG, WebP, and GIF images are allowed'));
     }
   },
 });

@@ -19,9 +19,10 @@ interface BinDetailFilesTabProps {
   binId: string;
   photos: Photo[];
   canEdit: boolean;
+  onAnalyzePhotos?: (photoIds: string[]) => void;
 }
 
-export function BinDetailFilesTab({ binId, photos, canEdit }: BinDetailFilesTabProps) {
+export function BinDetailFilesTab({ binId, photos, canEdit, onAnalyzePhotos }: BinDetailFilesTabProps) {
   const { t: tx } = useTranslation('ui');
   const attachmentsOn = isAttachmentsEnabled();
   const { planInfo, isGated } = usePlan();
@@ -57,7 +58,7 @@ export function BinDetailFilesTab({ binId, photos, canEdit }: BinDetailFilesTabP
           {showSectionLabels && (
             <h3 id={photosLabelId} className={sectionHeader}> {tx("photos_c8b2e8", { defaultValue: "Photos" })} </h3>
           )}
-          <PhotoGallery binId={binId} variant="inline" />
+          <PhotoGallery binId={binId} variant="inline" onAnalyzePhotos={onAnalyzePhotos} />
         </section>
       )}
       {showAttachments && (
