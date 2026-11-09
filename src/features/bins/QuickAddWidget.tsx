@@ -209,6 +209,10 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
           ref={photoInputRef}
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
+          // Open the rear camera directly on phones (Android 14+ otherwise shows
+          // the photo picker). Desktop ignores it; existing photos can still be
+          // analysed from the Files tab.
+          capture="environment"
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
