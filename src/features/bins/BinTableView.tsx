@@ -135,6 +135,7 @@ const BinTableRow = React.memo(function BinTableRow({
   isVisible,
   customFields,
 }: BinTableRowProps) {
+  const { t: tx } = useTranslation('ui');
   const getTagStyle = useTagStyle();
   const BinIcon = resolveIcon(bin.icon);
   const colorPreset = resolveColor(bin.color);
@@ -166,7 +167,7 @@ const BinTableRow = React.memo(function BinTableRow({
             tabIndex={-1}
             className="shrink-0 appearance-none bg-transparent p-0 border-none"
             onClick={(e) => { e.stopPropagation(); onSelect(bin.id, index, e.shiftKey); }}
-            aria-label="Select"
+            aria-label={tx('bins_selectAria')}
           >
             <BinIconBadge icon={BinIcon} colorPreset={colorPreset} selected={selectable ? selected : undefined} />
           </button>

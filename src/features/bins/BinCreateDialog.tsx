@@ -101,7 +101,7 @@ export function BinCreateDialog({ open, onOpenChange, prefillName, allTags: allT
           {!successInfo && (
             <DialogHeader className="shrink-0 px-5 pt-4 pb-3 mb-0 text-left border-b border-[var(--border-subtle)]">
               <DialogTitle>{tx("new_6403f2", { defaultValue: "New" })} {t.Bin}</DialogTitle>
-              <DialogDescription className="text-[13px]">{tx("add_a_new_storage_6d9f6d", { defaultValue: "Add a new storage" })} {t.bin} {tx("to_your_inventory_87a4f8", { defaultValue: "to your inventory." })}</DialogDescription>
+              <DialogDescription className="text-[13px]">{tx('bins_createDialogDescription', { bin: t.bin })}</DialogDescription>
             </DialogHeader>
           )}
           {activeLocationId && (

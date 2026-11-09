@@ -1,5 +1,10 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Labels and counts come from the catalogs; the global mock cannot pluralize.
+vi.unmock('react-i18next');
+
+import { renderWithI18n } from '@/test/i18nTestUtils';
 import type { BinItem } from '@/types';
 import { ItemList } from '../ItemList';
 import { setItemPageSize } from '../useItemPageSize';
@@ -49,7 +54,7 @@ afterEach(() => {
 describe('ItemList with onItemsChange (form mode)', () => {
   it('renders items in form mode (no binId)', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={items} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={items} onItemsChange={onItemsChange} />);
     expect(screen.getByText('Hammer')).toBeInTheDocument();
     expect(screen.getByText('Nails')).toBeInTheDocument();
     expect(screen.getByText('Screwdriver')).toBeInTheDocument();
@@ -57,7 +62,7 @@ describe('ItemList with onItemsChange (form mode)', () => {
 
   it('calls onItemsChange (not server API) when item is deleted from the row menu', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={items} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={items} onItemsChange={onItemsChange} />);
 
     const actionButtons = screen.getAllByLabelText('Item actions');
     fireEvent.click(actionButtons[0]); // open menu for Hammer
@@ -76,7 +81,7 @@ describe('ItemList with onItemsChange (form mode)', () => {
 describe('ItemList header sorting', () => {
   it('sorts items A-Z when Name header is clicked', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={unsortedItems} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={unsortedItems} onItemsChange={onItemsChange} />);
 
     fireEvent.click(screen.getByLabelText('Sort by Name'));
 
@@ -89,7 +94,7 @@ describe('ItemList header sorting', () => {
 
   it('toggles to Z-A on second Name header click', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={unsortedItems} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={unsortedItems} onItemsChange={onItemsChange} />);
 
     fireEvent.click(screen.getByLabelText('Sort by Name'));
     fireEvent.click(screen.getByLabelText('Name, sorted ascending'));
@@ -109,7 +114,7 @@ describe('ItemList header sorting', () => {
       { id: '3', name: 'Cherry', quantity: 3 },
       { id: '4', name: 'Date', quantity: null },
     ];
-    render(<ItemList items={itemsWithQty} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={itemsWithQty} onItemsChange={onItemsChange} />);
 
     fireEvent.click(screen.getByLabelText('Sort by Qty'));
 
@@ -129,7 +134,7 @@ describe('ItemList header sorting', () => {
       { id: '3', name: 'Cherry', quantity: 3 },
       { id: '4', name: 'Date', quantity: null },
     ];
-    render(<ItemList items={itemsWithQty} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={itemsWithQty} onItemsChange={onItemsChange} />);
 
     fireEvent.click(screen.getByLabelText('Sort by Qty'));
     fireEvent.click(screen.getByLabelText('Qty, sorted descending'));
@@ -143,7 +148,7 @@ describe('ItemList header sorting', () => {
   });
 
   it('does not render sort headers in readOnly mode', () => {
-    render(<ItemList items={unsortedItems} readOnly />);
+    renderWithI18n(<ItemList items={unsortedItems} readOnly />);
 
     expect(screen.queryByLabelText('Sort by Name')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Sort by Qty')).not.toBeInTheDocument();
@@ -151,7 +156,7 @@ describe('ItemList header sorting', () => {
 
   it('does not render sort headers with fewer than 2 items', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={[{ id: '1', name: 'Solo', quantity: 1 }]} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={[{ id: '1', name: 'Solo', quantity: 1 }]} onItemsChange={onItemsChange} />);
 
     expect(screen.queryByLabelText('Sort by Name')).not.toBeInTheDocument();
   });
@@ -159,8 +164,8 @@ describe('ItemList header sorting', () => {
 
 describe('ItemList hideHeader', () => {
   it('hides the count header while still rendering items', () => {
-    render(<ItemList items={items} readOnly hideHeader />);
-    expect(screen.queryByText('3 Items')).not.toBeInTheDocument();
+    renderWithI18n(<ItemList items={items} readOnly hideHeader />);
+    expect(screen.queryByText('3 items')).not.toBeInTheDocument();
     expect(screen.getByText('Hammer')).toBeInTheDocument();
   });
 });
@@ -168,7 +173,7 @@ describe('ItemList hideHeader', () => {
 describe('ItemList hideWhenEmpty', () => {
   it('renders nothing when hideWhenEmpty is true and items are empty', () => {
     const onItemsChange = vi.fn();
-    const { container } = render(
+    const { container } = renderWithI18n(
       <ItemList items={[]} onItemsChange={onItemsChange} hideWhenEmpty />,
     );
     expect(container.innerHTML).toBe('');
@@ -176,46 +181,46 @@ describe('ItemList hideWhenEmpty', () => {
 
   it('shows header and empty state when hideWhenEmpty is false and items are empty', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={[]} onItemsChange={onItemsChange} />);
-    expect(screen.getByText('0 Items')).toBeInTheDocument();
+    renderWithI18n(<ItemList items={[]} onItemsChange={onItemsChange} />);
+    expect(screen.getByText('0 items')).toBeInTheDocument();
     expect(screen.getByText(/no items yet/i)).toBeInTheDocument();
   });
 
   it('renders items normally when hideWhenEmpty is true but items exist', () => {
     const onItemsChange = vi.fn();
-    render(
+    renderWithI18n(
       <ItemList items={items} onItemsChange={onItemsChange} hideWhenEmpty />,
     );
     expect(screen.getByText('Hammer')).toBeInTheDocument();
-    expect(screen.getByText('3 Items')).toBeInTheDocument();
+    expect(screen.getByText('3 items')).toBeInTheDocument();
   });
 });
 
 describe('ItemList qty input', () => {
   it('shows the quantity value in the input when set', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={[{ id: '1', name: 'Hammer', quantity: 3 }]} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={[{ id: '1', name: 'Hammer', quantity: 3 }]} onItemsChange={onItemsChange} />);
     const qtyInput = screen.getByLabelText('Quantity') as HTMLInputElement;
     expect(qtyInput.value).toBe('3');
   });
 
   it('leaves the input empty when quantity is null', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={[{ id: '1', name: 'Nails', quantity: null }]} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={[{ id: '1', name: 'Nails', quantity: null }]} onItemsChange={onItemsChange} />);
     const qtyInput = screen.getByLabelText('Quantity') as HTMLInputElement;
     expect(qtyInput.value).toBe('');
   });
 
   it('keeps the qty input tab-reachable even when empty', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={[{ id: '1', name: 'Nails', quantity: null }]} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={[{ id: '1', name: 'Nails', quantity: null }]} onItemsChange={onItemsChange} />);
     // Input is always in the DOM regardless of value
     expect(screen.getByLabelText('Quantity')).toBeInTheDocument();
   });
 
   it('does not render a × prefix on any row', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={[{ id: '1', name: 'Hammer', quantity: 3 }]} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={[{ id: '1', name: 'Hammer', quantity: 3 }]} onItemsChange={onItemsChange} />);
     // The × (multiplication sign) chip was removed — qty now renders plain, like the name field.
     expect(screen.queryByText('×')).not.toBeInTheDocument();
     expect(screen.queryByText(/^×/)).not.toBeInTheDocument();
@@ -225,7 +230,7 @@ describe('ItemList qty input', () => {
 describe('ItemList column header position', () => {
   it('renders Name header before Qty header (trailing qty)', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={items} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={items} onItemsChange={onItemsChange} />);
     const nameHeader = screen.getByLabelText('Sort by Name');
     const qtyHeader = screen.getByLabelText('Sort by Qty');
     // Name element should appear before Qty in DOM order
@@ -235,14 +240,14 @@ describe('ItemList column header position', () => {
   });
 
   it('renders column header in readOnly when items exist', () => {
-    render(<ItemList items={items} readOnly />);
+    renderWithI18n(<ItemList items={items} readOnly />);
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Qty')).toBeInTheDocument();
   });
 
   it('does not render column header when list is empty', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={[]} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={[]} onItemsChange={onItemsChange} />);
     expect(screen.queryByText('Qty')).not.toBeInTheDocument();
   });
 });
@@ -263,27 +268,27 @@ describe('ItemList checkout row subline', () => {
   };
 
   it('renders the item name and a subline with who/when', () => {
-    render(<ItemList items={[checkoutItem]} binId="bin1" checkouts={[checkout]} />);
+    renderWithI18n(<ItemList items={[checkoutItem]} binId="bin1" checkouts={[checkout]} />);
     expect(screen.getByText('Hammer')).toBeInTheDocument();
     // Subline contains "Out", user name, and relative time — use a regex for flexibility
     expect(screen.getByText(/Out.*Jane/)).toBeInTheDocument();
   });
 
   it('exposes a Return menuitem in the row action menu when canReturn is true', () => {
-    render(<ItemList items={[checkoutItem]} binId="bin1" checkouts={[checkout]} />);
+    renderWithI18n(<ItemList items={[checkoutItem]} binId="bin1" checkouts={[checkout]} />);
     fireEvent.click(screen.getByLabelText('Item actions'));
     expect(screen.getByRole('menuitem', { name: /return/i })).toBeInTheDocument();
   });
 
   it('does not render any row action menu in readOnly mode', () => {
-    render(<ItemList items={[checkoutItem]} readOnly checkouts={[checkout]} />);
+    renderWithI18n(<ItemList items={[checkoutItem]} readOnly checkouts={[checkout]} />);
     expect(screen.queryByLabelText('Item actions')).not.toBeInTheDocument();
     // But the subline should still be visible for readers
     expect(screen.getByText(/Out.*Jane/)).toBeInTheDocument();
   });
 
   it('deletes a checked-out item when Delete is chosen from the menu', () => {
-    render(<ItemList items={[checkoutItem]} binId="bin1" checkouts={[checkout]} />);
+    renderWithI18n(<ItemList items={[checkoutItem]} binId="bin1" checkouts={[checkout]} />);
 
     fireEvent.click(screen.getByLabelText('Item actions'));
     fireEvent.click(screen.getByRole('menuitem', { name: /delete/i }));
@@ -299,13 +304,13 @@ describe('ItemList checkout row subline', () => {
 
 describe('ItemList readOnly qty display', () => {
   it('renders the quantity as plain text when set (no × prefix)', () => {
-    render(<ItemList items={[{ id: '1', name: 'Hammer', quantity: 3 }]} readOnly />);
+    renderWithI18n(<ItemList items={[{ id: '1', name: 'Hammer', quantity: 3 }]} readOnly />);
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.queryByText('×3')).not.toBeInTheDocument();
   });
 
   it('omits the qty cell on readOnly row when quantity is null', () => {
-    render(<ItemList items={[{ id: '1', name: 'Nails', quantity: null }]} readOnly />);
+    renderWithI18n(<ItemList items={[{ id: '1', name: 'Nails', quantity: null }]} readOnly />);
     expect(screen.queryByText(/^×/)).not.toBeInTheDocument();
     // The name still renders; the qty column is simply absent from the row
     expect(screen.getByText('Nails')).toBeInTheDocument();
@@ -327,24 +332,24 @@ describe('ItemList pagination', () => {
   });
 
   it('renders only pageSize items on the first page', () => {
-    render(<ItemList items={makeItems(30)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(30)} readOnly />);
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 25')).toBeInTheDocument();
     expect(screen.queryByText('Item 26')).not.toBeInTheDocument();
   });
 
   it('hides the pager on single-page lists', () => {
-    render(<ItemList items={makeItems(5)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(5)} readOnly />);
     expect(screen.queryByLabelText('Pagination')).not.toBeInTheDocument();
   });
 
   it('does not render an inline size picker (that now lives in Settings)', () => {
-    render(<ItemList items={makeItems(30)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(30)} readOnly />);
     expect(screen.queryByLabelText('Items per page')).not.toBeInTheDocument();
   });
 
   it('clicking page 2 shows that page slice', () => {
-    render(<ItemList items={makeItems(30)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(30)} readOnly />);
     fireEvent.click(screen.getByLabelText('Page 2'));
     expect(screen.queryByText('Item 25')).not.toBeInTheDocument();
     expect(screen.getByText('Item 26')).toBeInTheDocument();
@@ -352,7 +357,7 @@ describe('ItemList pagination', () => {
   });
 
   it('reacts to external setItemPageSize — re-slices and resets to page 1', () => {
-    render(<ItemList items={makeItems(30)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(30)} readOnly />);
     fireEvent.click(screen.getByLabelText('Page 2'));
     expect(screen.getByText('Item 26')).toBeInTheDocument();
 
@@ -365,7 +370,7 @@ describe('ItemList pagination', () => {
 
   it('hides the pager when size "all" is active', () => {
     setItemPageSize('all');
-    render(<ItemList items={makeItems(30)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(30)} readOnly />);
     expect(screen.queryByLabelText('Pagination')).not.toBeInTheDocument();
     expect(screen.getByText('Item 1')).toBeInTheDocument();
     expect(screen.getByText('Item 30')).toBeInTheDocument();
@@ -373,7 +378,7 @@ describe('ItemList pagination', () => {
 
   it('clicking the Name sort header resets page to 1', () => {
     const onItemsChange = vi.fn();
-    render(<ItemList items={makeItems(30)} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={makeItems(30)} onItemsChange={onItemsChange} />);
     fireEvent.click(screen.getByLabelText('Page 2'));
     expect(screen.getByText('Item 26')).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText('Sort by Name'));
@@ -382,7 +387,7 @@ describe('ItemList pagination', () => {
   });
 
   it('typing in the filter resets to page 1 and paginates matches', () => {
-    render(<ItemList items={makeItems(30)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(30)} readOnly />);
     fireEvent.click(screen.getByLabelText('Page 2'));
     const search = screen.getByPlaceholderText('Filter items...');
     fireEvent.change(search, { target: { value: 'Item 1' } });
@@ -392,13 +397,13 @@ describe('ItemList pagination', () => {
   });
 
   it('paginates in readOnly mode the same as edit mode', () => {
-    render(<ItemList items={makeItems(30)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(30)} readOnly />);
     expect(screen.getByLabelText('Pagination')).toBeInTheDocument();
     expect(screen.queryByText('Item 26')).not.toBeInTheDocument();
   });
 
   it('adding items jumps to the new last page', () => {
-    const { rerender } = render(<ItemList items={makeItems(26)} readOnly />);
+    const { rerender } = renderWithI18n(<ItemList items={makeItems(26)} readOnly />);
     expect(screen.getByText('Item 25')).toBeInTheDocument();
     expect(screen.queryByText('Item 26')).not.toBeInTheDocument();
 
@@ -410,14 +415,14 @@ describe('ItemList pagination', () => {
 
   it('still renders nothing when hideWhenEmpty is true and list is empty', () => {
     const onItemsChange = vi.fn();
-    const { container } = render(
+    const { container } = renderWithI18n(
       <ItemList items={[]} onItemsChange={onItemsChange} hideWhenEmpty />,
     );
     expect(container.innerHTML).toBe('');
   });
 
   it('does not render the "Show more" collapse button anymore', () => {
-    render(<ItemList items={makeItems(15)} readOnly />);
+    renderWithI18n(<ItemList items={makeItems(15)} readOnly />);
     expect(screen.queryByText(/show \d+ more/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/show less/i)).not.toBeInTheDocument();
   });
@@ -437,7 +442,7 @@ describe('ItemList batched delete undo', () => {
     (useToast as any).mockReturnValue({ showToast, updateToast });
 
     const onItemsChange = vi.fn();
-    render(<ItemList items={items} onItemsChange={onItemsChange} />);
+    renderWithI18n(<ItemList items={items} onItemsChange={onItemsChange} />);
 
     // Each delete removes the row from `displayItems` immediately; subsequent
     // calls always target the new first item (Hammer → Nails → Screwdriver).

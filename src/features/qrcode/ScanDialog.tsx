@@ -192,7 +192,7 @@ export function ScanDialog({ open, onOpenChange }: ScanDialogProps) {
                     <Button variant="outline" onClick={handleRetry}>
                       <RotateCcw className="h-4 w-4 mr-1.5" /> {tx("scan_again_8fd265", { defaultValue: "Scan Again" })} </Button>
                     <Button onClick={() => setCreateOpen(true)}>
-                      <Plus className="h-4 w-4 mr-1.5" /> {tx("create_6e157c", { defaultValue: "Create" })} {t.Bin}
+                      <Plus className="h-4 w-4 mr-1.5" /> {tx('bins_createAction', { bin: t.Bin })}
                     </Button>
                   </div>
                 </div>

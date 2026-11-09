@@ -160,8 +160,8 @@ export function ColorPicker({ value, onChange, secondaryLabel, secondaryValue, o
   const hasSecondary = !!(secondaryLabel && onSecondaryChange);
   const secondaryPreset = hasSecondary ? resolveColor(secondaryValue ?? '') : undefined;
 
-  const primaryLabel = preset?.label ?? 'None';
-  const secondaryDisplayLabel = secondaryPreset?.label ?? 'None';
+  const primaryLabel = preset?.label ?? tx('color_none');
+  const secondaryDisplayLabel = secondaryPreset?.label ?? tx('color_none');
 
   return (
     <div className="space-y-2">

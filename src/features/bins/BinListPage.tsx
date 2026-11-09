@@ -195,12 +195,12 @@ export function BinListPage() {
               )}
             </div>
             {canCreateBin && (
-              <Tooltip content={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })} side="bottom">
+              <Tooltip content={tx('bins_newBinAction', { bin: t.bin })} side="bottom">
                 <Button
                   onClick={() => setCreateOpen(true)}
                   size="icon"
                   className="h-10 w-10 rounded-[var(--radius-sm)]"
-                  aria-label={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })}
+                  aria-label={tx('bins_newBinAction', { bin: t.bin })}
                 >
                   <Plus className="h-5 w-5" />
                 </Button>
@@ -271,7 +271,7 @@ export function BinListPage() {
                   <>
                     <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-2 text-[12px] text-[var(--text-tertiary)]">
                       <span className="inline-flex items-center gap-1.5">
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">1</span> {tx("create_6e157c", { defaultValue: "Create" })} {t.bin}
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[10px] font-bold text-[var(--accent)]">1</span> {tx('bins_createAction', { bin: t.bin })}
                       </span>
                       <span className="opacity-30">→</span>
                       <span className="inline-flex items-center gap-1.5">

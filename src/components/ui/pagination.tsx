@@ -171,7 +171,7 @@ export function Pagination({
       {showFooter && (
         <div className="flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
           {showSummary && (
-            <span> {tx("showing_163d81", { defaultValue: "Showing" })} {rangeStart}&ndash;{rangeEnd} {tx("of_de04fa", { defaultValue: "of" })} {totalCount} {itemLabel}
+            <span> {tx('pagination_showingRange', { start: rangeStart, end: rangeEnd, total: totalCount, label: itemLabel })}
             </span>
           )}
           {pageSizeOptions && onPageSizeChange && pageSize != null && (

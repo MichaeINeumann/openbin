@@ -307,10 +307,9 @@ export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, ch
 
   if (hideWhenEmpty && items.length === 0) return null;
 
-  const itemWord = displayItems.length === 1 ? 'Item' : 'Items';
   const headerCount = filterQuery
-    ? `${filteredItems.length} of ${displayItems.length} ${itemWord}`
-    : `${displayItems.length} ${itemWord}`;
+    ? tx('items_headerFiltered', { filtered: filteredItems.length, total: tx('count_items', { count: displayItems.length }) })
+    : tx('count_items', { count: displayItems.length });
   const showSortHeaders = !readOnly && effectiveItems.length >= 2;
 
   return (

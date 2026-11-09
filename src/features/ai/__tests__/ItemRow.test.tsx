@@ -1,7 +1,12 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Labels and counts come from the catalogs; the global mock cannot pluralize.
+vi.unmock('react-i18next');
+
+import { renderWithI18n } from '@/test/i18nTestUtils';
 import { ItemRow } from '../ItemRow';
 
 const mockShowToast = vi.fn();
@@ -29,7 +34,7 @@ vi.mock('@/features/bins/useBins', () => ({
 const baseItem = { id: 'i1', name: 'Tent', quantity: null };
 
 function renderRow(props: Partial<Parameters<typeof ItemRow>[0]> = {}) {
-  return render(
+  return renderWithI18n(
     <MemoryRouter>
       <ItemRow item={baseItem} binId="b1" {...props} />
     </MemoryRouter>,
@@ -157,7 +162,7 @@ describe('ItemRow — Inline rename', () => {
 describe('ItemRow — Inline quantity stepper', () => {
   it('picking Adjust quantity reveals a Quantity input', async () => {
     const itemWithQty = { id: 'i1', name: 'Tent', quantity: 3 };
-    render(
+    renderWithI18n(
       <MemoryRouter>
         <ItemRow item={itemWithQty} binId="b1" canWrite={true} />
       </MemoryRouter>,
@@ -171,7 +176,7 @@ describe('ItemRow — Inline quantity stepper', () => {
 
   it('Increment button increases quantity draft', async () => {
     const itemWithQty = { id: 'i1', name: 'Tent', quantity: 3 };
-    render(
+    renderWithI18n(
       <MemoryRouter>
         <ItemRow item={itemWithQty} binId="b1" canWrite={true} />
       </MemoryRouter>,
@@ -185,7 +190,7 @@ describe('ItemRow — Inline quantity stepper', () => {
 
   it('Decrement button decreases quantity draft', async () => {
     const itemWithQty = { id: 'i1', name: 'Tent', quantity: 3 };
-    render(
+    renderWithI18n(
       <MemoryRouter>
         <ItemRow item={itemWithQty} binId="b1" canWrite={true} />
       </MemoryRouter>,
@@ -199,7 +204,7 @@ describe('ItemRow — Inline quantity stepper', () => {
 
   it('does not call updateQuantitySafe when quantity unchanged', async () => {
     const itemWithQty = { id: 'i1', name: 'Tent', quantity: 3 };
-    render(
+    renderWithI18n(
       <MemoryRouter>
         <ItemRow item={itemWithQty} binId="b1" canWrite={true} />
       </MemoryRouter>,

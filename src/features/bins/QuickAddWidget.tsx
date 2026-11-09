@@ -41,13 +41,13 @@ export function QuickAddWidget({ quickAdd, aiEnabled, aiGated, onUpgrade, dictat
   const isRecording = dictation?.state === 'recording';
   const isInline = variant === 'inline';
   const hasValue = quickAdd.value.trim().length > 0;
-  const { label: aiAddLabel } = useCreditCostLabel('Add with AI', 1);
+  const { label: aiAddLabel } = useCreditCostLabel(tx('quickAdd_addWithAi'), 1);
   // Sub-panel padding for expanded/preview states. In `card` variant the outer
   // wrapper supplies padding; in `inline` we add it per-state to align with row inset.
   const panelClass = isInline ? 'space-y-2 px-3.5 py-2.5' : 'space-y-2';
-  const inputPlaceholder = isEmptyList && isInline
-    ? 'Add items — type, paste a list, or tap the mic'
-    : 'Add item...';
+  const inputPlaceholder = tx(
+    isEmptyList && isInline ? 'quickAdd_placeholderEmpty' : 'quickAdd_placeholder',
+  );
   return (
     <div
       data-tour="quick-add"

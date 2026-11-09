@@ -39,7 +39,7 @@ export function SortHeader<C extends string>({
     <button
       type="button"
       onClick={handleClick}
-      aria-label={active ? tx("label_sorted_value1_96d6f2", { defaultValue: "{{label}}, sorted {{value1}}", label: label, value1: currentDirection === 'asc' ? 'ascending' : 'descending' }) : tx("sort_by_label_6696d6", { defaultValue: "Sort by {{label}}", label: label })}
+      aria-label={active ? tx("label_sorted_value1_96d6f2", { defaultValue: "{{label}}, sorted {{value1}}", label: label, value1: tx(currentDirection === 'asc' ? 'sort_ascending' : 'sort_descending') }) : tx("sort_by_label_6696d6", { defaultValue: "Sort by {{label}}", label: label })}
       className={cn(
         'ui-col-header flex items-center gap-0.5 transition-colors min-h-[44px] -my-2',
         active ? 'text-[var(--text-primary)]' : 'hover:text-[var(--text-secondary)]',

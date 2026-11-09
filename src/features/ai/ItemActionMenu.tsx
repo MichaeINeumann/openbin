@@ -20,7 +20,7 @@ export function ItemActionMenu({
   const { t: tx } = useTranslation('ui');
   return (
     <ActionMenu
-      triggerAriaLabel="Item actions"
+      triggerAriaLabel={tx('item_actions')}
       triggerClassName="shrink-0 inline-flex items-center justify-center h-8 w-8 -mr-1 rounded-[var(--radius-xs)] text-[var(--text-tertiary)] hover:bg-[var(--bg-active)] hover:text-[var(--text-primary)] transition-colors"
       menuClassName="min-w-[180px]"
     >

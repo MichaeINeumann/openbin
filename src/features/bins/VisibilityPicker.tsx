@@ -1,12 +1,8 @@
 import { Globe, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { OptionGroupOption } from '@/components/ui/option-group';
 import { OptionGroup } from '@/components/ui/option-group';
 import type { BinVisibility } from '@/types';
-
-const options: OptionGroupOption<BinVisibility>[] = [
-  { key: 'location', label: 'Everyone', icon: Globe },
-  { key: 'private', label: 'Only Me', icon: Lock },
-];
 
 interface VisibilityPickerProps {
   value: BinVisibility;
@@ -14,5 +10,10 @@ interface VisibilityPickerProps {
 }
 
 export function VisibilityPicker({ value, onChange }: VisibilityPickerProps) {
+  const { t: tx } = useTranslation('ui');
+  const options: OptionGroupOption<BinVisibility>[] = [
+    { key: 'location', label: tx('visibility_everyone'), icon: Globe },
+    { key: 'private', label: tx('visibility_onlyMe'), icon: Lock },
+  ];
   return <OptionGroup options={options} value={value} onChange={onChange} />;
 }

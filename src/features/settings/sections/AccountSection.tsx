@@ -300,7 +300,7 @@ export function AccountSection() {
           <FormField
             label={tx("display_name_8d6b34", { defaultValue: "Display Name" })}
             htmlFor="profile-name"
-            hint="Shown to other members of shared locations."
+            hint={tx('account_displayNameHint')}
             error={profileErrors.displayName}
           >
             <Input
@@ -322,7 +322,7 @@ export function AccountSection() {
           <FormField
             label={tx("email_84add5", { defaultValue: "Email" })}
             htmlFor="profile-email"
-            hint="Optional — used for account recovery"
+            hint={tx('account_emailHint')}
             error={profileErrors.email}
           >
             <Input
@@ -354,7 +354,7 @@ export function AccountSection() {
             <FormField
               label={tx("current_password_4d5967", { defaultValue: "Current Password" })}
               htmlFor="current-password"
-              hint="Required to verify it's you."
+              hint={tx('account_currentPasswordHint')}
             >
               <Input
                 id="current-password"
@@ -560,7 +560,7 @@ export function AccountSection() {
         dividerAbove
         status="danger"
         tintLabel
-        statusMessage="Deleting your account removes all locations where you are the only member. Shared locations are preserved. This action cannot be undone."
+        statusMessage={tx('account_deleteWarning')}
       >
         {user.deletionRequestedAt && user.deletionScheduledAt && (
           <DeletionPendingBanner scheduledAt={user.deletionScheduledAt} />

@@ -149,12 +149,12 @@ export function DashboardPage() {
               )}
             </div>
             {canCreateBin && (
-              <Tooltip content={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })} side="bottom">
+              <Tooltip content={tx('bins_newBinAction', { bin: t.bin })} side="bottom">
                 <Button
                   onClick={() => setCreateOpen(true)}
                   size="icon"
                   className="h-10 w-10 rounded-[var(--radius-sm)]"
-                  aria-label={tx("new_bin_63606a", { defaultValue: "New {{bin}}", bin: t.bin })}
+                  aria-label={tx('bins_newBinAction', { bin: t.bin })}
                   data-tour="new-bin-button"
                 >
                   <Plus className="h-5 w-5" />
@@ -325,7 +325,7 @@ export function DashboardPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               {canCreateBin && (
                 <Button onClick={() => setCreateOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" /> {tx("create_6e157c", { defaultValue: "Create" })} {t.bin}
+                  <Plus className="h-4 w-4 mr-2" /> {tx('bins_createAction', { bin: t.bin })}
                 </Button>
               )}
               <Button variant="outline" onClick={() => navigate('/print')}>

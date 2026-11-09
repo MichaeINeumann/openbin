@@ -12,7 +12,7 @@ export function ItemListActionMenu({ onCheckout, onReturn, onDelete }: ItemListA
   const { t: tx } = useTranslation('ui');
   return (
     <ActionMenu
-      triggerAriaLabel="Item actions"
+      triggerAriaLabel={tx('item_actions')}
       triggerClassName="shrink-0 flex items-center justify-center size-11 text-[var(--text-tertiary)] transition-opacity opacity-30 lg:opacity-0 lg:group-hover:opacity-100 aria-expanded:opacity-100"
       menuClassName="min-w-[160px]"
     >
