@@ -34,14 +34,9 @@ const UpgradePrompt = __EE__
   ? lazy(() => import('@/ee/UpgradePrompt').then(m => ({ default: m.UpgradePrompt })))
   : (() => null) as React.FC<Record<string, unknown>>;
 
-const PROMPT_TAB_META = [
-  { key: 'analysis', label: 'Photo Analysis', shortLabel: 'Photos' },
-  { key: 'command', label: 'Commands', shortLabel: 'Cmds' },
-  { key: 'query', label: 'Queries', shortLabel: 'Queries' },
-  { key: 'structure', label: 'Extraction', shortLabel: 'Extract' },
-  { key: 'reorganization', label: 'Reorganize', shortLabel: 'Reorg' },
-  { key: 'tagSuggestion', label: 'Tag Suggestion', shortLabel: 'Tags' },
-] as const;
+// Only the keys are fixed; the labels are looked up per render so the tab
+// strip follows the selected language.
+const PROMPT_TAB_KEYS = ['analysis', 'command', 'query', 'structure', 'reorganization', 'tagSuggestion'] as const;
 
 interface ResettableNumberFieldProps {
   id: string;
@@ -320,7 +315,7 @@ export function AiSection() {
                       <FormField
                         label={tx("api_key_47acd2", { defaultValue: "API Key" })}
                         htmlFor="ai-api-key"
-                        hint="Stored encrypted. Never sent to OpenBin."
+                        hint={tx('ai_apiKeyHint')}
                       >
                         <div className="relative">
                           <Input
@@ -345,7 +340,7 @@ export function AiSection() {
                       <FormField
                         label={tx("model_68c2cc", { defaultValue: "Model" })}
                         htmlFor="ai-model"
-                        hint="Exact model ID from your provider."
+                        hint={tx('ai_modelHint')}
                       >
                         <Input
                           id="ai-model"
@@ -400,7 +395,11 @@ export function AiSection() {
                   <SettingsSection label={tx("custom_prompts_f9020f", { defaultValue: "Custom Prompts" })} dividerAbove>
                     <div className="space-y-2">
                       <OptionGroup
-                        options={PROMPT_TAB_META.map((tab) => ({ key: tab.key, label: tab.label, shortLabel: tab.shortLabel }))}
+                        options={PROMPT_TAB_KEYS.map((key) => ({
+                          key,
+                          label: tx(`ai_promptType_${key}`),
+                          shortLabel: tx(`ai_promptTypeShort_${key}`),
+                        }))}
                         value={activePromptTab}
                         onChange={setActivePromptTab}
                         size="sm"
@@ -449,7 +448,7 @@ export function AiSection() {
                       <ResettableNumberField
                         id="ai-temperature"
                         label={tx("temperature_0a9062", { defaultValue: "Temperature" })}
-                        hint="Higher = more creative. (0.0–2.0)"
+                        hint={tx('ai_temperatureHint')}
                         value={temperature}
                         onChange={setTemperature}
                         min={0}
@@ -460,7 +459,7 @@ export function AiSection() {
                       <ResettableNumberField
                         id="ai-max-tokens"
                         label={tx("max_tokens_0176fa", { defaultValue: "Max Tokens" })}
-                        hint="Maximum length of each response. (100–16,000)"
+                        hint={tx('ai_maxTokensHint')}
                         value={maxTokens}
                         onChange={setMaxTokens}
                         min={100}
@@ -471,7 +470,7 @@ export function AiSection() {
                       <ResettableNumberField
                         id="ai-top-p"
                         label="Top P"
-                        hint="Nucleus sampling — leave blank if unsure. (0.0–1.0)"
+                        hint={tx('ai_topPHint')}
                         value={topP}
                         onChange={setTopP}
                         min={0}
@@ -482,7 +481,7 @@ export function AiSection() {
                       <ResettableNumberField
                         id="ai-timeout"
                         label={tx("request_timeout_dca0c3", { defaultValue: "Request Timeout" })}
-                        hint="Cancel slow requests after N seconds. Default 30."
+                        hint={tx('ai_timeoutHint')}
                         value={requestTimeout}
                         onChange={setRequestTimeout}
                         min={10}

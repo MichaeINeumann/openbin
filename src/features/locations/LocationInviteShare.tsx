@@ -184,7 +184,7 @@ export function LocationInviteShare({ location, variant = 'card' }: LocationInvi
       </div>
 
       {/* Helper text */}
-      <p className="text-[12px] text-[var(--text-tertiary)] px-0.5"> {tx("anyone_with_this_link_can_join_8c0203", { defaultValue: "Anyone with this link can join" })} <span className="font-medium text-[var(--text-secondary)]">{location.name}</span>.
+      <p className="text-[12px] text-[var(--text-tertiary)] px-0.5">{tx('locations_inviteLinkHint', { location: location.name })}
       </p>
 
       {/* QR code panel */}

@@ -224,15 +224,18 @@ export function AreasPage() {
                     onClick={() => setMembersLocationId(activeLocation.id)}
                     aria-label={
                       viewerCount > 0
-                        ? tx("view_membercount_value1_and_viewercount_value3_20bf58", { defaultValue: "View {{memberCount}} {{value1}} and {{viewerCount}} {{value3}}", memberCount: memberCount, value1: memberCount !== 1 ? 'members' : 'member', viewerCount: viewerCount, value3: viewerCount !== 1 ? 'viewers' : 'viewer' })
-                        : tx("view_membercount_value1_19f13f", { defaultValue: "View {{memberCount}} {{value1}}", memberCount: memberCount, value1: memberCount !== 1 ? 'members' : 'member' })
+                        ? tx('locations_viewMembersAndViewers', {
+                            members: tx('count_members', { count: memberCount }),
+                            viewers: tx('count_viewers', { count: viewerCount }),
+                          })
+                        : tx('locations_viewMembers', { members: tx('count_members', { count: memberCount }) })
                     }
                   >
                     <Users className="h-3.5 w-3.5" />
                     <span className="hidden sm:inline">
-                      {memberCount} {memberCount !== 1 ? 'members' : 'member'}
+                      {tx('count_members', { count: memberCount })}
                       {viewerCount > 0 && (
-                        <>, {viewerCount} {viewerCount !== 1 ? 'viewers' : 'viewer'}</>
+                        <>, {tx('count_viewers', { count: viewerCount })}</>
                       )}
                     </span>
                     <span className="sm:hidden">

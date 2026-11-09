@@ -258,7 +258,7 @@ export function TagsPage() {
                 )}
                 {showSuggestButton && suggestButton}
                 <Link to="/bins">
-                  <Button variant="secondary" size="sm">{tx("browse_2f3b5c", { defaultValue: "Browse" })} {t.bins}</Button>
+                  <Button variant="secondary" size="sm">{tx('bins_browseAction', { bins: t.bins })}</Button>
                 </Link>
               </div>
             )}
