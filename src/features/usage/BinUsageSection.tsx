@@ -83,7 +83,7 @@ export function BinUsageSection({ binId }: BinUsageSectionProps) {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-[12px] text-[var(--text-secondary)] tabular-nums">
-        {activeInYear} {tx("active_2bb6b9", { defaultValue: "active" })} {plural(activeInYear, 'day')} in {selectedYear}
+        {tx('usage_activeInYear', { count: activeInYear, year: selectedYear, defaultValue: `${activeInYear} active ${plural(activeInYear, 'day')} in ${selectedYear}` })}
         {lastUse ? tx("last_used_value0_05f827", { defaultValue: " · last used {{value0}}", value0: formatRelativeFromNow(lastUse, language) }) : ''}
       </p>
       <div className={`${flatCard} p-4 flex flex-col gap-3`}>

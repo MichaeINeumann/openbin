@@ -33,35 +33,21 @@ const CELL_TRANSITION =
 // All formatters pin timeZone: 'UTC' because the Date inputs are UTC-constructed
 // (Date.UTC / ISO YYYY-MM-DD). Without this, locales west of UTC render midnight-UTC
 // as the prior local day — shifting month labels and tooltips by one (e.g. Jan → "Dec").
-const DATE_FMT = new Intl.DateTimeFormat(undefined, {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-
-const MONTH_SHORT_FMT = new Intl.DateTimeFormat(undefined, {
-  month: 'short',
-  timeZone: 'UTC',
-});
-const WEEKDAY_SHORT_FMT = new Intl.DateTimeFormat(undefined, {
-  weekday: 'short',
-  timeZone: 'UTC',
-});
-
-const MONTH_LABELS: string[] = Array.from({ length: 12 }, (_, i) =>
-  MONTH_SHORT_FMT.format(new Date(Date.UTC(2024, i, 1))),
-);
-
-// 2024-01-07 is a Sunday in UTC; used to anchor the 7 weekday labels.
-const DOW_LABELS: string[] = Array.from({ length: 7 }, (_, i) =>
-  WEEKDAY_SHORT_FMT.format(new Date(Date.UTC(2024, 0, 7 + i))),
-);
-
-function formatPrettyDate(isoDate: string): string {
-  const parsed = parseIsoDate(isoDate);
-  if (!parsed) return isoDate;
-  return DATE_FMT.format(new Date(Date.UTC(parsed.y, parsed.m - 1, parsed.d)));
+function useCalendarLabels() {
+  const { i18n: { language } } = useTranslation();
+  return useMemo(() => {
+    const dateFormat = new Intl.DateTimeFormat(language, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+    const monthFormat = new Intl.DateTimeFormat(language, { month: 'short', timeZone: 'UTC' });
+    const weekdayFormat = new Intl.DateTimeFormat(language, { weekday: 'short', timeZone: 'UTC' });
+    return {
+      months: Array.from({ length: 12 }, (_, i) => monthFormat.format(new Date(Date.UTC(2024, i, 1)))),
+      weekdays: Array.from({ length: 7 }, (_, i) => weekdayFormat.format(new Date(Date.UTC(2024, 0, 7 + i)))),
+      formatDate(isoDate: string) {
+        const parsed = parseIsoDate(isoDate);
+        return parsed ? dateFormat.format(new Date(Date.UTC(parsed.y, parsed.m - 1, parsed.d))) : isoDate;
+      },
+    };
+  }, [language]);
 }
 
 function cellBoxStyle(intensity: Intensity, fill?: boolean): React.CSSProperties {
@@ -171,6 +157,7 @@ interface DailyGrid {
 function buildDailyGrid(
   data: Array<{ date: string; count: number }>,
   year: number,
+  monthLabels: string[],
 ): DailyGrid {
   if (!Number.isFinite(year)) return { cells: [], weeks: 0, monthPositions: [], activeDays: 0 };
 
@@ -211,7 +198,7 @@ function buildDailyGrid(
     if (!parsed) return;
     const monthIdx = parsed.m - 1;
     if (monthIdx !== lastMonth) {
-      monthPositions.push({ month: MONTH_LABELS[monthIdx], col: Math.floor(idx / 7) });
+      monthPositions.push({ month: monthLabels[monthIdx], col: Math.floor(idx / 7) });
       lastMonth = monthIdx;
     }
   });
@@ -222,6 +209,7 @@ function buildDailyGrid(
 function buildWeeklyMonthPositions(
   year: number,
   weekCount: number,
+  monthLabels: string[],
 ): Array<{ month: string; col: number }> {
   if (!Number.isFinite(year)) return [];
   const yearStart = Date.UTC(year, 0, 1);
@@ -232,7 +220,7 @@ function buildWeeklyMonthPositions(
     if (weekStart.getUTCFullYear() !== year) continue;
     const month = weekStart.getUTCMonth();
     if (month !== lastMonth) {
-      positions.push({ month: MONTH_LABELS[month], col: w });
+      positions.push({ month: monthLabels[month], col: w });
       lastMonth = month;
     }
   }
@@ -249,9 +237,10 @@ function DailyView({
   onDayClick?: (date: string) => void;
 }) {
   const { t: tx } = useTranslation('ui');
+  const calendar = useCalendarLabels();
   const { cells, weeks, monthPositions, activeDays } = useMemo(
-    () => buildDailyGrid(data, year),
-    [data, year],
+    () => buildDailyGrid(data, year, calendar.months),
+    [data, year, calendar.months],
   );
   const gridWidth = weeks * CELL_SIZE + (weeks - 1) * CELL_GAP;
   const todayIso = toIsoUtc(new Date());
@@ -261,7 +250,7 @@ function DailyView({
       key={year}
       className="flex flex-col gap-2 animate-fade-in motion-reduce:animate-none"
       role="img"
-      aria-label={tx("daily_usage_heatmap_for_year_activedays_active_value2_61c1e8", { defaultValue: "Daily usage heatmap for {{year}}. {{activeDays}} active {{value2}}.", year: year, activeDays: activeDays, value2: plural(activeDays, 'day') })}
+      aria-label={tx('usage_daily', { year, count: activeDays, defaultValue: `Daily usage heatmap for ${year}. ${activeDays} active ${plural(activeDays, 'day')}.` })}
     >
       <div className="overflow-x-auto scrollbar-thin -mx-1 px-1 pb-0.5" style={{ overscrollBehaviorX: 'contain' }}>
         <div className="inline-flex gap-2 items-start">
@@ -270,7 +259,7 @@ function DailyView({
             style={{ rowGap: CELL_GAP, paddingTop: 16 }}
             aria-hidden
           >
-            {DOW_LABELS.map((label, i) => (
+            {calendar.weekdays.map((label, i) => (
               <div
                 // biome-ignore lint/suspicious/noArrayIndexKey: fixed 7-slot week, locales may repeat short labels
                 key={i}
@@ -298,13 +287,13 @@ function DailyView({
                 const intensity = intensityStep(cell.count, 'daily');
                 const date = cell.date;
                 const isToday = date === todayIso;
-                const tooltipBase = `${formatPrettyDate(date)} — ${cell.count} ${plural(cell.count, 'hit')}`;
+                const tooltipBase = tx('usage_hits', { date: calendar.formatDate(date), count: cell.count, defaultValue: `${calendar.formatDate(date)} — ${cell.count} ${plural(cell.count, 'hit')}` });
                 return (
                   <Cell
                     key={cell.key}
                     intensity={intensity}
                     highlight={isToday}
-                    tooltip={isToday ? `${tooltipBase} (today)` : tooltipBase}
+                    tooltip={isToday ? tx('usage_today', { text: tooltipBase, defaultValue: `${tooltipBase} (today)` }) : tooltipBase}
                     onClick={onDayClick ? () => onDayClick(date) : undefined}
                   />
                 );
@@ -325,10 +314,11 @@ function WeeklyView({
   year: number;
 }) {
   const { t: tx } = useTranslation('ui');
+  const calendar = useCalendarLabels();
   const buckets = useMemo(() => bucketByWeek(data, year), [data, year]);
   const monthPositions = useMemo(
-    () => buildWeeklyMonthPositions(year, buckets.length),
-    [year, buckets.length],
+    () => buildWeeklyMonthPositions(year, buckets.length, calendar.months),
+    [year, buckets.length, calendar.months],
   );
   const gridWidth = buckets.length * CELL_SIZE + (buckets.length - 1) * CELL_GAP;
   const activeWeeks = useMemo(
@@ -341,7 +331,7 @@ function WeeklyView({
       key={year}
       className="flex flex-col gap-2 animate-fade-in motion-reduce:animate-none"
       role="img"
-      aria-label={tx("weekly_usage_heatmap_for_year_activeweeks_active_value2_f3332d", { defaultValue: "Weekly usage heatmap for {{year}}. {{activeWeeks}} active {{value2}}.", year: year, activeWeeks: activeWeeks, value2: plural(activeWeeks, 'week') })}
+      aria-label={tx('usage_weekly', { year, count: activeWeeks, defaultValue: `Weekly usage heatmap for ${year}. ${activeWeeks} active ${plural(activeWeeks, 'week')}.` })}
     >
       <div className="overflow-x-auto scrollbar-thin -mx-1 px-1 pb-0.5" style={{ overscrollBehaviorX: 'contain' }}>
         <div className="inline-flex flex-col gap-1">
@@ -360,7 +350,7 @@ function WeeklyView({
                 <Cell
                   key={bucket.index}
                   intensity={intensity}
-                  tooltip={`Week ${bucket.index + 1}, ${year} — ${bucket.activeDays} active ${plural(bucket.activeDays, 'day')}`}
+                  tooltip={tx('usage_week', { week: bucket.index + 1, year, count: bucket.activeDays, defaultValue: `Week ${bucket.index + 1}, ${year} — ${bucket.activeDays} active ${plural(bucket.activeDays, 'day')}` })}
                 />
               );
             })}
@@ -379,6 +369,7 @@ function MonthlyView({
   year: number;
 }) {
   const { t: tx } = useTranslation('ui');
+  const calendar = useCalendarLabels();
   const buckets = useMemo(() => bucketByMonth(data, year), [data, year]);
   const activeMonths = useMemo(
     () => buckets.reduce((s, b) => s + (b.activeDays > 0 ? 1 : 0), 0),
@@ -390,18 +381,18 @@ function MonthlyView({
       key={year}
       className="flex flex-col gap-2 animate-fade-in motion-reduce:animate-none"
       role="img"
-      aria-label={tx("monthly_usage_heatmap_for_year_activemonths_active_value2_51efad", { defaultValue: "Monthly usage heatmap for {{year}}. {{activeMonths}} active {{value2}}.", year: year, activeMonths: activeMonths, value2: plural(activeMonths, 'month') })}
+      aria-label={tx('usage_monthly', { year, count: activeMonths, defaultValue: `Monthly usage heatmap for ${year}. ${activeMonths} active ${plural(activeMonths, 'month')}.` })}
     >
       <div className="grid grid-cols-12 gap-[6px]">
         {buckets.map((bucket) => {
           const intensity = intensityStep(bucket.activeDays, 'monthly');
-          const label = MONTH_LABELS[bucket.index] ?? bucket.label;
+          const label = calendar.months[bucket.index] ?? bucket.label;
           return (
             <div key={bucket.index} className="flex flex-col items-center gap-1 min-w-0">
               <Cell
                 intensity={intensity}
                 fill
-                tooltip={`${label} ${year} — ${bucket.activeDays} active ${plural(bucket.activeDays, 'day')}`}
+                tooltip={tx('usage_month', { month: label, year, count: bucket.activeDays, defaultValue: `${label} ${year} — ${bucket.activeDays} active ${plural(bucket.activeDays, 'day')}` })}
               />
               <span className="text-[11px] text-[var(--text-tertiary)] leading-none">
                 {label}

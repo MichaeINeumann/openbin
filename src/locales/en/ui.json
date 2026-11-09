@@ -1328,5 +1328,20 @@
   "bin_name_and_existing_items_are_appended_automatically_this__82be81": "Bin name and existing items are appended automatically. This prompt defines the extraction rules.",
   "available_variables_32e2e7": "Available variables:",
   "existing_tags_are_passed_automatically_in_the_user_message_b9fc9f": ". Existing tags are passed automatically in the user message.",
-  "governs_ai_tag_suggestions_tags_mode_on_the_reorganize_page__59fa75": "Governs AI tag suggestions (Tags mode on the Reorganize page). The model sees the full tag vocabulary of the location plus a list of bins with items/area/existing tags, and proposes a cleaner taxonomy and per-bin assignments. Available variables:"
+  "governs_ai_tag_suggestions_tags_mode_on_the_reorganize_page__59fa75": "Governs AI tag suggestions (Tags mode on the Reorganize page). The model sees the full tag vocabulary of the location plus a list of bins with items/area/existing tags, and proposes a cleaner taxonomy and per-bin assignments. Available variables:",
+  "usage_daily_one": "Daily usage heatmap for {{year}}. {{count}} active day.",
+  "usage_daily_other": "Daily usage heatmap for {{year}}. {{count}} active days.",
+  "usage_weekly_one": "Weekly usage heatmap for {{year}}. {{count}} active week.",
+  "usage_weekly_other": "Weekly usage heatmap for {{year}}. {{count}} active weeks.",
+  "usage_monthly_one": "Monthly usage heatmap for {{year}}. {{count}} active month.",
+  "usage_monthly_other": "Monthly usage heatmap for {{year}}. {{count}} active months.",
+  "usage_hits_one": "{{date}} — {{count}} hit",
+  "usage_week_one": "Week {{week}}, {{year}} — {{count}} active day",
+  "usage_month_one": "{{month}} {{year}} — {{count}} active day",
+  "usage_activeInYear_one": "{{count}} active day in {{year}}",
+  "usage_hits_other": "{{date}} — {{count}} hits",
+  "usage_week_other": "Week {{week}}, {{year}} — {{count}} active days",
+  "usage_month_other": "{{month}} {{year}} — {{count}} active days",
+  "usage_activeInYear_other": "{{count}} active days in {{year}}",
+  "usage_today": "{{text}} (today)"
 }
