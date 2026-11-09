@@ -101,7 +101,7 @@ export function PhotoGallery({ binId, variant = 'card' }: PhotoGalleryProps) {
       });
     }
     if (inputRef.current) inputRef.current.value = '';
-  }, [binId, showToast]);
+  }, [binId, showToast, tx]);
 
   const handleDelete = useCallback(async (photo: Photo) => {
     try {
@@ -110,7 +110,7 @@ export function PhotoGallery({ binId, variant = 'card' }: PhotoGalleryProps) {
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_delete_photo_9fd736", { defaultValue: "Failed to delete photo" })), variant: 'error' });
     }
-  }, [showToast]);
+  }, [showToast, tx]);
 
   const content = (
     <>

@@ -102,7 +102,7 @@ export function useAdminUserActions({ detail, refresh, refreshAdminCount }: UseA
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_delete_user_121656", { defaultValue: "Failed to delete user" })), variant: 'error' });
     }
-  }, [detail, showToast, navigate]);
+  }, [detail, showToast, navigate, tx]);
 
   const handlePlanChange = useCallback((newPlan: PlanKey) => {
     if (!detail || newPlan === detail.plan) return;
@@ -157,7 +157,7 @@ export function useAdminUserActions({ detail, refresh, refreshAdminCount }: UseA
     } finally {
       setSaving(false);
     }
-  }, [detail, editForm, showToast, refresh]);
+  }, [detail, editForm, showToast, refresh, tx]);
 
   const handleRegenerateApiKey = useCallback(async () => {
     if (!detail) return;

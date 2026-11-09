@@ -146,7 +146,7 @@ export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }
       });
       navigate('/bins');
     });
-  }, [apply, selection.selectedBins, selectedAreaId, navigate, showToast, planCounts]);
+  }, [apply, selection.selectedBins, selectedAreaId, navigate, showToast, planCounts, tx]);
 
   const handleCancel = useCallback(() => {
     if (isStreaming) cancel();

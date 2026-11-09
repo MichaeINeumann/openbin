@@ -103,7 +103,7 @@ export function usePhotoGridDrag({ state, dispatch }: UsePhotoGridDragArgs): Use
       return () => clearTimeout(timer);
     }
     if (!state.lastToggle) lastToggleRef.current = null;
-  }, [state.lastToggle, showToast, dispatch]);
+  }, [state.lastToggle, showToast, dispatch, tx]);
 
   // Window listeners for pointermove / pointerup during drag.
   useEffect(() => {

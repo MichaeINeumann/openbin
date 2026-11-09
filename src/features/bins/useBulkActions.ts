@@ -52,7 +52,7 @@ export function useBulkActions(
     } finally {
       setIsBusy(false);
     }
-  }, [selected, clearSelection, showToast, t]);
+  }, [selected, clearSelection, showToast, t, tx]);
 
   const bulkPinToggle = useCallback(async () => {
     setIsBusy(true);
@@ -99,7 +99,7 @@ export function useBulkActions(
     } finally {
       setIsBusy(false);
     }
-  }, [selected, activeLocationId, clearSelection, showToast, navigate, t]);
+  }, [selected, activeLocationId, clearSelection, showToast, navigate, t, tx]);
 
   return { bulkDelete, bulkPinToggle, bulkDuplicate, pinLabel, isBusy };
 }

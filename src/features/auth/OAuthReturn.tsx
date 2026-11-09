@@ -86,5 +86,9 @@ export function useOAuthReturn() {
       prev.delete('reason');
       return prev;
     }, { replace: true });
+    // Deliberately mount-only: this reads the one-shot `oauth` query param left
+    // by the provider redirect and clears it again. `t` is intentionally not a
+    // dependency — the toast fires during this first run, so it always uses the
+    // language that is active at mount and can never go stale.
   }, []);
 }

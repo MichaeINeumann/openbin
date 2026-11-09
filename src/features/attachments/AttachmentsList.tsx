@@ -115,7 +115,7 @@ export function AttachmentsList({ binId, attachments, canUpload, canDelete }: At
       }
     }));
     if (inputRef.current) inputRef.current.value = '';
-  }, [binId, showToast]);
+  }, [binId, showToast, tx]);
 
   const handleDelete = useCallback(async (attachment: Attachment) => {
     try {
@@ -124,7 +124,7 @@ export function AttachmentsList({ binId, attachments, canUpload, canDelete }: At
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_delete_07931f", { defaultValue: "Failed to delete" })), variant: 'error' });
     }
-  }, [showToast]);
+  }, [showToast, tx]);
 
   const isOwnerOrAdmin = (a: Attachment) => isAdmin || a.created_by === user?.id;
 

@@ -101,7 +101,7 @@ function SystemTab() {
         showToast({ message: getErrorMessage(err, tx("failed_to_load_system_status_0ea5bf", { defaultValue: "Failed to load system status" })), variant: 'error' });
       })
       .finally(() => setLoadingHealth(false));
-  }, [showToast]);
+  }, [showToast, tx]);
 
   const handleToggleMaintenance = useCallback(async (enabled: boolean) => {
     try {
@@ -111,7 +111,7 @@ function SystemTab() {
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_toggle_maintenance_0440f3", { defaultValue: "Failed to toggle maintenance" })), variant: 'error' });
     }
-  }, [maintenanceMsg, showToast]);
+  }, [maintenanceMsg, showToast, tx]);
 
   const handleCreateBanner = useCallback(async () => {
     if (!bannerForm.text.trim()) return;
@@ -126,7 +126,7 @@ function SystemTab() {
     } finally {
       setBannerSaving(false);
     }
-  }, [bannerForm, createAnnouncement, showToast]);
+  }, [bannerForm, createAnnouncement, showToast, tx]);
 
   const handleDeleteBanner = useCallback(async (id: string) => {
     try {
@@ -135,7 +135,7 @@ function SystemTab() {
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_delete_announcement_1a5510", { defaultValue: "Failed to delete announcement" })), variant: 'error' });
     }
-  }, [deleteAnnouncement, showToast]);
+  }, [deleteAnnouncement, showToast, tx]);
 
   if (loadingHealth) {
     return (

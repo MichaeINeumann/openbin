@@ -38,7 +38,7 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
     } finally {
       setIsBusy(false);
     }
-  }, [clearSelection, showToast]);
+  }, [clearSelection, showToast, tx]);
 
   const bulkCheckout = useCallback(async (ids: string[]) => {
     setIsBusy(true);
@@ -71,7 +71,7 @@ export function useItemBulkActions(clearSelection: () => void, showToast: ToastF
     } finally {
       setIsBusy(false);
     }
-  }, [clearSelection, showToast]);
+  }, [clearSelection, showToast, tx]);
 
   const bulkQuantity = useCallback(async (ids: string[], op: QuantityOp, value?: number) => {
     setIsBusy(true);

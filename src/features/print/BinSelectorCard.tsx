@@ -48,7 +48,7 @@ export function BinSelectorCard({
     const unassigned = allBins.filter((b) => !b.area_id);
     if (unassigned.length > 0) groups.push({ areaId: null, label: tx("unassigned_e57016", { defaultValue: "Unassigned" }), depth: 0, bins: unassigned });
     return groups;
-  }, [allBins, areas]);
+  }, [allBins, areas, tx]);
 
   return (
     <Card>

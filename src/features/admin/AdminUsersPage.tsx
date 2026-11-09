@@ -75,7 +75,7 @@ export function AdminUsersPage() {
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_delete_user_121656", { defaultValue: "Failed to delete user" })), variant: 'error' });
     }
-  }, [deleteTarget, deleteUser, showToast]);
+  }, [deleteTarget, deleteUser, showToast, tx]);
 
   const handleRegistrationChange = useCallback(async (mode: string) => {
     try {
@@ -84,7 +84,7 @@ export function AdminUsersPage() {
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_update_registration_mode_f30ba6", { defaultValue: "Failed to update registration mode" })), variant: 'error' });
     }
-  }, [updateRegistrationMode, showToast]);
+  }, [updateRegistrationMode, showToast, tx]);
 
   const handleCreate = useCallback(async () => {
     setCreateLoading(true);
@@ -103,7 +103,7 @@ export function AdminUsersPage() {
     } finally {
       setCreateLoading(false);
     }
-  }, [createForm, createUser, showToast]);
+  }, [createForm, createUser, showToast, tx]);
 
   // Prevent flash of admin content for non-admins
   if (user && !user.isAdmin) return null;

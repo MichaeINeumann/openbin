@@ -118,7 +118,7 @@ export function AccountSection() {
         showToast({ message: getErrorMessage(err, tx("failed_to_load_connected_accounts_4b7a88", { defaultValue: "Failed to load connected accounts" })), variant: 'error' });
       });
     return () => { abort.abort(); };
-  }, [showToast]);
+  }, [showToast, tx]);
 
   const passwordChecks = useMemo(() => computePasswordChecks(newPassword), [newPassword]);
 

@@ -52,7 +52,7 @@ export function BinDetailInformationTab({ bin }: BinDetailInformationTabProps) {
         month: 'short',
         day: 'numeric',
       }),
-    [bin.created_at],
+    [bin.created_at, uiLanguage],
   );
 
   return (

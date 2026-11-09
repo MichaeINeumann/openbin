@@ -143,7 +143,7 @@ export function ItemList({ items, binId, readOnly, hideWhenEmpty, hideHeader, ch
         showToast({ message: tx("failed_to_sort_items_b6d178", { defaultValue: "Failed to sort items" }), variant: 'error' });
       });
     }, 500);
-  }, [items, localItems, viewMode, binId, onItemsChange, showToast]);
+  }, [items, localItems, viewMode, binId, onItemsChange, showToast, tx]);
 
   async function handleSaveEdit(itemId: string, value: string, quantity: number | null) {
     const next = effectiveItems.map((i) => (i.id === itemId ? { ...i, name: value, quantity } : i));

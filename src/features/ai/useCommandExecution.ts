@@ -100,7 +100,7 @@ export function useCommandExecution({
         setExecuting(null);
       }
     },
-    [turnsRef, setTurns, locationId, showToast],
+    [turnsRef, setTurns, locationId, showToast, tx],
   );
 
   return { executing, executeActions, toggleAction };

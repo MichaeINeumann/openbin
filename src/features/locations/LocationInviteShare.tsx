@@ -75,7 +75,7 @@ export function LocationInviteShare({ location, variant = 'card' }: LocationInvi
     } catch {
       showToast({ message: tx("failed_to_copy_35654b", { defaultValue: "Failed to copy" }), variant: 'error' });
     }
-  }, [inviteLink, showToast]);
+  }, [inviteLink, showToast, tx]);
 
   const handleCopyCode = useCallback(async () => {
     if (!inviteCode) return;
@@ -86,7 +86,7 @@ export function LocationInviteShare({ location, variant = 'card' }: LocationInvi
     } catch {
       showToast({ message: tx("failed_to_copy_35654b", { defaultValue: "Failed to copy" }), variant: 'error' });
     }
-  }, [inviteCode, showToast]);
+  }, [inviteCode, showToast, tx]);
 
   const handleShare = useCallback(async () => {
     if (!inviteLink) return;
@@ -102,7 +102,7 @@ export function LocationInviteShare({ location, variant = 'card' }: LocationInvi
         showToast({ message: tx("failed_to_copy_35654b", { defaultValue: "Failed to copy" }), variant: 'error' });
       }
     }
-  }, [inviteLink, location.name, showToast]);
+  }, [inviteLink, location.name, showToast, tx]);
 
   const handleDownloadQr = useCallback(() => {
     if (!qrUrl) return;
@@ -123,7 +123,7 @@ export function LocationInviteShare({ location, variant = 'card' }: LocationInvi
     } finally {
       setRegenerating(false);
     }
-  }, [location.id, showToast]);
+  }, [location.id, showToast, tx]);
 
   if (!isAdmin || !inviteCode) return null;
 

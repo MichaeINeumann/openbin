@@ -131,7 +131,7 @@ export function BinListPage() {
     setCopiedStyle({ icon: bin.icon, color: bin.color, card_style: bin.card_style });
     clearSelection();
     showToast({ message: tx("style_copied_c74b3a", { defaultValue: "Style copied" }), variant: 'success' });
-  }, [selectedIds, bins, clearSelection, showToast]);
+  }, [selectedIds, bins, clearSelection, showToast, tx]);
 
   const handlePasteStyle = useCallback(async () => {
     if (!copiedStyle) return;
@@ -139,7 +139,7 @@ export function BinListPage() {
     await Promise.all(ids.map((id) => updateBin(id, { icon: copiedStyle.icon, color: copiedStyle.color, cardStyle: copiedStyle.card_style })));
     clearSelection();
     showToast({ message: tx("style_applied_to_value0_value1_033108", { defaultValue: "Style applied to {{value0}} {{value1}}", value0: ids.length, value1: ids.length === 1 ? t.bin : t.bins }), variant: 'success' });
-  }, [copiedStyle, selectedIds, clearSelection, showToast, t]);
+  }, [copiedStyle, selectedIds, clearSelection, showToast, t, tx]);
 
   const handleBinSortChange = useCallback((column: SortOption, direction: SortDirection) => {
     setSort(column);

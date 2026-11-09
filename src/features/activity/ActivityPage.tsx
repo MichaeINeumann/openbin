@@ -47,7 +47,7 @@ export function ActivityPage() {
       if (getActionLabel(e, t, translateActivity).toLowerCase().includes(q)) return true;
       return false;
     });
-  }, [entries, searchQuery, t]);
+  }, [entries, searchQuery, t, translateActivity]);
 
   useEffect(() => {
     if (!permissionsLoading && !isAdmin) {

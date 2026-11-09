@@ -69,7 +69,7 @@ export function useCapture(binId?: string) {
         );
       }
     },
-    [updatePhotos],
+    [updatePhotos, tx],
   );
 
   const stopCamera = useCallback(() => {

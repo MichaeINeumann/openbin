@@ -113,7 +113,7 @@ export function useReorganizeTags() {
         setIsApplying(false);
       }
     },
-    [result, activeLocationId],
+    [result, activeLocationId, tx],
   );
 
   const clear = useCallback(() => {

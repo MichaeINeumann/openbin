@@ -34,7 +34,7 @@ export function useAdminUserOverrides({ detail, selfHosted, refresh }: UseAdminU
     return () => {
       ignore = true;
     };
-  }, [detailId, selfHosted, showToast]);
+  }, [detailId, selfHosted, showToast, tx]);
 
   const handleSaveOverrides = useCallback(async () => {
     if (!detail) return;
@@ -48,7 +48,7 @@ export function useAdminUserOverrides({ detail, selfHosted, refresh }: UseAdminU
     } finally {
       setSavingOverrides(false);
     }
-  }, [detail, overrides, showToast, refresh]);
+  }, [detail, overrides, showToast, refresh, tx]);
 
   const handleClearOverrides = useCallback(async () => {
     if (!detail) return;
@@ -60,7 +60,7 @@ export function useAdminUserOverrides({ detail, selfHosted, refresh }: UseAdminU
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_clear_overrides_0fbeda", { defaultValue: "Failed to clear overrides" })), variant: 'error' });
     }
-  }, [detail, showToast, refresh]);
+  }, [detail, showToast, refresh, tx]);
 
   const handleGrantCredits = useCallback(async () => {
     if (!detail || !grantAmount) return;
@@ -72,7 +72,7 @@ export function useAdminUserOverrides({ detail, selfHosted, refresh }: UseAdminU
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_grant_credits_58cbb6", { defaultValue: "Failed to grant credits" })), variant: 'error' });
     }
-  }, [detail, grantAmount, showToast, refresh]);
+  }, [detail, grantAmount, showToast, refresh, tx]);
 
   const handleResetCredits = useCallback(async () => {
     if (!detail) return;
@@ -83,7 +83,7 @@ export function useAdminUserOverrides({ detail, selfHosted, refresh }: UseAdminU
     } catch (err) {
       showToast({ message: getErrorMessage(err, tx("failed_to_reset_credits_3dbb1c", { defaultValue: "Failed to reset credits" })), variant: 'error' });
     }
-  }, [detail, showToast, refresh]);
+  }, [detail, showToast, refresh, tx]);
 
   return {
     overrides,

@@ -10,10 +10,10 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
   const { t: tx } = useTranslation('ui');
   const [isBusy, setIsBusy] = useState(false);
 
-  function notifyTagsChanged() {
+  const notifyTagsChanged = useCallback(() => {
     notify(Events.BINS);
     notify(Events.TAG_COLORS);
-  }
+  }, []);
 
   const bulkDelete = useCallback(
     async (tags: string[]) => {
@@ -31,7 +31,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
   );
 
   const bulkSetParent = useCallback(
@@ -51,7 +51,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
   );
 
   const bulkSetColor = useCallback(
@@ -70,7 +70,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
   );
 
   const bulkMerge = useCallback(
@@ -89,7 +89,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
   );
 
   return { bulkDelete, bulkSetParent, bulkSetColor, bulkMerge, isBusy };

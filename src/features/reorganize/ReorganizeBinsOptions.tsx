@@ -81,7 +81,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
         onChange: (v) => form.setOutliers(v as ReorganizeBinsForm['outliers']),
       },
     ],
-    [form, t.bin, t.bins],
+    [form, t.bin, t.bins, tx],
   );
 
   return (
