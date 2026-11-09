@@ -26,8 +26,8 @@ export function BulkSetColorDialog({ open, onOpenChange, selectedTagNames, onApp
       selectedIds={selectedTagNames}
       onApply={(tags) => onApply(tags, color)}
       applyDisabled={!color}
-      applyLabel="Apply color"
-      loadingLabel="Applying…"
+      applyLabel={tx('bulk_applyColor')}
+      loadingLabel={tx('bulk_applying')}
     >
       <TagColorPicker
         currentColor={color}

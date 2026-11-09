@@ -1,5 +1,8 @@
-import { act, renderHook } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Toast texts are pluralized by i18next, which the global mock cannot do.
+vi.unmock('react-i18next');
 
 const mockApiFetch = vi.fn();
 const mockNotify = vi.fn();
@@ -9,6 +12,7 @@ vi.mock('@/lib/eventBus', () => ({
   notify: (...a: unknown[]) => mockNotify(...a),
 }));
 
+import { renderHookWithI18n } from '@/test/i18nTestUtils';
 import { useCheckoutBulkActions } from '../useCheckoutBulkActions';
 
 describe('useCheckoutBulkActions', () => {
@@ -23,7 +27,7 @@ describe('useCheckoutBulkActions', () => {
 
   it('bulkReturn (no target) posts and toasts', async () => {
     mockApiFetch.mockResolvedValue({ returned: 3, errors: [] });
-    const { result } = renderHook(() => useCheckoutBulkActions('loc-1', clearSelection, showToast));
+    const { result } = renderHookWithI18n(() => useCheckoutBulkActions('loc-1', clearSelection, showToast));
     await act(() => result.current.bulkReturn(['co-1', 'co-2', 'co-3']));
     expect(mockApiFetch).toHaveBeenCalledWith('/api/locations/loc-1/checkouts/bulk-return', {
       method: 'POST', body: { checkoutIds: ['co-1', 'co-2', 'co-3'] },
@@ -34,7 +38,7 @@ describe('useCheckoutBulkActions', () => {
 
   it('bulkReturnToBin includes targetBinId and bin name in toast', async () => {
     mockApiFetch.mockResolvedValue({ returned: 2, errors: [] });
-    const { result } = renderHook(() => useCheckoutBulkActions('loc-1', clearSelection, showToast));
+    const { result } = renderHookWithI18n(() => useCheckoutBulkActions('loc-1', clearSelection, showToast));
     await act(() => result.current.bulkReturnToBin(['co-1', 'co-2'], 'bin-x', 'Garage A'));
     expect(mockApiFetch).toHaveBeenCalledWith('/api/locations/loc-1/checkouts/bulk-return', {
       method: 'POST', body: { checkoutIds: ['co-1', 'co-2'], targetBinId: 'bin-x' },
@@ -44,7 +48,7 @@ describe('useCheckoutBulkActions', () => {
 
   it('reports partial errors in toast', async () => {
     mockApiFetch.mockResolvedValue({ returned: 1, errors: [{ id: 'co-2', reason: 'NOT_FOUND' }] });
-    const { result } = renderHook(() => useCheckoutBulkActions('loc-1', clearSelection, showToast));
+    const { result } = renderHookWithI18n(() => useCheckoutBulkActions('loc-1', clearSelection, showToast));
     await act(() => result.current.bulkReturn(['co-1', 'co-2']));
     expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ message: 'Returned 1 item. 1 failed.' }));
   });

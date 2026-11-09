@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { apiFetch } from '@/lib/api';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
-import { pluralizeBins } from './pluralizeBins';
+import { useBinTerm } from '@/lib/terminology';
 import { TagInput } from './TagInput';
 import { notifyBinsChanged } from './useBins';
 
@@ -17,6 +17,7 @@ interface BulkTagDialogProps {
 
 export function BulkTagDialog({ open, onOpenChange, binIds, onDone, allTags }: BulkTagDialogProps) {
   const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const [tags, setTags] = useState<string[]>([]);
 
   async function apply(ids: string[]) {
@@ -46,7 +47,7 @@ export function BulkTagDialog({ open, onOpenChange, binIds, onDone, allTags }: B
       open={open}
       onOpenChange={onOpenChange}
       title={tx("add_tags_0b4440", { defaultValue: "Add Tags" })}
-      description={tx("add_tags_to_value0_13f394", { defaultValue: "Add tags to {{value0}}.", value0: pluralizeBins(binIds.length) })}
+      description={tx('bins_bulkTagDescription', { count: binIds.length, term: binTerm(binIds.length) })}
       selectedIds={binIds}
       onApply={apply}
       onApplied={onDone}

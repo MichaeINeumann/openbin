@@ -4,7 +4,7 @@ import { LocationSelectList } from '@/features/locations/LocationSelectList';
 import { useLocationList } from '@/features/locations/useLocations';
 import { useAuth } from '@/lib/auth';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
-import { pluralizeBins } from './pluralizeBins';
+import { useBinTerm } from '@/lib/terminology';
 import { moveBin } from './useBins';
 
 interface BulkLocationDialogProps {
@@ -16,6 +16,7 @@ interface BulkLocationDialogProps {
 
 export function BulkLocationDialog({ open, onOpenChange, binIds, onDone }: BulkLocationDialogProps) {
   const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const { activeLocationId } = useAuth();
   const { locations } = useLocationList();
   const otherLocations = locations.filter((l) => l.id !== activeLocationId);
@@ -32,13 +33,13 @@ export function BulkLocationDialog({ open, onOpenChange, binIds, onDone }: BulkL
       open={open}
       onOpenChange={onOpenChange}
       title={tx("move_to_location_418b89", { defaultValue: "Move to Location" })}
-      description={tx("move_value0_to_another_location_6bbc47", { defaultValue: "Move {{value0}} to another location.", value0: pluralizeBins(binIds.length) })}
+      description={tx('bins_bulkLocationDescription', { count: binIds.length, term: binTerm(binIds.length) })}
       selectedIds={binIds}
       onApply={apply}
       onApplied={onDone}
       applyDisabled={!targetId}
-      applyLabel="Move"
-      loadingLabel="Moving..."
+      applyLabel={tx('bulk_move')}
+      loadingLabel={tx('bulk_moving')}
     >
       <LocationSelectList
         locations={otherLocations}

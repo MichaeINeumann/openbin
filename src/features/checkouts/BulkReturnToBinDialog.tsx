@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BinPickerList } from '@/components/ui/bin-picker-list';
 import { useBinList } from '@/features/bins/useBins';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
+import { useBinTerm } from '@/lib/terminology';
 import type { ItemCheckoutWithContext } from '@/types';
 
 interface BulkReturnToBinDialogProps {
@@ -17,6 +19,8 @@ export function BulkReturnToBinDialog({
   checkouts,
   onApply,
 }: BulkReturnToBinDialogProps) {
+  const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const [search, setSearch] = useState('');
   const [targetId, setTargetId] = useState<string | null>(null);
   const { bins } = useBinList(undefined, 'name', undefined, !open);
@@ -38,16 +42,16 @@ export function BulkReturnToBinDialog({
         }
         onOpenChange(v);
       }}
-      title={`Return ${ids.length} item${ids.length === 1 ? '' : 's'} to chosen bin`}
-      description={`Items currently span ${originBinCount} bin${originBinCount === 1 ? '' : 's'}. They'll all move to the picked destination.`}
+      title={tx('checkouts_bulkReturnTitle', { count: ids.length, term: binTerm(1) })}
+      description={tx('checkouts_bulkReturnSpan', { count: originBinCount, term: binTerm(originBinCount) })}
       selectedIds={ids}
       onApply={async (checkoutIds) => {
         if (!targetId) return;
         await onApply(checkoutIds, targetId, targetName);
       }}
       applyDisabled={!targetId}
-      applyLabel="Return"
-      loadingLabel="Returning..."
+      applyLabel={tx('bulk_return')}
+      loadingLabel={tx('bulk_returning')}
     >
       <BinPickerList
         selectedBinId={targetId}

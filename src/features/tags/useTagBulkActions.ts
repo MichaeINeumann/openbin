@@ -2,12 +2,13 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiFetch } from '@/lib/api';
 import { Events, notify } from '@/lib/eventBus';
-import { pluralize } from '@/lib/utils';
+import { useBinCountLabel } from '@/lib/terminology';
 
 type ToastFn = (toast: { message: string; variant?: 'error' | 'success' }) => void;
 
 export function useTagBulkActions(locationId: string | null, clearSelection: () => void, showToast: ToastFn) {
   const { t: tx } = useTranslation('ui');
+  const binCount = useBinCountLabel();
   const [isBusy, setIsBusy] = useState(false);
 
   const notifyTagsChanged = useCallback(() => {
@@ -26,12 +27,12 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: tx("deleted_value0_from_value1_5fec83", { defaultValue: "Deleted {{value0}} from {{value1}}", value0: pluralize(tagsDeleted, 'tag'), value1: pluralize(binsUpdated, 'bin') }) });
+        showToast({ message: tx('tags_bulkDeleted', { count: tagsDeleted, bins: binCount(binsUpdated) }) });
       } finally {
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx, binCount],
   );
 
   const bulkSetParent = useCallback(
@@ -45,8 +46,11 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        const verb = parentTag ? 'Set parent' : 'Cleared parent';
-        showToast({ message: tx("verb_for_value1_a8b7ff", { defaultValue: "{{verb}} for {{value1}}", verb: verb, value1: pluralize(tagsUpdated, 'tag') }) });
+        showToast({
+          message: parentTag
+            ? tx('tags_bulkParentSet', { count: tagsUpdated })
+            : tx('tags_bulkParentCleared', { count: tagsUpdated }),
+        });
       } finally {
         setIsBusy(false);
       }
@@ -65,7 +69,7 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: tx("set_color_for_value0_e0e7a2", { defaultValue: "Set color for {{value0}}", value0: pluralize(tagsUpdated, 'tag') }) });
+        showToast({ message: tx('tags_bulkColorSet', { count: tagsUpdated }) });
       } finally {
         setIsBusy(false);
       }
@@ -84,12 +88,12 @@ export function useTagBulkActions(locationId: string | null, clearSelection: () 
         );
         notifyTagsChanged();
         clearSelection();
-        showToast({ message: tx("merged_value0_into_totag_across_value2_e5070d", { defaultValue: "Merged {{value0}} into \"{{toTag}}\" across {{value2}}", value0: pluralize(fromTags.length, 'tag'), toTag: toTag, value2: pluralize(binsUpdated, 'bin') }) });
+        showToast({ message: tx('tags_bulkMerged', { count: fromTags.length, toTag, bins: binCount(binsUpdated) }) });
       } finally {
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast, notifyTagsChanged, tx],
+    [locationId, clearSelection, showToast, notifyTagsChanged, tx, binCount],
   );
 
   return { bulkDelete, bulkSetParent, bulkSetColor, bulkMerge, isBusy };

@@ -1,4 +1,4 @@
-import { type RenderResult, render } from '@testing-library/react';
+import { type RenderHookResult, type RenderResult, render, renderHook } from '@testing-library/react';
 import i18next from 'i18next';
 import type { ReactElement } from 'react';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
@@ -52,4 +52,19 @@ export function renderWithI18n(ui: ReactElement, options?: { language?: string }
     instance.changeLanguage(options.language);
   }
   return render(<I18nextProvider i18n={instance}>{ui}</I18nextProvider>);
+}
+
+/**
+ * The renderHook() counterpart of renderWithI18n(), for hooks whose output is
+ * user-visible text (toast messages, labels) and therefore has to be asserted
+ * against the real catalogs — the global mock cannot pluralize.
+ */
+export function renderHookWithI18n<T>(hook: () => T, options?: { language?: string }): RenderHookResult<T, unknown> {
+  const instance = createTestI18n();
+  if (options?.language) {
+    instance.changeLanguage(options.language);
+  }
+  return renderHook(hook, {
+    wrapper: ({ children }) => <I18nextProvider i18n={instance}>{children}</I18nextProvider>,
+  });
 }

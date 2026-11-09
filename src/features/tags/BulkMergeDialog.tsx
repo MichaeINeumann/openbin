@@ -55,8 +55,8 @@ export function BulkMergeDialog({
       selectedIds={selectedTagNames}
       onApply={(tags) => onApply(tags, target)}
       applyDisabled={!targetValid}
-      applyLabel="Merge"
-      loadingLabel="Merging…"
+      applyLabel={tx('bulk_merge')}
+      loadingLabel={tx('bulk_merging')}
     >
       <div className="flex flex-col gap-3">
         <div className="flex gap-1">

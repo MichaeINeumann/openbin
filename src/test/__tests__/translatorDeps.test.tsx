@@ -10,6 +10,11 @@ vi.mock('@/lib/eventBus', () => ({
   notify: () => {},
   useRefreshOn: () => {},
 }));
+// The tag toasts count bins through the location's terminology.
+vi.mock('@/lib/auth', () => ({ useAuth: () => ({ activeLocationId: 'loc-1' }) }));
+vi.mock('@/features/locations/useLocations', () => ({
+  useLocationList: () => ({ locations: [{ id: 'loc-1', term_bin: '' }] }),
+}));
 
 const { useTranslation } = await import('react-i18next');
 const { renderWithI18n } = await import('../i18nTestUtils');

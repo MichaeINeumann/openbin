@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocationList } from '@/features/locations/useLocations';
 import { useAuth } from '@/lib/auth';
@@ -78,4 +78,24 @@ export function useTerminology(): Terminology {
       Areas: capitalize(area.plural),
     };
   }, [activeLocationId, locations, i18n.language]);
+}
+
+/**
+ * Picks the bin term that matches `count`. Sentences about a selection have to
+ * agree with the location's own wording, which may be renamed and may pluralize
+ * differently from English.
+ */
+export function useBinTerm(): (count: number) => string {
+  const term = useTerminology();
+  return useCallback((count: number) => (count === 1 ? term.bin : term.bins), [term]);
+}
+
+/**
+ * "3 bins" / "3 Kisten" — a standalone count phrase, for the rare sentence that
+ * carries two numbers and so cannot pluralize on both through i18next.
+ */
+export function useBinCountLabel(): (count: number) => string {
+  const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
+  return useCallback((count: number) => tx('count_bins', { count, term: binTerm(count) }), [tx, binTerm]);
 }

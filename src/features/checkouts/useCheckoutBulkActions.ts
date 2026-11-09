@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiFetch } from '@/lib/api';
 import { Events, notify } from '@/lib/eventBus';
-import { pluralize } from '@/lib/utils';
 
 type ToastFn = (toast: { message: string; variant?: 'error' | 'success' }) => void;
 
@@ -10,6 +10,7 @@ export function useCheckoutBulkActions(
   clearSelection: () => void,
   showToast: ToastFn,
 ) {
+  const { t: tx } = useTranslation('ui');
   const [isBusy, setIsBusy] = useState(false);
 
   const call = useCallback(
@@ -33,14 +34,20 @@ export function useCheckoutBulkActions(
         notify(Events.CHECKOUTS);
         notify(Events.BINS);
         clearSelection();
-        const main = `Returned ${pluralize(returned, 'item')}${targetName ? ` to ${targetName}` : ''}`;
-        const tail = errors.length > 0 ? `. ${pluralize(errors.length, 'failed', 'failed')}.` : '';
-        showToast({ message: `${main}${tail}` });
+        // Separate keys instead of an optional " to X" fragment, so each
+        // language can place the target wherever its grammar needs it.
+        const main = targetName
+          ? tx('checkouts_bulkReturnedTo', { count: returned, binName: targetName })
+          : tx('checkouts_bulkReturned', { count: returned });
+        const message = errors.length > 0
+          ? `${main}. ${tx('bulk_failedCount', { count: errors.length })}.`
+          : main;
+        showToast({ message });
       } finally {
         setIsBusy(false);
       }
     },
-    [locationId, clearSelection, showToast],
+    [locationId, clearSelection, showToast, tx],
   );
 
   const bulkReturn = useCallback(

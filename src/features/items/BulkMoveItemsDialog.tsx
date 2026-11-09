@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { BinPickerList } from '@/components/ui/bin-picker-list';
 import { useBinList } from '@/features/bins/useBins';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
-import { pluralize } from '@/lib/utils';
 
 interface BulkMoveItemsDialogProps {
   open: boolean;
@@ -29,7 +28,7 @@ export function BulkMoveItemsDialog({ open, onOpenChange, selectedIds, onApply }
         }
         onOpenChange(v);
       }}
-      title={tx("move_value0_74c2a8", { defaultValue: "Move {{value0}}", value0: pluralize(selectedIds.length, 'item') })}
+      title={tx('items_bulkMoveTitle', { count: selectedIds.length })}
       description={tx("select_a_bin_to_move_the_items_into_9e4842", { defaultValue: "Select a bin to move the items into." })}
       selectedIds={selectedIds}
       onApply={async (ids) => {
@@ -37,8 +36,8 @@ export function BulkMoveItemsDialog({ open, onOpenChange, selectedIds, onApply }
         await onApply(ids, targetId, targetName);
       }}
       applyDisabled={!targetId}
-      applyLabel="Move"
-      loadingLabel="Moving…"
+      applyLabel={tx('bulk_move')}
+      loadingLabel={tx('bulk_moving')}
     >
       <BinPickerList
         selectedBinId={targetId}

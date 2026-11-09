@@ -4,22 +4,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioOption } from '@/components/ui/radio-option';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
-import { pluralize } from '@/lib/utils';
 import type { QuantityOp } from './useItemBulkActions';
 
-const OPTIONS: Array<{ value: QuantityOp; label: string; needsValue: boolean }> = [
-  { value: 'set', label: 'Set to', needsValue: true },
-  { value: 'inc', label: 'Increment by', needsValue: true },
-  { value: 'dec', label: 'Decrement by', needsValue: true },
-  { value: 'clear', label: 'Clear quantity', needsValue: false },
+// Labels and hints are looked up per render rather than baked into a module
+// constant, so they follow the selected language.
+const OPTIONS: Array<{ value: QuantityOp; needsValue: boolean }> = [
+  { value: 'set', needsValue: true },
+  { value: 'inc', needsValue: true },
+  { value: 'dec', needsValue: true },
+  { value: 'clear', needsValue: false },
 ];
-
-const DESCRIPTIONS: Record<QuantityOp, string> = {
-  set: 'Sets the quantity on every selected item.',
-  inc: 'Adds to the existing quantity on every selected item.',
-  dec: 'Subtracts from the existing quantity. Items reaching zero will have their quantity cleared.',
-  clear: 'Removes the quantity from every selected item.',
-};
 
 interface BulkQuantityDialogProps {
   open: boolean;
@@ -43,13 +37,13 @@ export function BulkQuantityDialog({ open, onOpenChange, selectedIds, onApply }:
         if (!v) { setOp('set'); setValue('1'); }
         onOpenChange(v);
       }}
-      title={tx("update_quantity_for_value0_c63b88", { defaultValue: "Update quantity for {{value0}}", value0: pluralize(selectedIds.length, 'item') })}
-      description={DESCRIPTIONS[op]}
+      title={tx('items_bulkQuantityTitle', { count: selectedIds.length })}
+      description={tx(`items_quantityHint_${op}`)}
       selectedIds={selectedIds}
       onApply={async (ids) => onApply(ids, op, needsValue ? numValue : undefined)}
       applyDisabled={!valueValid}
-      applyLabel="Apply"
-      loadingLabel="Applying…"
+      applyLabel={tx('bulk_apply')}
+      loadingLabel={tx('bulk_applying')}
     >
       <div className="flex flex-col gap-2">
         {OPTIONS.map((o) => (
@@ -57,7 +51,7 @@ export function BulkQuantityDialog({ open, onOpenChange, selectedIds, onApply }:
             key={o.value}
             selected={op === o.value}
             onClick={() => setOp(o.value)}
-            label={o.label}
+            label={tx(`items_quantityOp_${o.value}`)}
           />
         ))}
       </div>

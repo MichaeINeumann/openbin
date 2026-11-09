@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
 import { getSecondaryColorInfo, setSecondaryColor } from '@/lib/cardStyle';
+import { useBinTerm } from '@/lib/terminology';
 import { ColorPicker } from './ColorPicker';
 import { IconPicker } from './IconPicker';
-import { pluralizeBins } from './pluralizeBins';
 import { StylePicker } from './StylePicker';
 import { updateBin } from './useBins';
 
@@ -18,6 +18,7 @@ interface BulkAppearanceDialogProps {
 
 export function BulkAppearanceDialog({ open, onOpenChange, binIds, onDone }: BulkAppearanceDialogProps) {
   const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const [icon, setIcon] = useState('');
   const [color, setColor] = useState('');
   const [cardStyle, setCardStyle] = useState('');
@@ -53,7 +54,7 @@ export function BulkAppearanceDialog({ open, onOpenChange, binIds, onDone }: Bul
       open={open}
       onOpenChange={onOpenChange}
       title={tx("appearance_41def7", { defaultValue: "Appearance" })}
-      description={tx("customize_value0_only_modified_sections_will_be_applied_4e8475", { defaultValue: "Customize {{value0}}. Only modified sections will be applied.", value0: pluralizeBins(binIds.length) })}
+      description={tx('bins_bulkAppearanceDescription', { count: binIds.length, term: binTerm(binIds.length) })}
       selectedIds={binIds}
       onApply={apply}
       onApplied={onDone}

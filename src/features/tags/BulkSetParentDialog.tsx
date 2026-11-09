@@ -41,8 +41,8 @@ export function BulkSetParentDialog({
       description={tx("choose_a_parent_tag_or_none_to_clear_52c5cc", { defaultValue: "Choose a parent tag, or None to clear." })}
       selectedIds={selectedTagNames}
       onApply={(tags) => onApply(tags, parentValue || null)}
-      applyLabel="Save"
-      loadingLabel="Saving…"
+      applyLabel={tx('bulk_save')}
+      loadingLabel={tx('bulk_saving')}
     >
       <div className="space-y-2">
         <Label htmlFor="bulk-set-parent-select">{tx("parent_23d692", { defaultValue: "Parent" })}</Label>
