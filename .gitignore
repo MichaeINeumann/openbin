@@ -22,3 +22,6 @@ superpowers/
 **/.jwt_secret
 .playwright-mcp/
 smoke-*.png
+
+# Internal working notes (keep local, never force-add)
+/docs/WORK_PROGRESS_GERMAN.md
