@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
 import type { Terminology } from '@/lib/terminology';
 import { describeAction, enrichActionsWithNames } from '../commandActionUtils';
@@ -76,10 +77,14 @@ describe('enrichActionsWithNames', () => {
   });
 });
 
+/** Stand-in for the i18next lookup the component passes in. */
+const tx = ((key: string, options?: Record<string, unknown>) =>
+  `${key}${options ? ` ${JSON.stringify(options)}` : ''}`) as unknown as TFunction<'ui'>;
+
 describe('describeAction fallback for missing bin_name', () => {
   it('does NOT render the string "undefined" when bin_name is missing on duplicate_bin', () => {
     const action = { type: 'duplicate_bin', bin_id: 'b1', new_name: 'Copy of Car Supplies' } as unknown as CommandAction;
-    const description = describeAction(action, t);
+    const description = describeAction(action, t, tx);
     expect(description).not.toMatch(/undefined/i);
     // The copy's new name should still appear
     expect(description).toContain('Copy of Car Supplies');
@@ -87,7 +92,7 @@ describe('describeAction fallback for missing bin_name', () => {
 
   it('does NOT render the string "undefined" when bin_name is missing on delete_bin', () => {
     const action = { type: 'delete_bin', bin_id: 'b1' } as unknown as CommandAction;
-    const description = describeAction(action, t);
+    const description = describeAction(action, t, tx);
     expect(description).not.toMatch(/undefined/i);
   });
 });

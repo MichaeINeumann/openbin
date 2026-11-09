@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BulkUpdateDialog } from '@/lib/bulk/BulkUpdateDialog';
+import { useBinTerm } from '@/lib/terminology';
 import { cn, inputBase } from '@/lib/utils';
 import type { TagEntry } from './useTags';
 
@@ -24,6 +25,7 @@ export function BulkMergeDialog({
   onApply,
 }: BulkMergeDialogProps) {
   const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const [mode, setMode] = useState<'existing' | 'new'>('existing');
   const [existingTarget, setExistingTarget] = useState('');
   const [newTarget, setNewTarget] = useState('');
@@ -50,8 +52,8 @@ export function BulkMergeDialog({
         }
         onOpenChange(v);
       }}
-      title={`Merge ${selectedTagNames.length} tag${selectedTagNames.length === 1 ? '' : 's'}`}
-      description={`Merge into a single canonical tag across ~${binsAffected} bin${binsAffected === 1 ? '' : 's'}. The originals will be deleted.`}
+      title={tx('tags_bulkMergeTitle', { count: selectedTagNames.length })}
+      description={tx('tags_bulkMergeDescription', { count: binsAffected, term: binTerm(binsAffected) })}
       selectedIds={selectedTagNames}
       onApply={(tags) => onApply(tags, target)}
       applyDisabled={!targetValid}

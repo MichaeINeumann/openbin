@@ -22,6 +22,9 @@ describe('parseRelevanceKind', () => {
   });
 });
 
+/** Stand-in for the i18next lookup the component passes in. */
+const itemCount = (count: number) => `${count} item${count === 1 ? '' : 's'}`;
+
 describe('getMatchDisplay', () => {
   const baseMatch: QueryMatch = {
     bin_id: 'b1',
@@ -36,7 +39,7 @@ describe('getMatchDisplay', () => {
   };
 
   it('returns header-only for empty bin', () => {
-    expect(getMatchDisplay(baseMatch)).toEqual({
+    expect(getMatchDisplay(baseMatch, itemCount)).toEqual({
       mode: 'header-only',
       defaultExpanded: false,
       countLabel: '',
@@ -44,7 +47,7 @@ describe('getMatchDisplay', () => {
   });
 
   it('returns nav-disclosure when items empty but total > 0 (plural)', () => {
-    expect(getMatchDisplay({ ...baseMatch, total_item_count: 12 })).toEqual({
+    expect(getMatchDisplay({ ...baseMatch, total_item_count: 12 }, itemCount)).toEqual({
       mode: 'nav-disclosure',
       defaultExpanded: false,
       countLabel: '12 items',
@@ -52,7 +55,7 @@ describe('getMatchDisplay', () => {
   });
 
   it('returns nav-disclosure with singular for 1 total item', () => {
-    expect(getMatchDisplay({ ...baseMatch, total_item_count: 1 })).toEqual({
+    expect(getMatchDisplay({ ...baseMatch, total_item_count: 1 }, itemCount)).toEqual({
       mode: 'nav-disclosure',
       defaultExpanded: false,
       countLabel: '1 item',
@@ -66,7 +69,7 @@ describe('getMatchDisplay', () => {
       total_item_count: 1,
       relevance: 'name contains "test"',
     };
-    expect(getMatchDisplay(match)).toEqual({
+    expect(getMatchDisplay(match, itemCount)).toEqual({
       mode: 'inline-disclosure',
       defaultExpanded: false,
       countLabel: '1 item',
@@ -80,7 +83,7 @@ describe('getMatchDisplay', () => {
       total_item_count: 12,
       relevance: 'contains "drill"',
     };
-    expect(getMatchDisplay(match)).toEqual({
+    expect(getMatchDisplay(match, itemCount)).toEqual({
       mode: 'inline-disclosure',
       defaultExpanded: true,
       countLabel: '1 item',
@@ -97,7 +100,7 @@ describe('getMatchDisplay', () => {
       total_item_count: 5,
       relevance: 'contains "battery"',
     };
-    expect(getMatchDisplay(match).defaultExpanded).toBe(false);
+    expect(getMatchDisplay(match, itemCount).defaultExpanded).toBe(false);
   });
 
   it('does not auto-expand for tag-kind single item', () => {
@@ -107,7 +110,7 @@ describe('getMatchDisplay', () => {
       total_item_count: 1,
       relevance: 'tagged "garage"',
     };
-    expect(getMatchDisplay(match).defaultExpanded).toBe(false);
+    expect(getMatchDisplay(match, itemCount).defaultExpanded).toBe(false);
   });
 
   it('does not auto-expand for metadata-kind single item', () => {
@@ -117,6 +120,6 @@ describe('getMatchDisplay', () => {
       total_item_count: 1,
       relevance: 'pinned',
     };
-    expect(getMatchDisplay(match).defaultExpanded).toBe(false);
+    expect(getMatchDisplay(match, itemCount).defaultExpanded).toBe(false);
   });
 });

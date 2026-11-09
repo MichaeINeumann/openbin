@@ -1,6 +1,11 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
+
+// Counts are pluralized by i18next, which the global mock cannot do.
+vi.unmock('react-i18next');
+
+import { renderWithI18n } from '@/test/i18nTestUtils';
 import { BinItemGroup } from '../BinItemGroup';
 import type { QueryMatch } from '../useInventoryQuery';
 
@@ -31,7 +36,7 @@ const baseMatch: QueryMatch = {
 };
 
 function renderGroup(match: QueryMatch, onBinClick = vi.fn()) {
-  return render(
+  return renderWithI18n(
     <MemoryRouter>
       <BinItemGroup match={match} canWrite={false} onBinClick={onBinClick} />
     </MemoryRouter>,

@@ -37,7 +37,7 @@ export function BulkSetParentDialog({
         if (!v) setParentValue('');
         onOpenChange(v);
       }}
-      title={`Set parent for ${selectedTagNames.length} tag${selectedTagNames.length === 1 ? '' : 's'}`}
+      title={tx('tags_bulkParentTitle', { count: selectedTagNames.length })}
       description={tx("choose_a_parent_tag_or_none_to_clear_52c5cc", { defaultValue: "Choose a parent tag, or None to clear." })}
       selectedIds={selectedTagNames}
       onApply={(tags) => onApply(tags, parentValue || null)}

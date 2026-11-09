@@ -33,7 +33,7 @@ export function BulkDeleteItemsDialog({ open, onOpenChange, count, onConfirm }: 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{tx("delete_f6fdbe", { defaultValue: "Delete" })} {count} {tx("item_3a7d97", { defaultValue: "item" })}{count === 1 ? '' : 's'}?</DialogTitle>
+          <DialogTitle>{tx('items_bulkDeleteTitle', { count })}</DialogTitle>
           <DialogDescription>{tx("you_can_undo_this_immediately_after_f4fb95", { defaultValue: "You can undo this immediately after." })}</DialogDescription>
         </DialogHeader>
         <DialogFooter>

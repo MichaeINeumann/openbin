@@ -1,5 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+
+// Counts are pluralized by i18next, which the global mock cannot do.
+vi.unmock('react-i18next');
+
+import { renderWithI18n } from '@/test/i18nTestUtils';
 import type { Bin } from '@/types';
 import type { SourceCard } from '../deriveMoveList';
 import { MoveListSheet } from '../MoveListSheet';
@@ -62,14 +67,19 @@ const baseProps = {
 
 describe('MoveListSheet', () => {
   it('renders header with title, date, and counts', async () => {
-    render(<MoveListSheet {...baseProps} />);
+    renderWithI18n(<MoveListSheet {...baseProps} />);
     await waitFor(() => expect(screen.getByText('Move List')).toBeTruthy());
     expect(screen.getByText('Group by type')).toBeTruthy();
     expect(screen.getByText(/1 → 1 bin · 2 items · 1 move/)).toBeTruthy();
   });
 
+  it('pluralizes the header counts in German', async () => {
+    renderWithI18n(<MoveListSheet {...baseProps} totalItems={1} totalMoves={3} />, { language: 'de-DE' });
+    await waitFor(() => expect(screen.getByText(/1 Gegenstand · 3 Verschiebungen/)).toBeTruthy());
+  });
+
   it('renders a section per source bin with short code (no QR)', async () => {
-    render(<MoveListSheet {...baseProps} />);
+    renderWithI18n(<MoveListSheet {...baseProps} />);
     await waitFor(() => expect(screen.getByText('Garage Bench')).toBeTruthy());
     expect(screen.queryByTestId('move-list-qr-src-1')).toBeNull();
     expect(screen.getByTestId('move-list-code-src-1')).toBeTruthy();
@@ -77,21 +87,21 @@ describe('MoveListSheet', () => {
   });
 
   it('renders a checkbox per item', async () => {
-    render(<MoveListSheet {...baseProps} />);
+    renderWithI18n(<MoveListSheet {...baseProps} />);
     await waitFor(() => expect(screen.getByText('Garage Bench')).toBeTruthy());
     const checkboxes = screen.getAllByTestId(/^move-list-item-check/);
     expect(checkboxes).toHaveLength(2);
   });
 
   it('renders destination pill and bulleted items with quantity prefix', async () => {
-    render(<MoveListSheet {...baseProps} />);
+    renderWithI18n(<MoveListSheet {...baseProps} />);
     await waitFor(() => expect(screen.getByText('Hand Tools')).toBeTruthy());
     expect(screen.getByText(/Hammer/)).toBeTruthy();
     expect(screen.getByText(/5× Screw/)).toBeTruthy();
   });
 
   it('renders `(new)` tag next to destination names', async () => {
-    render(<MoveListSheet {...baseProps} />);
+    renderWithI18n(<MoveListSheet {...baseProps} />);
     await waitFor(() => expect(screen.getByText('Hand Tools')).toBeTruthy());
     expect(screen.getByText('new')).toBeTruthy();
   });
@@ -104,7 +114,7 @@ describe('MoveListSheet', () => {
         makeCard({ sourceBin: makeBin({ id: 'src-2', name: 'Kitchen', short_code: 'SRC222' }) }),
       ],
     };
-    render(<MoveListSheet {...twoCards} />);
+    renderWithI18n(<MoveListSheet {...twoCards} />);
     await waitFor(() => expect(screen.getByText('Garage')).toBeTruthy());
     expect(screen.getByText('Kitchen')).toBeTruthy();
     expect(screen.getByTestId('move-list-code-src-1')).toBeTruthy();
@@ -114,7 +124,7 @@ describe('MoveListSheet', () => {
   });
 
   it('renders "No source bins selected" when list is empty', () => {
-    render(<MoveListSheet {...baseProps} sourceCards={[]} totalItems={0} totalMoves={0} totalDestinationBins={0} />);
+    renderWithI18n(<MoveListSheet {...baseProps} sourceCards={[]} totalItems={0} totalMoves={0} totalDestinationBins={0} />);
     expect(screen.getByText(/No source bins/i)).toBeTruthy();
   });
 
@@ -130,14 +140,14 @@ describe('MoveListSheet', () => {
         },
       ],
     });
-    render(<MoveListSheet {...baseProps} sourceCards={[preservedCard]} />);
+    renderWithI18n(<MoveListSheet {...baseProps} sourceCards={[preservedCard]} />);
     await waitFor(() => expect(screen.getAllByText('Garage Bench').length).toBeGreaterThan(0));
     expect(screen.getByText('will be kept')).toBeTruthy();
     expect(screen.getByText('kept')).toBeTruthy();
   });
 
   it('renders `will be emptied` header and `new` tag by default', async () => {
-    render(<MoveListSheet {...baseProps} />);
+    renderWithI18n(<MoveListSheet {...baseProps} />);
     await waitFor(() => expect(screen.getByText('Garage Bench')).toBeTruthy());
     expect(screen.getByText('will be emptied')).toBeTruthy();
     expect(screen.getByText('new')).toBeTruthy();

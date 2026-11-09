@@ -21,6 +21,7 @@ import { apiFetch, getAvatarUrl } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { allChecksPassing, computePasswordChecks } from '@/lib/passwordStrength';
 import { useAuthStatusConfig } from '@/lib/qrConfig';
+import { useTerminology } from '@/lib/terminology';
 import { usePlan } from '@/lib/usePlan';
 import { useUserPreferences } from '@/lib/userPreferences';
 import { useWarnOnUnload } from '@/lib/useWarnOnUnload';
@@ -54,6 +55,7 @@ function validateDisplayName(value: string): string | undefined {
 export function AccountSection() {
   const { i18n: { language: uiLanguage } } = useTranslation();
   const { t: tx } = useTranslation('ui');
+  const term = useTerminology();
   const { user, updateUser } = useAuth();
   const { showToast } = useToast();
   const { locations } = useLocationList();
@@ -288,7 +290,7 @@ export function AccountSection() {
               </span>
               <span className="inline-flex items-center gap-1">
                 <MapPin className="h-3 w-3" />
-                {locations.length} {tx("location_6469ac", { defaultValue: "location" })}{locations.length !== 1 ? 's' : ''}
+                {tx('count_locations', { count: locations.length, term: locations.length === 1 ? term.location : term.locations })}
               </span>
             </>
           }

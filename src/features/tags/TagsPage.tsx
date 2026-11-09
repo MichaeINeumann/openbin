@@ -157,12 +157,17 @@ export function TagsPage() {
     try {
       const result = await deleteTag(activeLocationId, deleteTarget);
       const orphanMsg = result.orphanedChildren
-        ? ` \u2014 ${result.orphanedChildren} child tag${result.orphanedChildren === 1 ? '' : 's'} moved to top level`
+        ? tx('tags_orphanedChildren', { count: result.orphanedChildren })
         : '';
-      showToast({ message: `Removed "${deleteTarget}" from ${result.binsUpdated} ${result.binsUpdated === 1 ? t.bin : t.bins}${orphanMsg}` });
+      const removed = tx('tags_removedFrom', {
+        count: result.binsUpdated,
+        tag: deleteTarget,
+        term: result.binsUpdated === 1 ? t.bin : t.bins,
+      });
+      showToast({ message: `${removed}${orphanMsg}` });
       setDeleteTarget(null);
     } catch {
-      showToast({ message: 'Failed to delete tag', variant: 'error' });
+      showToast({ message: tx('tags_deleteFailed'), variant: 'error' });
     } finally {
       setDeleteLoading(false);
     }
@@ -290,7 +295,7 @@ export function TagsPage() {
           onClear={clearSelection}
           isBusy={isBusy}
           actions={bulkActions}
-          selectionLabel={`${selectedIds.size} tag${selectedIds.size === 1 ? '' : 's'} selected`}
+          selectionLabel={tx('selected_tags', { count: selectedIds.size })}
         />
       )}
 

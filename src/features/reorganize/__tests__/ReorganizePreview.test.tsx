@@ -1,5 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+
+// Counts are pluralized by i18next, which the global mock cannot do.
+vi.unmock('react-i18next');
+
+import { renderWithI18n } from '@/test/i18nTestUtils';
 import type { Area, Bin } from '@/types';
 import { ReorganizePreview } from '../ReorganizePreview';
 import type { ReorgResponse } from '../useReorganize';
@@ -60,7 +65,7 @@ describe('ReorganizePreview — source-oriented', () => {
       bins: [{ name: 'Tools', items: ['Hammer', 'Wrench'], tags: [] }],
       summary: '',
     };
-    render(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
+    renderWithI18n(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
     const alpha = screen.getAllByText('Alpha Bin')[0];
     const beta = screen.getAllByText('Beta Bin')[0];
     expect(alpha.compareDocumentPosition(beta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -76,7 +81,7 @@ describe('ReorganizePreview — source-oriented', () => {
       bins: [{ name: 'Hand Tools', items: ['Hammer'], tags: [] }],
       summary: '',
     };
-    render(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
+    renderWithI18n(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
     expect(screen.getAllByText(/will be kept/)[0]).toBeTruthy();
   });
 
@@ -90,7 +95,7 @@ describe('ReorganizePreview — source-oriented', () => {
       bins: [{ name: 'Tools', items: ['Hammer'], tags: [] }],
       summary: '',
     };
-    render(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
+    renderWithI18n(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
     expect(screen.getAllByText(/will be emptied/)[0]).toBeTruthy();
   });
 
@@ -104,7 +109,7 @@ describe('ReorganizePreview — source-oriented', () => {
       bins: [{ name: 'Tools', items: ['Hammer'], tags: [] }],
       summary: '',
     };
-    render(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
+    renderWithI18n(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
     expect(screen.getAllByText('Existing bin')[0]).toBeTruthy();
   });
 
@@ -121,7 +126,7 @@ describe('ReorganizePreview — source-oriented', () => {
       ],
       summary: '',
     };
-    render(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
+    renderWithI18n(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
     expect(screen.getAllByText(/×2 destinations/).length).toBeGreaterThanOrEqual(1);
   });
 
@@ -136,7 +141,7 @@ describe('ReorganizePreview — source-oriented', () => {
       ],
       summary: '',
     };
-    render(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
+    renderWithI18n(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
     expect(screen.getByRole('button', { name: /keep 1 bin/ })).toBeTruthy();
   });
 
@@ -146,7 +151,7 @@ describe('ReorganizePreview — source-oriented', () => {
       bins: [{ name: 'Dest', items: ['A', 'B'], tags: [] }],
       summary: '',
     };
-    render(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
+    renderWithI18n(<ReorganizePreview {...baseProps} inputBins={inputBins} result={result} />);
     expect(screen.getByRole('button', { name: /Accept — Move 2 items, create 1 bin/ })).toBeTruthy();
   });
 });

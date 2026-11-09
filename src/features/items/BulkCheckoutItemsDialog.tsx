@@ -33,7 +33,7 @@ export function BulkCheckoutItemsDialog({ open, onOpenChange, count, onConfirm }
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{tx("check_out_e9f38d", { defaultValue: "Check out" })} {count} {tx("item_3a7d97", { defaultValue: "item" })}{count === 1 ? '' : 's'}?</DialogTitle>
+          <DialogTitle>{tx('items_bulkCheckoutTitle', { count })}</DialogTitle>
           <DialogDescription>{tx("already_checked_out_items_will_be_skipped_099b27", { defaultValue: "Already-checked-out items will be skipped." })}</DialogDescription>
         </DialogHeader>
         <DialogFooter>

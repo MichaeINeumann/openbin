@@ -28,7 +28,7 @@ export function BinItemGroup({
   onBinClick,
 }: BinItemGroupProps) {
   const { t: tx } = useTranslation('ui');
-  const display = getMatchDisplay(match);
+  const display = getMatchDisplay(match, (count) => tx('count_items', { count }));
   const isExpandable = display.mode === 'inline-disclosure';
   const [expanded, setExpanded] = useState(display.defaultExpanded);
   const itemsId = `items-${match.bin_id}`;

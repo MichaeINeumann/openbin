@@ -1,5 +1,7 @@
-import { pluralize } from '@/lib/utils';
 import type { QueryMatch } from './useInventoryQuery';
+
+/** Minimal translator shape, so this stays a plain function outside React. */
+type CountLabeller = (count: number) => string;
 
 export type DisplayMode = 'header-only' | 'inline-disclosure' | 'nav-disclosure';
 export type RelevanceKind = 'item' | 'name' | 'tag' | 'metadata' | 'fuzzy' | 'unknown';
@@ -34,7 +36,7 @@ export function parseRelevanceKind(relevance: string): RelevanceKind {
   return 'unknown';
 }
 
-export function getMatchDisplay(match: QueryMatch): MatchDisplay {
+export function getMatchDisplay(match: QueryMatch, itemCountLabel: CountLabeller): MatchDisplay {
   const itemsCount = match.items.length;
   const totalCount = match.total_item_count;
 
@@ -45,7 +47,7 @@ export function getMatchDisplay(match: QueryMatch): MatchDisplay {
     return {
       mode: 'nav-disclosure',
       defaultExpanded: false,
-      countLabel: pluralize(totalCount, 'item'),
+      countLabel: itemCountLabel(totalCount),
     };
   }
   const kind = parseRelevanceKind(match.relevance);
@@ -53,6 +55,6 @@ export function getMatchDisplay(match: QueryMatch): MatchDisplay {
     mode: 'inline-disclosure',
     defaultExpanded: kind === 'item' && itemsCount === 1,
     // Pill shows MATCHED item count; BinItemGroup's "+N more" footer covers the delta to total.
-    countLabel: pluralize(itemsCount, 'item'),
+    countLabel: itemCountLabel(itemsCount),
   };
 }

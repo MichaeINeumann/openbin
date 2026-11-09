@@ -48,7 +48,7 @@ export function TourLauncher({ tourId, variant = 'icon', className }: TourLaunch
     );
   }
 
-  const stepCount = `${tour.steps.length} step${tour.steps.length === 1 ? '' : 's'}`;
+  const stepCount = tx('count_steps', { count: tour.steps.length });
   return (
     <SettingsRow
       icon={tour.icon}

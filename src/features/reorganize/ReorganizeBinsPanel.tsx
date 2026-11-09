@@ -176,7 +176,7 @@ export function ReorganizeBinsActionPanel({ selection, areas, form, reorganize }
       {selection.selectedIds.size >= 2 && !overCap && (
         <div className="text-[12px] text-[var(--text-tertiary)] text-center -mt-2 flex flex-col items-center gap-0.5">
           <span>
-            {itemCount} {tx("item_3a7d97", { defaultValue: "item" })}{itemCount !== 1 ? 's' : ''} {tx("across_9a82bf", { defaultValue: "across" })} {selection.selectedIds.size}{' '}
+            {tx('count_items', { count: itemCount })} {tx("across_9a82bf", { defaultValue: "across" })} {selection.selectedIds.size}{' '}
             {t.bins}
           </span>
           {__EE__ ? (

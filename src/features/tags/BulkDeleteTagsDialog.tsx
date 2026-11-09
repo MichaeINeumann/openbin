@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useBinTerm } from '@/lib/terminology';
 import type { TagEntry } from './useTags';
 
 interface BulkDeleteTagsDialogProps {
@@ -21,6 +22,7 @@ interface BulkDeleteTagsDialogProps {
 
 export function BulkDeleteTagsDialog({ open, onOpenChange, tags, binsAffected, onConfirm }: BulkDeleteTagsDialogProps) {
   const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const [loading, setLoading] = useState(false);
   async function handle() {
     setLoading(true);
@@ -32,14 +34,16 @@ export function BulkDeleteTagsDialog({ open, onOpenChange, tags, binsAffected, o
     }
   }
   const preview =
-    tags.slice(0, 5).map((t) => `"${t}"`).join(', ') + (tags.length > 5 ? `, +${tags.length - 5} more` : '');
+    tags.slice(0, 5).map((t) => `“${t}”`).join(', ') +
+    (tags.length > 5 ? tx('tags_previewMore', { count: tags.length - 5 }) : '');
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle> {tx("delete_f6fdbe", { defaultValue: "Delete" })} {tags.length} {tx("tag_5e9b60", { defaultValue: "tag" })}{tags.length === 1 ? '' : 's'}?
-          </DialogTitle>
-          <DialogDescription> {tx("removes_12c60b", { defaultValue: "Removes" })} {preview} {tx("from_this_location_7460af", { defaultValue: "from this location. ~" })}{binsAffected} {tx("bin_9a5d56", { defaultValue: "bin" })}{binsAffected === 1 ? '' : 's'} {tx("will_be_updated_children_become_top_level_8979b0", { defaultValue: "will be updated. Children become top-level." })} </DialogDescription>
+          <DialogTitle>{tx('tags_bulkDeleteTitle', { count: tags.length })}</DialogTitle>
+          <DialogDescription>
+            {tx('tags_bulkDeleteDescription', { count: binsAffected, term: binTerm(binsAffected), preview })}
+          </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={loading}> {tx("cancel_77dfd2", { defaultValue: "Cancel" })} </Button>

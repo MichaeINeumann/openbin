@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '@/components/ui/toast';
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { useBinCountLabel, useTerminology } from '@/lib/terminology';
 import type { ExportData } from '@/types';
 import {
   countCSVBins,
@@ -17,15 +19,16 @@ import {
   validateCSVHeader,
 } from './exportImport';
 
-function importErrorMessage(err: unknown): string {
+/** Returns a catalog key; the caller translates so the text follows the language. */
+function importErrorKey(err: unknown) {
   if (err instanceof ImportError) {
     switch (err.code) {
-      case 'FILE_TOO_LARGE': return 'File is too large (max 100 MB)';
-      case 'INVALID_JSON': return 'File is not valid JSON';
-      case 'INVALID_FORMAT': return 'Invalid backup file format';
+      case 'FILE_TOO_LARGE': return 'data_fileTooLarge';
+      case 'INVALID_JSON': return 'data_invalidJson';
+      case 'INVALID_FORMAT': return 'data_invalidFormat';
     }
   }
-  return 'Failed to read backup file';
+  return 'data_backupReadFailed';
 }
 
 type ExportFormat = 'zip' | 'json' | 'csv';
@@ -41,6 +44,9 @@ interface ImportPreview {
 export function useDataSectionActions() {
   const { activeLocationId } = useAuth();
   const { showToast } = useToast();
+  const { t: tx } = useTranslation('ui');
+  const term = useTerminology();
+  const binCount = useBinCountLabel();
 
   function resolveLocationId(locationId?: string | null): string | null {
     return locationId ?? activeLocationId ?? null;
@@ -147,7 +153,7 @@ export function useDataSectionActions() {
   async function handleExport(locationId?: string | null) {
     const targetLocationId = resolveLocationId(locationId);
     if (!targetLocationId) {
-      showToast({ message: 'Select a location first' });
+      showToast({ message: tx('data_selectLocationFirst', { term: term.location }) });
       return;
     }
     setExporting(true);
@@ -155,21 +161,25 @@ export function useDataSectionActions() {
       switch (exportFormat) {
         case 'zip':
           await exportZip(targetLocationId);
-          showToast({ message: 'ZIP backup exported successfully' });
+          showToast({ message: tx('data_exportZipSuccess') });
           break;
         case 'json':
           await exportAllData(targetLocationId);
-          showToast({ message: 'Backup exported successfully' });
+          showToast({ message: tx('data_exportJsonSuccess') });
           break;
         case 'csv':
           await exportCsv(targetLocationId);
-          showToast({ message: 'CSV exported successfully' });
+          showToast({ message: tx('data_exportCsvSuccess') });
           break;
       }
       setExportDialogOpen(false);
     } catch {
-      const label = exportFormat === 'zip' ? 'ZIP export' : exportFormat === 'csv' ? 'CSV export' : 'Export';
-      showToast({ message: `${label} failed` });
+      const failedKey = exportFormat === 'zip'
+        ? 'data_exportZipFailed'
+        : exportFormat === 'csv'
+          ? 'data_exportCsvFailed'
+          : 'data_exportFailed';
+      showToast({ message: tx(failedKey) });
     } finally {
       setExporting(false);
     }
@@ -188,7 +198,7 @@ export function useDataSectionActions() {
 
     if (importFormatRaw === 'zip') {
       if (!file.name.toLowerCase().endsWith('.zip')) {
-        showToast({ message: 'Please select a .zip file' });
+        showToast({ message: tx('data_pickZipFile') });
       } else {
         setZipPending({ file });
         fetchDryRun({ file, format: 'zip' }, importMode, locationId);
@@ -199,37 +209,38 @@ export function useDataSectionActions() {
         setPendingData(data);
         fetchDryRun({ json: data }, importMode, locationId);
       } catch (err) {
-        showToast({ message: importErrorMessage(err) });
+        showToast({ message: tx(importErrorKey(err)) });
       }
     } else {
       try {
         const text = await file.text();
         if (!text.trim()) {
-          showToast({ message: 'CSV file is empty' });
+          showToast({ message: tx('data_csvEmpty') });
           return;
         }
         if (!validateCSVHeader(text)) {
-          showToast({ message: 'Invalid CSV header. Expected "Bin Name,Area,Item,Quantity,Tags" or "Bin Name,Area,Items,Tags"' });
+          showToast({ message: tx('data_csvBadHeader') });
           return;
         }
         const counts = countCSVBins(text);
         setCsvPending({ file, bins: counts.bins, items: counts.items });
         fetchDryRun({ file, format: 'csv' }, importMode, locationId);
       } catch {
-        showToast({ message: 'Failed to read CSV file' });
+        showToast({ message: tx('data_csvReadFailed') });
       }
     }
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   function buildImportToast(result: ImportResult, isReplace: boolean): string {
-    const parts: string[] = [];
-    parts.push(`${result.binsImported} bin${result.binsImported !== 1 ? 's' : ''}`);
-    if (result.trashedBinsImported) parts.push(`${result.trashedBinsImported} trashed`);
-    if (result.photosImported) parts.push(`${result.photosImported} photo${result.photosImported !== 1 ? 's' : ''}`);
-    const main = parts.join(', ');
-    const skipped = !isReplace && result.binsSkipped ? ` (${result.binsSkipped} skipped)` : '';
-    return isReplace ? `Replaced all data: ${main}` : `Imported ${main}${skipped}`;
+    const parts: string[] = [binCount(result.binsImported)];
+    if (result.trashedBinsImported) parts.push(tx('data_trashedCount', { count: result.trashedBinsImported }));
+    if (result.photosImported) parts.push(tx('count_photos', { count: result.photosImported }));
+    const summary = parts.join(', ');
+    const skipped = !isReplace && result.binsSkipped
+      ? tx('data_skippedSuffix', { count: result.binsSkipped })
+      : '';
+    return isReplace ? tx('data_replacedAll', { summary }) : tx('data_imported', { summary, skipped });
   }
 
   async function handleConfirmImport(locationId?: string | null) {
@@ -245,7 +256,7 @@ export function useDataSectionActions() {
         setImportDialogOpen(false);
       } catch (err) {
         const detail = err instanceof Error ? err.message : String(err);
-        showToast({ message: `ZIP import failed: ${detail}` });
+        showToast({ message: tx('data_zipImportFailed', { detail }) });
       } finally {
         setImporting(false);
       }
@@ -258,7 +269,11 @@ export function useDataSectionActions() {
         setImportDialogOpen(false);
       } catch (err) {
         const detail = err instanceof Error ? err.message : String(err);
-        showToast({ message: `${importMode === 'replace' ? 'Replace import' : 'Import'} failed: ${detail}` });
+        showToast({
+          message: importMode === 'replace'
+            ? tx('data_replaceImportFailed', { detail })
+            : tx('data_importFailed', { detail }),
+        });
       } finally {
         setImporting(false);
       }
@@ -267,13 +282,17 @@ export function useDataSectionActions() {
       try {
         const result = await importCSV(targetLocationId, csvPending.file, importMode);
         showToast({
-          message: `Imported ${result.binsImported} bin${result.binsImported !== 1 ? 's' : ''} with ${result.itemsImported} item${result.itemsImported !== 1 ? 's' : ''}${result.binsSkipped ? ` (${result.binsSkipped} skipped)` : ''}`,
+          message: tx('data_importedWithItems', {
+            bins: binCount(result.binsImported),
+            items: tx('count_items', { count: result.itemsImported }),
+            skipped: result.binsSkipped ? tx('data_skippedSuffix', { count: result.binsSkipped }) : '',
+          }),
         });
         setCsvPending(null);
         setImportDialogOpen(false);
       } catch (err) {
         const detail = err instanceof Error ? err.message : String(err);
-        showToast({ message: `CSV import failed: ${detail}` });
+        showToast({ message: tx('data_csvImportFailed', { detail }) });
       } finally {
         setImporting(false);
       }

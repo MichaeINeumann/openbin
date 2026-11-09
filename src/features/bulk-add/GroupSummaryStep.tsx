@@ -108,7 +108,7 @@ export function GroupSummaryStep({
                 </div>
                 <div className="text-[12px] text-[var(--text-secondary)] flex gap-2">
                   <span>
-                    {group.items.length} {tx("item_3a7d97", { defaultValue: "item" })}{group.items.length !== 1 ? 's' : ''}
+                    {tx('count_items', { count: group.items.length })}
                   </span>
                   {group.photos.length > 1 && <span>· {group.photos.length} {tx("photos_2e58e0", { defaultValue: "photos" })}</span>}
                   {!hasName && (

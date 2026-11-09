@@ -73,7 +73,7 @@ export function CommandActionList({
                     !checked ? 'text-[var(--text-tertiary)] line-through'
                       : destructive ? 'text-[var(--destructive)]' : 'text-[var(--text-primary)]',
                   )}>
-                    {describeAction(action, t)}
+                    {describeAction(action, t, tx)}
                   </span>
                 </button>
               </li>

@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { ArrowRight, Loader2, Package, RefreshCw } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -77,12 +78,12 @@ export function ReorganizePreview({
           <span aria-hidden="true" className="text-[var(--text-quaternary)]">·</span>
           <span>
             <span className="font-medium text-[var(--text-secondary)]">{totalItems}</span>
-            {' '}{tx("item_3a7d97", { defaultValue: "item" })}{totalItems !== 1 ? 's' : ''}
+            {' '}{tx('word_items', { count: totalItems })}
           </span>
           <span aria-hidden="true" className="text-[var(--text-quaternary)]">·</span>
           <span>
             <span className="font-medium text-[var(--text-secondary)]">{totalMoves}</span>
-            {' '}{tx("move_379d6c", { defaultValue: "move" })}{totalMoves !== 1 ? 's' : ''}
+            {' '}{tx('word_moves', { count: totalMoves })}
           </span>
           {binsKept > 0 && (
             <>
@@ -112,7 +113,7 @@ export function ReorganizePreview({
               <>
                 <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> {tx("applying_e578c2", { defaultValue: "Applying…" })} </>
             ) : (
-              buildAcceptLabel(itemsMoving, binsKept, binsCreated, t.bin, t.bins)
+              buildAcceptLabel(tx, itemsMoving, binsKept, binsCreated, t.bin, t.bins)
             )}
           </Button>
           <div className="flex gap-2 justify-center flex-wrap">
@@ -151,11 +152,15 @@ function SourceCardRow({ card, delay }: { card: SourceCard; delay: number }) {
   const chipBg = colorPreset?.bg ?? 'var(--bg-hover)';
   const itemTotal = card.outgoingClusters.reduce((sum, c) => sum + c.items.length, 0);
   const destinationCount = card.outgoingClusters.length;
-  const statusText = card.preserved ? 'will be kept' : 'will be emptied';
+  const statusText = tx(card.preserved ? 'reorganize_willBeKept' : 'reorganize_willBeEmptied');
 
   return (
     <li
-      aria-label={`${card.sourceBin.name}: ${itemTotal} item${itemTotal !== 1 ? 's' : ''}, ${statusText}`}
+      aria-label={tx('reorganize_cardAria', {
+        binName: card.sourceBin.name,
+        items: tx('count_items', { count: itemTotal }),
+        status: statusText,
+      })}
       className="ai-stagger-item rounded-[var(--radius-md)] border border-[var(--border-flat)] bg-[var(--bg-flat)] overflow-hidden"
       style={{ animationDelay: `${delay}ms` }}
     >
@@ -172,7 +177,7 @@ function SourceCardRow({ card, delay }: { card: SourceCard; delay: number }) {
             {card.sourceBin.name || '…'}
           </div>
           <div className="text-[12px] text-[var(--text-tertiary)] mt-0.5 tabular-nums">
-            {itemTotal} {tx("item_3a7d97", { defaultValue: "item" })}{itemTotal !== 1 ? 's' : ''}
+            {tx('count_items', { count: itemTotal })}
             {destinationCount > 1 && tx("destinationcount_destinations_1a37fc", { defaultValue: " → {{destinationCount}} destinations", destinationCount: destinationCount })}
           </div>
         </div>
@@ -230,7 +235,7 @@ function ClusterRow({ cluster }: { cluster: SourceCard['outgoingClusters'][numbe
           {cluster.destinationKept ? tx("existing_bin_ec5370", { defaultValue: "Existing bin" }) : tx("new_bin_3bd18a", { defaultValue: "New bin" })}
         </span>
         <span className="ml-auto shrink-0 text-[11px] text-[var(--text-tertiary)] tabular-nums">
-          {itemCount} {tx("item_3a7d97", { defaultValue: "item" })}{itemCount !== 1 ? 's' : ''}
+          {tx('count_items', { count: itemCount })}
         </span>
       </div>
 
@@ -287,19 +292,19 @@ function ItemRow({ item }: { item: MoveListItem }) {
 }
 
 function buildAcceptLabel(
+  tx: TFunction<'ui'>,
   itemsMoving: number,
   binsKept: number,
   binsCreated: number,
   binWord: string,
   binsWord: string,
 ): string {
-  const parts: string[] = [];
-  parts.push(`Move ${itemsMoving} item${itemsMoving !== 1 ? 's' : ''}`);
+  const parts: string[] = [tx('reorganize_moveItems', { count: itemsMoving })];
   if (binsKept > 0) {
-    parts.push(`keep ${binsKept} ${binsKept === 1 ? binWord : binsWord}`);
+    parts.push(tx('reorganize_keepBins', { count: binsKept, term: binsKept === 1 ? binWord : binsWord }));
   }
   if (binsCreated > 0) {
-    parts.push(`create ${binsCreated} ${binsCreated === 1 ? binWord : binsWord}`);
+    parts.push(tx('reorganize_createBins', { count: binsCreated, term: binsCreated === 1 ? binWord : binsWord }));
   }
-  return `Accept — ${parts.join(', ')}`;
+  return tx('reorganize_acceptLabel', { summary: parts.join(', ') });
 }

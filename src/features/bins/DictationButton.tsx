@@ -195,7 +195,7 @@ export function DictationButton({ dictation }: DictationButtonProps) {
     return (
       <output className="w-full space-y-2" aria-live="polite">
         <div className="text-xs text-[var(--text-quaternary)]">
-          {structuredItems.length} {tx("item_3a7d97", { defaultValue: "item" })}{structuredItems.length !== 1 ? 's' : ''} {tx("parsed_from_dictation_e112e7", { defaultValue: "parsed from dictation" })} </div>
+          {tx('count_items', { count: structuredItems.length })} {tx("parsed_from_dictation_e112e7", { defaultValue: "parsed from dictation" })} </div>
         <div className="flex flex-wrap gap-1.5">
           {structuredItems.map((item, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: items identified by stable index for toggle state

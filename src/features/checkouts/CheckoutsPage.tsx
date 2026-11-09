@@ -202,7 +202,7 @@ export function CheckoutsPage() {
           onClear={clearSelection}
           isBusy={isBusy}
           actions={bulkActions}
-          selectionLabel={`${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'} selected`}
+          selectionLabel={tx('selected_items', { count: selectedIds.size })}
         />
       )}
       {origMounted && (

@@ -13,6 +13,7 @@ import {
 import { LocationSelectList } from '@/features/locations/LocationSelectList';
 import { useLocationList } from '@/features/locations/useLocations';
 import { useAuth } from '@/lib/auth';
+import { useBinTerm } from '@/lib/terminology';
 
 import type { Location } from '@/types';
 import { SettingsPageHeader } from '../SettingsPageHeader';
@@ -72,6 +73,7 @@ function LocationPickerSection({
 
 export function DataSection() {
   const { t: tx } = useTranslation('ui');
+  const binTerm = useBinTerm();
   const navigate = useNavigate();
   const { activeLocationId } = useAuth();
 
@@ -124,9 +126,13 @@ export function DataSection() {
     : importFormat === 'zip' && zipPending
       ? `${zipPending.file.name} (${formatFileSize(zipPending.file.size)})`
       : importFormat === 'json' && pendingData
-        ? `Found ${pendingData.bins.length} bin${pendingData.bins.length !== 1 ? 's' : ''}`
+        ? tx('data_foundBins', { count: pendingData.bins.length, term: binTerm(pendingData.bins.length) })
         : importFormat === 'csv' && csvPending
-          ? `Found ${csvPending.bins} bin${csvPending.bins !== 1 ? 's' : ''} with ${csvPending.items} item${csvPending.items !== 1 ? 's' : ''}`
+          ? tx('data_foundBinsWithItems', {
+              count: csvPending.bins,
+              term: binTerm(csvPending.bins),
+              items: tx('count_items', { count: csvPending.items }),
+            })
           : null;
 
   return (

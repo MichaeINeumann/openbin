@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '@/components/ui/toast';
 import { useTextStructuring } from '@/features/ai/useTextStructuring';
 import { addItemsToBin } from '@/features/bins/useBins';
@@ -26,6 +27,7 @@ interface UseDictationOptions {
 export function useDictation(options: UseDictationOptions) {
   const { binId, binName, existingItems, locationId, onAdd } = options;
   const { showToast } = useToast();
+  const { t: tx } = useTranslation('ui');
 
   const existingItemsKey = existingItems.join('\0');
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional content-based stabilization
@@ -145,10 +147,10 @@ export function useDictation(options: UseDictationOptions) {
           await addItemsToBin(binId, items);
         }
         showToast({
-          message: `Added ${selected.length} item${selected.length !== 1 ? 's' : ''} from dictation`,
+          message: tx('items_addedFromDictation', { count: selected.length }),
         });
       } catch {
-        showToast({ message: 'Failed to add items', variant: 'error' });
+        showToast({ message: tx('items_addFailed'), variant: 'error' });
       }
       setItemState('idle');
       setTranscript(null);

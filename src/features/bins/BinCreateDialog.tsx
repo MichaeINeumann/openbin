@@ -78,7 +78,7 @@ export function BinCreateDialog({ open, onOpenChange, prefillName, allTags: allT
         );
         const failCount = results.filter((ok) => !ok).length;
         if (failCount > 0) {
-          showToast({ message: `${failCount} photo${failCount > 1 ? 's' : ''} failed to upload`, variant: 'error' });
+          showToast({ message: tx('photos_uploadFailedCountBin', { count: failCount }), variant: 'error' });
         }
       }
       setSuccessInfo([{

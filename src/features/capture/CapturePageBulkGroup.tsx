@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { TourLauncher } from '@/features/tour/TourLauncher';
-import { cn, focusRing, pluralize } from '@/lib/utils';
+import { cn, focusRing } from '@/lib/utils';
 import { CameraStartScreen } from './CameraStartScreen';
 import { setCapturedPhotos, setCapturedReturnTarget } from './capturedPhotos';
 import { FirstRunCoachmark, HelpButton } from './guidance/CameraGuidance';
@@ -43,7 +43,7 @@ export function CapturePageBulkGroup() {
 
   function handleClose() {
     if (photos.length > 0) {
-      const ok = window.confirm(`Discard ${pluralize(photos.length, 'photo')}?`);
+      const ok = window.confirm(tx('capture_discardPhotos', { count: photos.length }));
       if (!ok) return;
     }
     navigate(-1);
@@ -116,7 +116,7 @@ export function CapturePageBulkGroup() {
             <div
               aria-live="polite"
               className="text-[11px] font-medium text-white/90 tracking-wide"
-            > {tx("bin_1752e7", { defaultValue: "Bin #" })}{currentGroup + 1} · {pluralize(photosInCurrentGroup, 'photo')}
+            > {tx("bin_1752e7", { defaultValue: "Bin #" })}{currentGroup + 1} · {tx('count_photos', { count: photosInCurrentGroup })}
             </div>
 
             <div className="flex items-center gap-2">

@@ -122,7 +122,7 @@ export function AiSuggestionsPanel({
                 ))}
               </ul>
               {currentItems.length > 0 && (
-                <p className="text-[12px] text-[var(--text-tertiary)] mt-1"> {tx("will_replace_current_fde375", { defaultValue: "Will replace current" })} {currentItems.length} {tx("item_3a7d97", { defaultValue: "item" })}{currentItems.length !== 1 ? 's' : ''}
+                <p className="text-[12px] text-[var(--text-tertiary)] mt-1"> {tx("will_replace_current_fde375", { defaultValue: "Will replace current" })} {tx('count_items', { count: currentItems.length })}
                 </p>
               )}
             </div>

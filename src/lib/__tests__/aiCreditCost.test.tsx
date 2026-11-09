@@ -1,8 +1,11 @@
-import { render, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Counts are pluralized by i18next, which the global mock cannot do.
+vi.unmock('react-i18next');
 
 vi.mock('../usePlan', () => ({ usePlan: vi.fn() }));
 
+import { renderHookWithI18n, renderWithI18n } from '@/test/i18nTestUtils';
 import { CreditCost, computeCreditEstimate, formatCreditCompactSuffix, formatCreditSuffix, reorganizeWeight, useCreditCostLabel, visionWeight } from '../aiCreditCost';
 import { usePlan } from '../usePlan';
 
@@ -41,22 +44,22 @@ describe('reorganizeWeight (client mirror)', () => {
 
 describe('<CreditCost>', () => {
   it('renders the cost as small "Uses X credits" text', () => {
-    const { getByText } = render(<CreditCost cost={5} />);
+    const { getByText } = renderWithI18n(<CreditCost cost={5} />);
     expect(getByText(/Uses 5 credits/)).toBeTruthy();
   });
 
   it('uses the singular form when cost is 1', () => {
-    const { getByText } = render(<CreditCost cost={1} />);
+    const { getByText } = renderWithI18n(<CreditCost cost={1} />);
     expect(getByText(/Uses 1 credit\b/)).toBeTruthy();
   });
 
   it('renders nothing when cost is 0', () => {
-    const { container } = render(<CreditCost cost={0} />);
+    const { container } = renderWithI18n(<CreditCost cost={0} />);
     expect(container.firstChild).toBeNull();
   });
 
   it('forwards a className for layout adjustments', () => {
-    const { container } = render(<CreditCost cost={5} className="ml-2" />);
+    const { container } = renderWithI18n(<CreditCost cost={5} className="ml-2" />);
     const el = container.firstChild as HTMLElement | null;
     expect(el?.className).toContain('ml-2');
   });
@@ -171,21 +174,21 @@ describe('useCreditCostLabel', () => {
 
   it('composes label and compactSuffix from plan info', () => {
     setupPlan({ used: 10, limit: 100, resetsAt: '2026-06-01' });
-    const { result } = renderHook(() => useCreditCostLabel('Reanalyze with AI', 5));
+    const { result } = renderHookWithI18n(() => useCreditCostLabel('Reanalyze with AI', 5));
     expect(result.current.label).toBe('Reanalyze with AI · 5 credits (5%)');
     expect(result.current.compactSuffix).toBe(' · 5%');
   });
 
   it('omits the percent when aiCredits is null (self-host)', () => {
     setupPlan(null);
-    const { result } = renderHook(() => useCreditCostLabel('Voice input', 1));
+    const { result } = renderHookWithI18n(() => useCreditCostLabel('Voice input', 1));
     expect(result.current.label).toBe('Voice input · 1 credit');
     expect(result.current.compactSuffix).toBe('');
   });
 
   it('renders "would exceed" copy when projected exceeds limit', () => {
     setupPlan({ used: 95, limit: 100, resetsAt: '2026-06-01' });
-    const { result } = renderHook(() => useCreditCostLabel('Reorganize', 20));
+    const { result } = renderHookWithI18n(() => useCreditCostLabel('Reorganize', 20));
     expect(result.current.label).toBe('Reorganize · 20 credits (would exceed monthly limit)');
     expect(result.current.compactSuffix).toBe(' · over');
   });

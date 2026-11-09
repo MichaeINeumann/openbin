@@ -42,7 +42,7 @@ export function MoveListSheet({
           <span className="move-list-date">{new Date().toLocaleDateString(uiLanguage)}</span>
         </div>
         <div className="move-list-counts">
-          {sourceCards.length} → {totalDestinationBins} {totalDestinationBins === 1 ? t.bin : t.bins} · {totalItems} {tx("item_3a7d97", { defaultValue: "item" })}{totalItems !== 1 ? 's' : ''} · {totalMoves} {tx("move_379d6c", { defaultValue: "move" })}{totalMoves !== 1 ? 's' : ''}
+          {sourceCards.length} → {totalDestinationBins} {totalDestinationBins === 1 ? t.bin : t.bins} · {tx('count_items', { count: totalItems })} · {tx('count_moves', { count: totalMoves })}
         </div>
         {summary && <p className="move-list-summary">{summary}</p>}
       </div>
@@ -97,7 +97,7 @@ function MoveListSection({ card, areas }: MoveListSectionProps) {
           </span>
           <span className="move-list-meta-sep" aria-hidden="true">·</span>
           <span className="move-list-meta-count">
-            {itemTotal} {tx("item_3a7d97", { defaultValue: "item" })}{itemTotal !== 1 ? 's' : ''}
+            {tx('count_items', { count: itemTotal })}
           </span>
         </div>
       </div>
@@ -136,7 +136,7 @@ function MoveListCluster({
           {cluster.destinationKept ? 'kept' : 'new'}
         </span>
         <span className="move-list-cluster-count">
-          {itemCount} {tx("item_3a7d97", { defaultValue: "item" })}{itemCount !== 1 ? 's' : ''}
+          {tx('count_items', { count: itemCount })}
         </span>
         {cluster.destinationTags.length > 0 && (
           <span className="move-list-cluster-tags">

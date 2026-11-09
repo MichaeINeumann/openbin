@@ -1,6 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
+
+// Counts are pluralized by i18next, which the global mock cannot do.
+vi.unmock('react-i18next');
+
+import { renderWithI18n } from '@/test/i18nTestUtils';
 import { AiTurnQueryResult } from '../AiTurnQueryResult';
 
 vi.mock('@/lib/usePermissions', () => ({
@@ -24,7 +29,7 @@ vi.mock('@/features/items/itemActions', () => ({
 
 describe('AiTurnQueryResult', () => {
   it('renders the answer within a flat-card', () => {
-    const { container } = render(
+    const { container } = renderWithI18n(
       <MemoryRouter>
         <AiTurnQueryResult
           queryResult={{ answer: 'Found it', matches: [] }}
@@ -37,7 +42,7 @@ describe('AiTurnQueryResult', () => {
   });
 
   it('does not render a follow-up textarea or Back button', () => {
-    render(
+    renderWithI18n(
       <MemoryRouter>
         <AiTurnQueryResult
           queryResult={{ answer: '', matches: [] }}
@@ -50,7 +55,7 @@ describe('AiTurnQueryResult', () => {
   });
 
   it('renders mixed display modes independently — auto-expanded + collapsed do not interfere', () => {
-    render(
+    renderWithI18n(
       <MemoryRouter>
         <AiTurnQueryResult
           queryResult={{

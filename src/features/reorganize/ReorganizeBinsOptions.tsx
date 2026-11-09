@@ -192,7 +192,7 @@ export function ReorganizeBinsOptions({ form, itemCount }: Props) {
         ))}
 
         <div className="mt-3 pt-3 border-t border-[var(--border-subtle)] text-[12px] text-[var(--text-tertiary)]">
-          {itemCount} {tx("item_3a7d97", { defaultValue: "item" })}{itemCount !== 1 ? 's' : ''} {tx("across_selected_eaf487", { defaultValue: "across selected" })} {t.bins}
+          {tx('count_items', { count: itemCount })} {tx("across_selected_eaf487", { defaultValue: "across selected" })} {t.bins}
         </div>
       </div>
     </Disclosure>

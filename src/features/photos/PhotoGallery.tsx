@@ -96,7 +96,7 @@ export function PhotoGallery({ binId, variant = 'card' }: PhotoGalleryProps) {
     notifyPhotosChanged();
     if (errorCount > 0) {
       showToast({
-        message: `Failed to upload ${errorCount} photo${errorCount > 1 ? 's' : ''}`,
+        message: tx('photos_uploadFailedCount', { count: errorCount }),
         variant: 'error',
       });
     }

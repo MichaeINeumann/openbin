@@ -147,7 +147,7 @@ export function ItemsPage() {
           onClear={clearSelection}
           isBusy={isBusy}
           actions={actions}
-          selectionLabel={`${selectedIds.size} item${selectedIds.size === 1 ? '' : 's'} selected`}
+          selectionLabel={tx('selected_items', { count: selectedIds.size })}
         />
       )}
 

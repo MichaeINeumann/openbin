@@ -129,7 +129,7 @@ export function ShareBinDialog({ binId, open, onOpenChange }: ShareBinDialogProp
               </span>
               <span className="inline-flex items-center gap-1">
                 <Eye className="h-3 w-3" />
-                {share.viewCount} {tx("view_8f3a07", { defaultValue: "view" })}{share.viewCount !== 1 ? 's' : ''}
+                {tx('count_views', { count: share.viewCount })}
               </span>
               {share.expiresAt && (
                 <span className="inline-flex items-center gap-1">
