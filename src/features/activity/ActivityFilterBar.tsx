@@ -37,12 +37,13 @@ export function ActivityFilterBar({
   onSearchChange,
 }: ActivityFilterBarProps) {
   const { t: tx } = useTranslation('ui');
+  const { t: ta } = useTranslation('activity');
   const t = useTerminology();
   const { activeLocationId } = useAuth();
   const { members } = useLocationMembers(activeLocationId);
   const filterOptions = useMemo<OptionGroupOption<EntityTypeFilter>[]>(
-    () => ENTITY_TYPE_FILTERS.map((f) => ({ key: f.value, label: f.tKey ? t[f.tKey] : f.label })),
-    [t],
+    () => ENTITY_TYPE_FILTERS.map((f) => ({ key: f.value, label: f.tKey ? t[f.tKey] : ta(f.value === 'member' ? 'filter_members' : 'filter_all', { defaultValue: f.label }) })),
+    [t, ta],
   );
 
   const hasActiveFilters = userId || dateFrom || dateTo;

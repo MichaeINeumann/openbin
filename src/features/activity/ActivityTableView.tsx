@@ -10,7 +10,7 @@ import { useTerminology } from '@/lib/terminology';
 import { cn, firstName, relativeTime } from '@/lib/utils';
 import type { ActivityLogEntry } from '@/types';
 import { ActivityRowDetail } from './ActivityRowDetail';
-import { getActionBadgeLabel, getActionColor, getActionIcon, getChangedFieldLabels, getEntityDescription } from './activityHelpers';
+import { getActionBadgeLabel, getActionColor, getActionIcon, getChangedFieldLabels, getEntityDescription, getEntityTypeLabel } from './activityHelpers';
 
 interface ActivityTableViewProps {
   entries: ActivityLogEntry[];
@@ -28,6 +28,7 @@ const CHIP_CLASS =
 export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, searchQuery = '', currentEntityId }: ActivityTableViewProps) {
   const { i18n: { language: uiLanguage } } = useTranslation();
   const { t: tx } = useTranslation('ui');
+  const { t: ta } = useTranslation('activity');
   const navigate = useNavigate();
   const t = useTerminology();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -46,10 +47,10 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
       <Table>
         <TableHeader>
           <span className="w-8 shrink-0" />
-          <span className="hidden lg:block w-[72px] shrink-0 ui-col-header">{tx("action_97c89a", { defaultValue: "Action" })}</span>
+          <span className="hidden lg:block w-[120px] shrink-0 ui-col-header">{tx("action_97c89a", { defaultValue: "Action" })}</span>
           <span className="flex-[2] ui-col-header">{tx("description_55f8eb", { defaultValue: "Description" })}</span>
           <span className="hidden lg:block flex-1 ui-col-header">{tx("user_9f8a23", { defaultValue: "User" })}</span>
-          <span className="hidden lg:block w-[72px] shrink-0 ui-col-header">{tx("type_3deb74", { defaultValue: "Type" })}</span>
+          <span className="hidden lg:block w-[120px] shrink-0 ui-col-header">{tx("type_3deb74", { defaultValue: "Type" })}</span>
           <span className="w-20 shrink-0 ui-col-header text-right">{tx("time_6c82e6", { defaultValue: "Time" })}</span>
           <span className="w-5 shrink-0" />
         </TableHeader>
@@ -63,10 +64,10 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
             entry.action !== 'permanent_delete' &&
             entry.action !== 'delete';
           const detailId = `activity-detail-${entry.id}`;
-          const chipLabels = getChangedFieldLabels(entry, t);
+          const chipLabels = getChangedFieldLabels(entry, t, ta);
           const overflow = Math.max(0, chipLabels.length - MAX_CHIPS);
           const chips = overflow > 0
-            ? [...chipLabels.slice(0, MAX_CHIPS), `+${overflow} more`]
+            ? [...chipLabels.slice(0, MAX_CHIPS), ta('more', { count: overflow, defaultValue: `+${overflow} more` })]
             : chipLabels;
 
           return (
@@ -93,7 +94,7 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
                   </div>
                 </div>
 
-                <div className="hidden lg:block w-[72px] shrink-0">
+                <div className="hidden lg:block w-[120px] shrink-0">
                   <Badge
                     className={cn(
                       'text-[11px] border-0',
@@ -101,7 +102,7 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
                       'bg-[color-mix(in_srgb,currentColor_12%,transparent)]',
                     )}
                   >
-                    {getActionBadgeLabel(entry.action)}
+                    {getActionBadgeLabel(entry.action, ta)}
                   </Badge>
                 </div>
 
@@ -111,7 +112,7 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
                       <span className="lg:hidden font-medium truncate max-w-[10rem]" title={entry.display_name}>
                         <Highlight text={firstName(entry.display_name)} query={searchQuery} />
                       </span>{' '}
-                      <Highlight text={getEntityDescription(entry, t)} query={searchQuery} />
+                      <Highlight text={getEntityDescription(entry, t, ta)} query={searchQuery} />
                     </p>
                     {chips.map((label, i) => (
                       <span
@@ -136,9 +137,9 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
                   )}
                 </div>
 
-                <div className="hidden lg:block w-[72px] shrink-0">
+                <div className="hidden lg:block w-[120px] shrink-0">
                   <Badge variant="outline" className="text-[11px] capitalize">
-                    {entry.entity_type}
+                    {getEntityTypeLabel(entry.entity_type, t, ta)}
                   </Badge>
                 </div>
 
@@ -170,7 +171,7 @@ export function ActivityTableView({ entries, hasMore, isLoadingMore, loadMore, s
                       entry={entry}
                       onNavigate={
                         isClickable
-                          ? () => navigate(`/bin/${entry.entity_id}`, { state: { backLabel: 'Activity', backPath: '/activity' } })
+                          ? () => navigate(`/bin/${entry.entity_id}`, { state: { backLabel: ta('page_title', { defaultValue: 'Activity' }), backPath: '/activity' } })
                           : undefined
                       }
                     />

@@ -2,9 +2,11 @@ import { type RenderResult, render } from '@testing-library/react';
 import i18next from 'i18next';
 import type { ReactElement } from 'react';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
+import deActivity from '@/locales/de-DE/activity.json';
 import deAuth from '@/locales/de-DE/auth.json';
 import deCommon from '@/locales/de-DE/common.json';
 import deUi from '@/locales/de-DE/ui.json';
+import enActivity from '@/locales/en/activity.json';
 import enAuth from '@/locales/en/auth.json';
 import enCommon from '@/locales/en/common.json';
 import enUi from '@/locales/en/ui.json';
@@ -26,8 +28,8 @@ function createTestI18n() {
     ns: ['common', 'auth'],
     defaultNS: 'common',
     resources: {
-      'de-DE': { common: deCommon, auth: deAuth, ui: deUi },
-      en: { common: enCommon, auth: enAuth, ui: enUi },
+      'de-DE': { common: deCommon, auth: deAuth, ui: deUi, activity: deActivity },
+      en: { common: enCommon, auth: enAuth, ui: enUi, activity: enActivity },
       nb: { common: nbCommon, auth: nbAuth },
     },
     interpolation: { escapeValue: false },
